@@ -1,0 +1,246 @@
+<?php
+// Mulai session
+session_start();
+
+// Include file koneksi yang telah diperbaiki
+require_once 'koneksi.php';
+
+// Periksa status login - jika belum login, redirect ke halaman login
+if (!isset($_SESSION['user_id'])) {
+    header("Location: login.php");
+    exit;
+}
+
+// Fungsi untuk memeriksa koneksi database dan melakukan reconnect jika terputus
+function check_connection($conn) {
+    if (!$conn->ping()) {
+        // Reconnect jika koneksi terputus
+        $conn->close();
+        $servername = "127.0.0.1";
+        $username   = "root";
+        $password   = "";
+        $dbname     = "sigap";
+        $port       = 3306;
+        
+        $conn = new mysqli($servername, $username, $password, $dbname, $port);
+        
+        if ($conn->connect_error) {
+            die("Connection failed: " . $conn->connect_error);
+        }
+    }
+    return $conn;
+}
+
+// Pastikan koneksi aktif
+$conn = check_connection($conn);
+
+// Default content jika database tidak tersedia
+$title = "Selamat Datang di BPS Kota Bandar Lampung";
+$description = "Silakan isi konten halaman utama website.";
+$image = "konten.webp";
+
+try {
+    // Cek apakah tabel konten ada
+    $table_check = $conn->query("SHOW TABLES LIKE 'konten'");
+    if ($table_check && $table_check->num_rows > 0) {
+        // Ambil data konten terbaru
+        $sql = "SELECT * FROM konten WHERE id = 1 LIMIT 1";
+        $result = $conn->query($sql);
+
+        if ($result && $result->num_rows > 0) {
+            // Jika data ditemukan, gunakan data dari database
+            $row = $result->fetch_assoc();
+            $title = $row["title"];
+            $description = $row["description"];
+            $image = $row["image"];
+        }
+    }
+} catch (Exception $e) {
+    // Jika terjadi error, gunakan data default
+}
+
+// Pastikan path gambar lengkap dan benar
+$image_path = "img/" . $image;
+if (!file_exists($image_path)) {
+    $image_path = "img/konten.webp"; // Gambar default jika gambar tidak ditemukan
+}
+
+// Tutup koneksi database
+$conn->close();
+
+// Cek status login
+$is_logged_in = isset($_SESSION['user_id']);
+$is_admin = $is_logged_in && $_SESSION['role'] === 'admin';
+
+// Set default full_name jika tidak ada dalam session
+if (!isset($_SESSION['full_name'])) {
+    $_SESSION['full_name'] = $_SESSION['username'];
+}
+?>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>BPS Kota Bandar Lampung</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="Website Resmi BPS Kota Bandar Lampung" />
+    <meta name="author" content="" />
+    <!-- css -->
+    <link href="css/bootstrap.min.css" rel="stylesheet" />
+    <link href="css/fancybox/jquery.fancybox.css" rel="stylesheet">
+    <link href="css/jcarousel.css" rel="stylesheet" />
+    <link href="css/flexslider.css" rel="stylesheet" />
+    <link href="js/owl-carousel/owl.carousel.css" rel="stylesheet"> 
+    <link href="css/style.css" rel="stylesheet" />
+    <link href="css/custom-styles.css" rel="stylesheet" />
+    <link href="css/font-awesome.css" rel="stylesheet" />
+    
+    <!-- HTML5 shim, for IE6-8 support of HTML5 elements -->
+    <!--[if lt IE 9]>
+        <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    
+    <script>
+        // Simpan informasi login di sessionStorage
+        sessionStorage.setItem('isLoggedIn', 'true');
+        sessionStorage.setItem('username', '<?php echo addslashes($_SESSION['username']); ?>');
+        sessionStorage.setItem('userRole', '<?php echo addslashes($_SESSION['role']); ?>');
+    </script>
+</head>
+<body>
+    <!-- Mobile Menu Toggle Button -->
+    <button class="mobile-menu-toggle">
+        <i class="fa fa-bars"></i> Menu
+    </button>
+    
+    <!-- Sidebar menu -->
+    <div class="sidebar">
+        <a class="navbar-brand" href="index.php"><img src="img/logoo.png" alt="logo"/></a>
+        <ul class="nav navbar-nav">
+            <li class="active"><a href="index.php">Beranda</a></li> 
+            <li><a href="monev.php">Monev</a></li>
+            <li><a href="about.php">Layanan</a></li>
+            <li><a href="services.php">Pusat Aplikasi</a></li>
+            <li><a href="pricing.php">Dokumentasi</a></li>
+            <li><a href="contact.php">Pengaduan</a></li>
+            
+            <?php if ($is_admin): ?>
+                <!-- Menu Admin - hanya ditampilkan jika role adalah admin -->
+                <li class="admin-menu"><a href="admin-users.php"><i class="fa fa-users"></i> Manajemen User</a></li>
+                <li class="admin-menu"><a href="admin-services.php"><i class="fa fa-cogs"></i> Manajemen Layanan</a></li>
+                <li class="admin-menu"><a href="admin-content.php"><i class="fa fa-file-text"></i> Manajemen Konten</a></li>
+            <?php endif; ?>
+            
+            <li class="logout-menu"><a href="logout.php" class="logout-link"><i class="fa fa-sign-out"></i> Logout (<?php echo htmlspecialchars($_SESSION['username']); ?>)</a></li>
+        </ul>
+    </div>
+
+    <div id="wrapper">
+        <!-- Slider -->
+        <section id="featured">
+            <div id="main-slider" class="flexslider">
+                <ul class="slides">
+                    <li>
+                        <img src="img/slides/b.png" alt="" />
+                        <div class="flex-caption">
+                            <h3>BPS Kota Bandar Lampung</h3> 
+                        </div>
+                    </li>
+                </ul>
+            </div>
+            <!-- end slider -->
+        </section>
+
+        <section>
+            <div class="container text-center">
+                <h3><?php echo $title; ?></h3>
+                <p><?php echo $description; ?></p>
+                <div class="row service-v1 margin-bottom-40">
+                    <div class="col-md-4 md-margin-bottom-40 center-block" style="float: none; margin: 0 auto;">
+                        <img class="img-responsive" src="<?php echo $image_path; ?>" alt="<?php echo $title; ?>">   
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="content">
+            <div class="container">
+                <div class="row">
+                    <div class="col-xs-12 col-sm-12 col-md-12">
+                        <div class="latest-post-wrap">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <footer>
+        <div class="container">
+            <div class="row">
+                <div class="col-md-4">
+                    <h4>Badan Pusat Statistik Kota Bandar Lampung</h4>
+                    <address>
+                        <i class="fa fa-map-marker"></i> Jl. Sutan Syahrir No. 30, Pahoman<br>
+                        Bandar Lampung, 35215<br>
+                        <i class="fa fa-phone"></i> Telp: (0721) 255980<br>
+                        <i class="fa fa-envelope"></i> Email: <a href="mailto:bps1871@bps.go.id">bps1871@bps.go.id</a>
+                    </address>
+                </div>
+                <div class="col-md-4">
+                    <h4>Tautan Cepat</h4>
+                    <ul class="link-list">
+                        <li><a href="index.php"><i class="fa fa-angle-right"></i> Beranda</a></li>
+                        <li><a href="monev.php"><i class="fa fa-angle-right"></i> Monev</a></li>
+                        <li><a href="about.php"><i class="fa fa-angle-right"></i> Layanan</a></li>
+                        <li><a href="services.php"><i class="fa fa-angle-right"></i> Pusat Aplikasi</a></li>
+                        <li><a href="contact.php"><i class="fa fa-angle-right"></i> Pengaduan</a></li>
+                    </ul>
+                </div>
+                <div class="col-md-4">
+                    <h4>Ikuti Kami</h4>
+                    <ul class="social-network">
+                        <li><a href="#" data-placement="top" title="Facebook"><i class="fa fa-facebook fa-2x"></i></a></li>
+                        <li><a href="#" data-placement="top" title="Twitter"><i class="fa fa-twitter fa-2x"></i></a></li>
+                        <li><a href="#" data-placement="top" title="Instagram"><i class="fa fa-instagram fa-2x"></i></a></li>
+                        <li><a href="#" data-placement="top" title="Youtube"><i class="fa fa-youtube fa-2x"></i></a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        </footer>
+        <div id="sub-footer">
+            <div class="container">
+                <div class="row">
+                    <div class="col-lg-6">
+                        <div class="copyright">
+                            <p>Hak Cipta © 2025 Badan Pusat Statistik Kota Bandar Lampung. Semua Hak Dilindungi.</p>
+                        </div>
+                    </div>
+                    <div class="col-lg-6">
+                        <ul class="social-network">
+                            <li><a href="#" data-placement="top" title="Kembali ke Atas"><i class="fa fa-arrow-up"></i></a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <a href="#" class="scrollup"><i class="fa fa-angle-up active"></i></a>
+
+    <!-- javascript
+    ================================================== -->
+    <!-- Placed at the end of the document so the pages load faster -->
+    <script src="js/jquery.js"></script>
+    <script src="js/jquery.easing.1.3.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+    <script src="js/jquery.fancybox.pack.js"></script>
+    <script src="js/jquery.fancybox-media.js"></script> 
+    <script src="js/portfolio/jquery.quicksand.js"></script>
+    <script src="js/portfolio/setting.js"></script>
+    <script src="js/jquery.flexslider.js"></script>
+    <script src="js/animate.js"></script>
+    <script src="js/custom.js"></script>
+    <script src="js/owl-carousel/owl.carousel.js"></script>
+</body>
+</html> 
