@@ -265,7 +265,15 @@ $is_admin = $is_logged_in && $_SESSION['role'] === 'admin';
         <div class="container">
             <div class="row">
                 <div class="col-lg-12 text-center">
-                    <p>© 2025 BPS Kota Bandar Lampung.</p>
+                    <h4>Badan Pusat Statistik Kota Bandar Lampung</h4>
+                    <address>
+                        Jl. Sutan Syahrir No. 30, Pahoman, Bandar Lampung, 35215<br>
+                        Telp. (0721) 255980. Mailbox : bps1871@bps.go.id
+                    </address>
+                    <div class="copyright">
+                        <p>Hak Cipta © 2025 Badan Pusat Statistik Kota Bandar Lampung<br>
+                        Semua Hak Dilindungi</p>
+                    </div>
                 </div>
             </div>
         </div>

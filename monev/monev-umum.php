@@ -139,6 +139,7 @@ $is_admin = $is_logged_in && $_SESSION['role'] === 'admin';
         <a class="navbar-brand" href="../index.php"><img src="../img/logoo.png" alt="logo"/></a>
         <ul class="nav navbar-nav">
             <li><a href="../index.php">Beranda</a></li>
+            <li><a href="../profil.php">Profil dan Roadmap</a></li>
             <li class="active"><a href="../monev.php">Monev</a></li>
             <li><a href="../about.php">Layanan</a></li>
             <li><a href="../services.php">Pusat Aplikasi</a></li>
@@ -277,7 +278,15 @@ $is_admin = $is_logged_in && $_SESSION['role'] === 'admin';
         <div class="container">
             <div class="row">
                 <div class="col-lg-12 text-center">
-                    <p>© 2025 BPS Kota Bandar Lampung.</p>
+                    <h4>Badan Pusat Statistik Kota Bandar Lampung</h4>
+                    <address>
+                        Jl. Sutan Syahrir No. 30, Pahoman, Bandar Lampung, 35215<br>
+                        Telp. (0721) 255980. Mailbox : bps1871@bps.go.id
+                    </address>
+                    <div class="copyright">
+                        <p>Hak Cipta © 2025 Badan Pusat Statistik Kota Bandar Lampung<br>
+                        Semua Hak Dilindungi</p>
+                    </div>
                 </div>
             </div>
         </div>

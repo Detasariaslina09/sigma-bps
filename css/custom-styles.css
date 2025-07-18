@@ -311,7 +311,7 @@ body {
 /* Styling untuk footer */
 footer {
     background: #1a3c6e; /* Warna biru tua BPS */
-    padding: 40px 0 20px;
+    padding: 40px 0;
     color: #fff;
     margin-top: auto;
     border-top: 5px solid #ff9800; /* Garis oranye di atas footer */
@@ -324,29 +324,42 @@ footer h4 {
     padding-bottom: 10px;
     position: relative;
     text-transform: uppercase;
-    font-size: 18px;
+    font-size: 20px;
 }
 
 footer h4:after {
     content: '';
     position: absolute;
-    left: 0;
+    left: 50%;
+    transform: translateX(-50%);
     bottom: 0;
-    width: 50px;
+    width: 80px;
     height: 3px;
     background: #ff9800;
 }
 
 footer p {
     margin: 0;
-    font-size: 14px;
+    font-size: 15px;
     line-height: 1.6;
 }
 
 footer address {
     line-height: 1.8;
     margin-bottom: 20px;
+    font-size: 16px;
+    color: #f0f0f0;
+}
+
+footer .copyright {
+    margin-top: 20px;
+    padding-top: 20px;
+    border-top: 1px solid rgba(255,255,255,0.1);
+}
+
+footer .copyright p {
     font-size: 14px;
+    color: #ddd;
 }
 
 footer address i {
@@ -436,27 +449,16 @@ footer .social-network li a:hover {
 
 @media (max-width: 768px) {
     footer {
-        padding: 30px 0 10px;
-        text-align: center;
+        padding: 30px 0;
     }
     
-    footer h4:after {
-        left: 50%;
-        transform: translateX(-50%);
+    footer h4 {
+        font-size: 18px;
     }
     
-    footer .col-md-4 {
-        margin-bottom: 30px;
-    }
-    
-    footer .social-network {
-        text-align: center;
-    }
-    
-    #sub-footer .social-network,
-    #sub-footer .copyright {
-        text-align: center;
-        margin-top: 10px;
+    footer address,
+    footer p {
+        font-size: 14px;
     }
 }
 

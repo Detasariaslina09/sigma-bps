@@ -287,7 +287,8 @@ if ($result->num_rows > 0) {
     <div class="sidebar">
         <a class="navbar-brand" href="index.php"><img src="img/logoo.png" alt="logo"/></a>
         <ul class="nav navbar-nav">
-            <li><a href="index.php">Beranda</a></li> 
+            <li><a href="index.php">Beranda</a></li>
+            <li><a href="profil.php">Profil dan Roadmap</a></li>
             <li><a href="monev.php">Monev</a></li>
             <li><a href="about.php">Layanan</a></li>
             <li><a href="services.php">Pusat Aplikasi</a></li>
@@ -390,53 +391,20 @@ if ($result->num_rows > 0) {
         <footer>
         <div class="container">
             <div class="row">
-                <div class="col-md-4">
+                <div class="col-lg-12 text-center">
                     <h4>Badan Pusat Statistik Kota Bandar Lampung</h4>
                     <address>
-                        <i class="fa fa-map-marker"></i> Jl. Sutan Syahrir No. 30, Pahoman<br>
-                        Bandar Lampung, 35215<br>
-                        <i class="fa fa-phone"></i> Telp: (0721) 255980<br>
-                        <i class="fa fa-envelope"></i> Email: <a href="mailto:bps1871@bps.go.id">bps1871@bps.go.id</a>
+                        Jl. Sutan Syahrir No. 30, Pahoman, Bandar Lampung, 35215<br>
+                        Telp. (0721) 255980. Mailbox : bps1871@bps.go.id
                     </address>
-                </div>
-                <div class="col-md-4">
-                    <h4>Tautan Cepat</h4>
-                    <ul class="link-list">
-                        <li><a href="index.php"><i class="fa fa-angle-right"></i> Beranda</a></li>
-                        <li><a href="monev.php"><i class="fa fa-angle-right"></i> Monev</a></li>
-                        <li><a href="about.php"><i class="fa fa-angle-right"></i> Layanan</a></li>
-                        <li><a href="services.php"><i class="fa fa-angle-right"></i> Pusat Aplikasi</a></li>
-                        <li><a href="contact.php"><i class="fa fa-angle-right"></i> Pengaduan</a></li>
-                    </ul>
-                </div>
-                <div class="col-md-4">
-                    <h4>Ikuti Kami</h4>
-                    <ul class="social-network">
-                        <li><a href="#" data-placement="top" title="Facebook"><i class="fa fa-facebook fa-2x"></i></a></li>
-                        <li><a href="#" data-placement="top" title="Twitter"><i class="fa fa-twitter fa-2x"></i></a></li>
-                        <li><a href="#" data-placement="top" title="Instagram"><i class="fa fa-instagram fa-2x"></i></a></li>
-                        <li><a href="#" data-placement="top" title="Youtube"><i class="fa fa-youtube fa-2x"></i></a></li>
-                    </ul>
+                    <div class="copyright">
+                        <p>Hak Cipta © 2025 Badan Pusat Statistik Kota Bandar Lampung<br>
+                        Semua Hak Dilindungi</p>
+                    </div>
                 </div>
             </div>
         </div>
         </footer>
-        <div id="sub-footer">
-            <div class="container">
-                <div class="row">
-                    <div class="col-lg-6">
-                        <div class="copyright">
-                            <p>Hak Cipta © 2025 Badan Pusat Statistik Kota Bandar Lampung. Semua Hak Dilindungi.</p>
-                        </div>
-                    </div>
-                    <div class="col-lg-6">
-                        <ul class="social-network">
-                            <li><a href="#" data-placement="top" title="Kembali ke Atas"><i class="fa fa-arrow-up"></i></a></li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
-        </div>
     </div>
 
     <a href="#" class="scrollup"><i class="fa fa-angle-up active"></i></a>
