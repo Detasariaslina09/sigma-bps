@@ -8,6 +8,72 @@ if (!isset($_SESSION['user_id'])) {
     exit;
 }
 
+// Fungsi untuk memeriksa koneksi database dan melakukan reconnect jika terputus
+function check_connection($conn) {
+    if (!$conn->ping()) {
+        // Reconnect jika koneksi terputus
+        $conn->close();
+        $servername = "127.0.0.1";
+        $username   = "root";
+        $password   = "";
+        $dbname     = "sigap";
+        $port       = 3306;
+        
+        $conn = new mysqli($servername, $username, $password, $dbname, $port);
+        
+        if ($conn->connect_error) {
+            die("Connection failed: " . $conn->connect_error);
+        }
+    }
+    return $conn;
+}
+
+// Pastikan koneksi aktif
+$conn = check_connection($conn);
+
+// Ambil data profil dari database
+$profiles = [];
+$kepala = null;
+$kasubbag = null;
+$staff = [];
+
+$sql = "SELECT * FROM profil ORDER BY id ASC";
+$result = $conn->query($sql);
+if ($result && $result->num_rows > 0) {
+    while ($row = $result->fetch_assoc()) {
+        // Pisahkan data berdasarkan jabatan
+        if (strpos(strtolower($row['jabatan']), 'kepala bps') !== false) {
+            $kepala = $row;
+        } else if (strpos(strtolower($row['jabatan']), 'kepala sub bagian') !== false) {
+            $kasubbag = $row;
+        } else {
+            $staff[] = $row;
+        }
+    }
+}
+
+// Jika tidak ada data kepala atau kasubbag, gunakan data default
+if (!$kepala) {
+    $kepala = [
+        'nama' => 'Dr. Suhariyanto, M.Si.',
+        'jabatan' => 'Kepala BPS Kota Bandar Lampung',
+        'foto' => 'kepala.jpg',
+        'link' => ''
+    ];
+}
+
+if (!$kasubbag) {
+    $kasubbag = [
+        'nama' => 'Dra. Maryam Hayati, M.M.',
+        'jabatan' => 'Kepala Sub Bagian Tata Usaha',
+        'foto' => 'kasubbag.jpg',
+        'link' => ''
+    ];
+}
+
+// Tutup koneksi database
+$conn->close();
+
 // Cek status login
 $is_logged_in = isset($_SESSION['user_id']);
 $is_admin = $is_logged_in && $_SESSION['role'] === 'admin';
@@ -333,7 +399,8 @@ if (!isset($_SESSION['full_name'])) {
                 <li class="admin-menu"><a href="admin-users.php"><i class="fa fa-users"></i> Manajemen User</a></li>
                 <li class="admin-menu"><a href="admin-services.php"><i class="fa fa-cogs"></i> Manajemen Layanan</a></li>
                 <li class="admin-menu"><a href="admin-content.php"><i class="fa fa-file-text"></i> Manajemen Konten</a></li>
-            <?php endif; ?>
+                <li class="admin-menu"><a href="admin-profil.php"><i class="fa fa-id-card"></i> Manajemen Profil</a></li>
+                <?php endif; ?>
             
             <li class="logout-menu"><a href="logout.php" class="logout-link"><i class="fa fa-sign-out"></i> Logout (<?php echo htmlspecialchars($_SESSION['username']); ?>)</a></li>
         </ul>
@@ -362,10 +429,10 @@ if (!isset($_SESSION['full_name'])) {
                         <div class="col-md-8 col-md-offset-2">
                             <div class="org-chart-box org-chart-head">
                                 <div class="leader-photo">
-                                    <img src="img/staff/kepala.jpg" alt="Kepala BPS">
+                                    <img src="img/staff/<?php echo htmlspecialchars($kepala['foto']); ?>" alt="Kepala BPS">
                                 </div>
-                                <h4>Kepala BPS Kota Bandar Lampung</h4>
-                                <p>Dr. Suhariyanto, M.Si.</p>
+                                <h4><?php echo htmlspecialchars($kepala['jabatan']); ?></h4>
+                                <p><?php echo htmlspecialchars($kepala['nama']); ?></p>
                             </div>
                         </div>
                     </div>
@@ -375,10 +442,10 @@ if (!isset($_SESSION['full_name'])) {
                         <div class="col-md-6 col-md-offset-6">
                             <div class="org-chart-box org-chart-subhead">
                                 <div class="leader-photo">
-                                    <img src="img/staff/kasubbag.jpg" alt="Kepala Sub Bagian">
+                                    <img src="img/staff/<?php echo htmlspecialchars($kasubbag['foto']); ?>" alt="Kepala Sub Bagian">
                                 </div>
-                                <h4>Kepala Sub Bagian Tata Usaha</h4>
-                                <p>Dra. Maryam Hayati, M.M.</p>
+                                <h4><?php echo htmlspecialchars($kasubbag['jabatan']); ?></h4>
+                                <p><?php echo htmlspecialchars($kasubbag['nama']); ?></p>
                             </div>
                         </div>
                     </div>
@@ -388,269 +455,21 @@ if (!isset($_SESSION['full_name'])) {
                         <div class="col-md-12">
                             <h3 class="text-center">Pegawai</h3>
                             <div class="org-chart-staff">
-                                <!-- 36 pegawai dalam 6 baris, 6 per baris -->
-                                <div class="staff-box" data-profile="https://www.canva.com/design/DAFxyz123/embed">
-                                    <div class="staff-photo">
-                                        <img src="img/staff/default-male.jpg" alt="Agus Setiawan">
-                                    </div>
-                                    <h4>Agus Setiawan</h4>
-                                    <p>Statistisi Ahli Muda</p>
+                                <?php if (empty($staff)): ?>
+                                <div class="col-md-12 text-center">
+                                    <p>Belum ada data pegawai.</p>
                                 </div>
-                                <div class="staff-box" data-profile="https://www.canva.com/design/DAFxyz124/embed">
-                                    <div class="staff-photo">
-                                        <img src="img/staff/default-male.jpg" alt="Budi Santoso">
+                                <?php else: ?>
+                                    <?php foreach ($staff as $profile): ?>
+                                    <div class="staff-box" data-profile="<?php echo !empty($profile['link']) ? htmlspecialchars($profile['link']) : '#'; ?>">
+                                        <div class="staff-photo">
+                                            <img src="img/staff/<?php echo htmlspecialchars($profile['foto']); ?>" alt="<?php echo htmlspecialchars($profile['nama']); ?>">
+                                        </div>
+                                        <h4><?php echo htmlspecialchars($profile['nama']); ?></h4>
+                                        <p><?php echo htmlspecialchars($profile['jabatan']); ?></p>
                                     </div>
-                                    <h4>Budi Santoso</h4>
-                                    <p>Statistisi Ahli Muda</p>
-                                </div>
-                                <div class="staff-box" data-profile="https://www.canva.com/design/DAFxyz125/embed">
-                                    <div class="staff-photo">
-                                        <img src="img/staff/default-female.jpg" alt="Citra Dewi">
-                                    </div>
-                                    <h4>Citra Dewi</h4>
-                                    <p>Statistisi Ahli Pertama</p>
-                                </div>
-                                <div class="staff-box" data-profile="https://www.canva.com/design/DAFxyz126/embed">
-                                    <div class="staff-photo">
-                                        <img src="img/staff/default-female.jpg" alt="Dian Purnama">
-                                    </div>
-                                    <h4>Dian Purnama</h4>
-                                    <p>Pranata Komputer</p>
-                                </div>
-                                <div class="staff-box" data-profile="https://www.canva.com/design/DAFxyz127/embed">
-                                    <div class="staff-photo">
-                                        <img src="img/staff/default-male.jpg" alt="Eko Prasetyo">
-                                    </div>
-                                    <h4>Eko Prasetyo</h4>
-                                    <p>Statistisi Ahli Pertama</p>
-                                </div>
-                                <div class="staff-box" data-profile="https://www.canva.com/design/DAFxyz128/embed">
-                                    <div class="staff-photo">
-                                        <img src="img/staff/default-female.jpg" alt="Fina Kurniati">
-                                    </div>
-                                    <h4>Fina Kurniati</h4>
-                                    <p>Statistisi Ahli Pertama</p>
-                                </div>
-                                
-                                <!-- Baris kedua -->
-                                <div class="staff-box" data-profile="https://www.canva.com/design/DAFxyz129/embed">
-                                    <div class="staff-photo">
-                                        <img src="img/staff/default-male.jpg" alt="Gunawan Wibisono">
-                                    </div>
-                                    <h4>Gunawan Wibisono</h4>
-                                    <p>Pranata Komputer</p>
-                                </div>
-                                <div class="staff-box" data-profile="https://www.canva.com/design/DAFxyz130/embed">
-                                    <div class="staff-photo">
-                                        <img src="img/staff/default-female.jpg" alt="Hesti Rahayu">
-                                    </div>
-                                    <h4>Hesti Rahayu</h4>
-                                    <p>Statistisi Ahli Muda</p>
-                                </div>
-                                <div class="staff-box" data-profile="https://www.canva.com/design/DAFxyz131/embed">
-                                    <div class="staff-photo">
-                                        <img src="img/staff/default-male.jpg" alt="Indra Kusuma">
-                                    </div>
-                                    <h4>Indra Kusuma</h4>
-                                    <p>Statistisi Ahli Pertama</p>
-                                </div>
-                                <div class="staff-box" data-profile="https://www.canva.com/design/DAFxyz132/embed">
-                                    <div class="staff-photo">
-                                        <img src="img/staff/default-male.jpg" alt="Joko Susilo">
-                                    </div>
-                                    <h4>Joko Susilo</h4>
-                                    <p>Statistisi Ahli Muda</p>
-                                </div>
-                                <div class="staff-box" data-profile="https://www.canva.com/design/DAFxyz133/embed">
-                                    <div class="staff-photo">
-                                        <img src="img/staff/default-female.jpg" alt="Kartika Sari">
-                                    </div>
-                                    <h4>Kartika Sari</h4>
-                                    <p>Statistisi Ahli Pertama</p>
-                                </div>
-                                <div class="staff-box" data-profile="https://www.canva.com/design/DAFxyz134/embed">
-                                    <div class="staff-photo">
-                                        <img src="img/staff/default-male.jpg" alt="Lukman Hakim">
-                                    </div>
-                                    <h4>Lukman Hakim</h4>
-                                    <p>Pranata Komputer</p>
-                                </div>
-                                
-                                <!-- Baris ketiga -->
-                                <div class="staff-box" data-profile="https://www.canva.com/design/DAFxyz135/embed">
-                                    <div class="staff-photo">
-                                        <img src="img/staff/default-female.jpg" alt="Maya Anggraini">
-                                    </div>
-                                    <h4>Maya Anggraini</h4>
-                                    <p>Statistisi Ahli Pertama</p>
-                                </div>
-                                <div class="staff-box" data-profile="https://www.canva.com/design/DAFxyz136/embed">
-                                    <div class="staff-photo">
-                                        <img src="img/staff/default-male.jpg" alt="Nanda Putra">
-                                    </div>
-                                    <h4>Nanda Putra</h4>
-                                    <p>Statistisi Ahli Muda</p>
-                                </div>
-                                <div class="staff-box" data-profile="https://www.canva.com/design/DAFxyz137/embed">
-                                    <div class="staff-photo">
-                                        <img src="img/staff/default-female.jpg" alt="Olivia Putri">
-                                    </div>
-                                    <h4>Olivia Putri</h4>
-                                    <p>Statistisi Ahli Pertama</p>
-                                </div>
-                                <div class="staff-box" data-profile="https://www.canva.com/design/DAFxyz138/embed">
-                                    <div class="staff-photo">
-                                        <img src="img/staff/default-male.jpg" alt="Pramono Widodo">
-                                    </div>
-                                    <h4>Pramono Widodo</h4>
-                                    <p>Pranata Komputer</p>
-                                </div>
-                                <div class="staff-box" data-profile="https://www.canva.com/design/DAFxyz139/embed">
-                                    <div class="staff-photo">
-                                        <img src="img/staff/default-female.jpg" alt="Qori Amalia">
-                                    </div>
-                                    <h4>Qori Amalia</h4>
-                                    <p>Statistisi Ahli Pertama</p>
-                                </div>
-                                <div class="staff-box" data-profile="https://www.canva.com/design/DAFxyz140/embed">
-                                    <div class="staff-photo">
-                                        <img src="img/staff/default-male.jpg" alt="Rudi Hartono">
-                                    </div>
-                                    <h4>Rudi Hartono</h4>
-                                    <p>Statistisi Ahli Muda</p>
-                                </div>
-                                
-                                <!-- Baris keempat -->
-                                <div class="staff-box" data-profile="https://www.canva.com/design/DAFxyz141/embed">
-                                    <div class="staff-photo">
-                                        <img src="img/staff/default-female.jpg" alt="Sari Indah">
-                                    </div>
-                                    <h4>Sari Indah</h4>
-                                    <p>Statistisi Ahli Pertama</p>
-                                </div>
-                                <div class="staff-box" data-profile="https://www.canva.com/design/DAFxyz142/embed">
-                                    <div class="staff-photo">
-                                        <img src="img/staff/default-male.jpg" alt="Tono Sucipto">
-                                    </div>
-                                    <h4>Tono Sucipto</h4>
-                                    <p>Pranata Komputer</p>
-                                </div>
-                                <div class="staff-box" data-profile="https://www.canva.com/design/DAFxyz143/embed">
-                                    <div class="staff-photo">
-                                        <img src="img/staff/default-female.jpg" alt="Utami Dewi">
-                                    </div>
-                                    <h4>Utami Dewi</h4>
-                                    <p>Statistisi Ahli Pertama</p>
-                                </div>
-                                <div class="staff-box" data-profile="https://www.canva.com/design/DAFxyz144/embed">
-                                    <div class="staff-photo">
-                                        <img src="img/staff/default-female.jpg" alt="Vina Anggraeni">
-                                    </div>
-                                    <h4>Vina Anggraeni</h4>
-                                    <p>Statistisi Ahli Muda</p>
-                                </div>
-                                <div class="staff-box" data-profile="https://www.canva.com/design/DAFxyz145/embed">
-                                    <div class="staff-photo">
-                                        <img src="img/staff/default-male.jpg" alt="Wawan Setiawan">
-                                    </div>
-                                    <h4>Wawan Setiawan</h4>
-                                    <p>Statistisi Ahli Pertama</p>
-                                </div>
-                                <div class="staff-box" data-profile="https://www.canva.com/design/DAFxyz146/embed">
-                                    <div class="staff-photo">
-                                        <img src="img/staff/default-male.jpg" alt="Xaverius Aditya">
-                                    </div>
-                                    <h4>Xaverius Aditya</h4>
-                                    <p>Pranata Komputer</p>
-                                </div>
-                                
-                                <!-- Baris kelima -->
-                                <div class="staff-box" data-profile="https://www.canva.com/design/DAFxyz147/embed">
-                                    <div class="staff-photo">
-                                        <img src="img/staff/default-female.jpg" alt="Yanti Kusuma">
-                                    </div>
-                                    <h4>Yanti Kusuma</h4>
-                                    <p>Statistisi Ahli Pertama</p>
-                                </div>
-                                <div class="staff-box" data-profile="https://www.canva.com/design/DAFxyz148/embed">
-                                    <div class="staff-photo">
-                                        <img src="img/staff/default-male.jpg" alt="Zaenal Abidin">
-                                    </div>
-                                    <h4>Zaenal Abidin</h4>
-                                    <p>Statistisi Ahli Muda</p>
-                                </div>
-                                <div class="staff-box" data-profile="https://www.canva.com/design/DAFxyz149/embed">
-                                    <div class="staff-photo">
-                                        <img src="img/staff/default-female.jpg" alt="Anita Wijaya">
-                                    </div>
-                                    <h4>Anita Wijaya</h4>
-                                    <p>Statistisi Ahli Pertama</p>
-                                </div>
-                                <div class="staff-box" data-profile="https://www.canva.com/design/DAFxyz150/embed">
-                                    <div class="staff-photo">
-                                        <img src="img/staff/default-male.jpg" alt="Bambang Sutrisno">
-                                    </div>
-                                    <h4>Bambang Sutrisno</h4>
-                                    <p>Pranata Komputer</p>
-                                </div>
-                                <div class="staff-box" data-profile="https://www.canva.com/design/DAFxyz151/embed">
-                                    <div class="staff-photo">
-                                        <img src="img/staff/default-female.jpg" alt="Cahya Ningrum">
-                                    </div>
-                                    <h4>Cahya Ningrum</h4>
-                                    <p>Statistisi Ahli Pertama</p>
-                                </div>
-                                <div class="staff-box" data-profile="https://www.canva.com/design/DAFxyz152/embed">
-                                    <div class="staff-photo">
-                                        <img src="img/staff/default-male.jpg" alt="Dedi Kurniawan">
-                                    </div>
-                                    <h4>Dedi Kurniawan</h4>
-                                    <p>Statistisi Ahli Muda</p>
-                                </div>
-                                
-                                <!-- Baris keenam -->
-                                <div class="staff-box" data-profile="https://www.canva.com/design/DAFxyz153/embed">
-                                    <div class="staff-photo">
-                                        <img src="img/staff/default-female.jpg" alt="Erni Susanti">
-                                    </div>
-                                    <h4>Erni Susanti</h4>
-                                    <p>Statistisi Ahli Pertama</p>
-                                </div>
-                                <div class="staff-box" data-profile="https://www.canva.com/design/DAFxyz154/embed">
-                                    <div class="staff-photo">
-                                        <img src="img/staff/default-male.jpg" alt="Fajar Nugroho">
-                                    </div>
-                                    <h4>Fajar Nugroho</h4>
-                                    <p>Pranata Komputer</p>
-                                </div>
-                                <div class="staff-box" data-profile="https://www.canva.com/design/DAFxyz155/embed">
-                                    <div class="staff-photo">
-                                        <img src="img/staff/default-female.jpg" alt="Gita Pramesti">
-                                    </div>
-                                    <h4>Gita Pramesti</h4>
-                                    <p>Statistisi Ahli Pertama</p>
-                                </div>
-                                <div class="staff-box" data-profile="https://www.canva.com/design/DAFxyz156/embed">
-                                    <div class="staff-photo">
-                                        <img src="img/staff/default-male.jpg" alt="Hadi Purnomo">
-                                    </div>
-                                    <h4>Hadi Purnomo</h4>
-                                    <p>Statistisi Ahli Muda</p>
-                                </div>
-                                <div class="staff-box" data-profile="https://www.canva.com/design/DAFxyz157/embed">
-                                    <div class="staff-photo">
-                                        <img src="img/staff/default-female.jpg" alt="Irma Suryani">
-                                    </div>
-                                    <h4>Irma Suryani</h4>
-                                    <p>Statistisi Ahli Pertama</p>
-                                </div>
-                                <div class="staff-box" data-profile="https://www.canva.com/design/DAFxyz158/embed">
-                                    <div class="staff-photo">
-                                        <img src="img/staff/default-male.jpg" alt="Joni Iskandar">
-                                    </div>
-                                    <h4>Joni Iskandar</h4>
-                                    <p>Pranata Komputer</p>
-                                </div>
+                                    <?php endforeach; ?>
+                                <?php endif; ?>
                             </div>
                         </div>
                     </div>
@@ -730,15 +549,18 @@ if (!isset($_SESSION['full_name'])) {
             var name = $(this).find("h4").text();
             var profileUrl = $(this).data("profile");
             
-            // Set judul modal dan URL iframe
-            modalTitle.innerText = "Profil " + name;
-            canvaFrame.src = profileUrl;
-            
-            // Tampilkan modal
-            modal.style.display = "block";
-            
-            // Nonaktifkan scroll pada body
-            $("body").css("overflow", "hidden");
+            // Hanya tampilkan modal jika ada URL profil
+            if (profileUrl && profileUrl !== '#') {
+                // Set judul modal dan URL iframe
+                modalTitle.innerText = "Profil " + name;
+                canvaFrame.src = profileUrl;
+                
+                // Tampilkan modal
+                modal.style.display = "block";
+                
+                // Nonaktifkan scroll pada body
+                $("body").css("overflow", "hidden");
+            }
         });
         
         // Tutup modal ketika tombol close diklik
