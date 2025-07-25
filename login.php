@@ -107,7 +107,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             <li><a href="about.php">Layanan</a></li>
             <li><a href="services.php">Pusat Aplikasi</a></li>
             <li><a href="pricing.php">Dokumentasi</a></li>
-            <li><a href="contact.php">Pengaduan</a></li>
+            <li><a href="harmoni.php">Harmoni</a></li>
             <li class="active"><a href="login.php">Login</a></li>
         </ul>
     </div>
@@ -164,7 +164,16 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             <div class="container">
                 <div class="row">
                     <div class="col-lg-12 text-center">
-                        <p>© 2025 BPS Kota Bandar Lampung.</p>
+                        <h4>Badan Pusat Statistik Kota Bandar Lampung</h4>
+                        <address>
+                            Jl. Sutan Syahrir No. 30, Pahoman, Bandar Lampung, 35215<br>
+                            Telp. (0721) 255980. Mailbox : bps1871@bps.go.id
+                        </address>
+                        <div class="text-center">
+                            <p>Hak Cipta © 2025 Badan Pusat Statistik Kota Bandar Lampung</p>
+                            <p>Semua Hak Dilindungi</p>
+                        </div>
+                    </div>
                     </div>
                 </div>
             </div>

@@ -33,23 +33,132 @@ $is_admin = $is_logged_in && $_SESSION['role'] === 'admin';
       <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
     <![endif]-->
 <style>
+.app-card {
+    background: #fff;
+    padding: 15px;
+    border-radius: 10px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    text-align: center;
+    margin-bottom: 25px;
+    transition: all 0.3s ease;
+    height: 220px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.app-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+}
+
+.app-logo {
+    width: 60px;
+    height: 60px;
+    object-fit: contain;
+    margin: 0 auto 12px;
+}
+
+.app-card h3 {
+    color: #333;
+    font-size: 15px;
+    margin: 0 0 8px;
+    font-weight: 600;
+    line-height: 1.3;
+}
+
+.app-card p {
+    color: #666;
+    font-size: 12px;
+    margin: 0 0 12px;
+    line-height: 1.4;
+    flex-grow: 1;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    max-width: 90%;
+}
+
 .app-card .btn-app {
-  background: #ff9800;
-  color: #fff !important;
-  border: none;
-  padding: 8px 20px;
-  border-radius: 5px;
-  font-weight: 600;
-  transition: background 0.2s, box-shadow 0.2s;
-  box-shadow: 0 2px 8px rgba(255,152,0,0.08);
+    background: #ff9800;
+    color: #fff !important;
+    border: none;
+    padding: 6px 15px;
+    border-radius: 4px;
+    font-weight: 500;
+    font-size: 12px;
+    transition: all 0.2s ease;
+    text-decoration: none;
+    display: inline-block;
+    margin-top: auto;
 }
+
 .app-card .btn-app:hover {
-  background: #e65100;
-  color: #fff !important;
-  box-shadow: 0 4px 16px rgba(230,81,0,0.12);
+    background: #e65100;
+    transform: translateY(-1px);
 }
-.app-card .btn-app, .app-card .btn-app:visited, .app-card .btn-app:active, .app-card .btn-app:focus {
-  color: #fff !important;
+
+.section-title {
+    margin-bottom: 40px;
+}
+
+.section-title h2 {
+    color: #333;
+    font-size: 28px;
+    font-weight: 600;
+    margin-bottom: 10px;
+}
+
+.section-title p {
+    color: #666;
+    font-size: 16px;
+}
+
+.row {
+    display: flex;
+    flex-wrap: wrap;
+    margin: 0 -12px;
+}
+
+.col-md-3 {
+    width: 25%;
+    padding: 0 12px;
+}
+
+@media (max-width: 992px) {
+    .col-md-3 {
+        width: 33.333%;
+    }
+    .app-card {
+        height: 200px;
+    }
+    .app-logo {
+        width: 50px;
+        height: 50px;
+    }
+}
+
+@media (max-width: 768px) {
+    .col-md-3 {
+        width: 50%;
+    }
+    .section-title h2 {
+        font-size: 24px;
+    }
+    .section-title p {
+        font-size: 14px;
+    }
+}
+
+@media (max-width: 480px) {
+    .col-md-3 {
+        width: 100%;
+    }
+    .app-card {
+        height: 180px;
+    }
 }
 </style>
 </head>
@@ -69,7 +178,7 @@ $is_admin = $is_logged_in && $_SESSION['role'] === 'admin';
             <li><a href="about.php">Layanan</a></li>
             <li class="active"><a href="services.php">Pusat Aplikasi</a></li>
             <li><a href="pricing.php">Dokumentasi</a></li>
-            <li><a href="contact.php">Pengaduan</a></li>
+            <li><a href="harmoni.php">Harmoni</a></li>
         
         <?php if ($is_admin): ?>
         <!-- Menu Admin - hanya ditampilkan jika role adalah admin -->
@@ -96,142 +205,39 @@ $is_admin = $is_logged_in && $_SESSION['role'] === 'admin';
             </div>
             
             <div class="row">
-                <!-- App 1 -->
-                <div class="col-md-4 col-sm-6">
+                <?php
+                $apps = [
+                    ['img' => 'bps.png', 'title' => 'SIMPEG', 'desc' => 'Sistem Informasi Kepegawaian BPS', 'url' => 'https://simpeg.bps.go.id/data/'],
+                    ['img' => 'sipecut.png', 'title' => 'SIPECUT', 'desc' => 'Sistem Informasi Pelayanan Cuti', 'url' => 'https://sipecut.bps.go.id/app/index.php/pegawai'],
+                    ['img' => 'KipApp.png', 'title' => 'KipApp', 'desc' => 'Aplikasi Kinerja Pegawai', 'url' => 'https://webapps.bps.go.id/kipapp/#/auth/login'],
+                    ['img' => 'Siimut.png', 'title' => 'SiImut', 'desc' => 'Sistem Informasi Mutasi', 'url' => 'https://sdm.bps.go.id/siimut/web/'],
+                    ['img' => 'bbps.png', 'title' => 'SIJAFUNG', 'desc' => 'Sistem Informasi Jabatan Fungsional', 'url' => 'https://jafung.bps.go.id/main'],
+                    ['img' => 'bos.png', 'title' => 'BOS', 'desc' => 'Back Office System', 'url' => 'https://backoffice.bps.go.id/'],
+                    ['img' => 'bbps.png', 'title' => 'TK Online', 'desc' => 'Sistem Tata Kelola Online', 'url' => 'http://tkonline.bps.go.id/'],
+                    ['img' => 'warkop.png', 'title' => 'Warkop BPS', 'desc' => 'Learning Management System', 'url' => 'https://lms.bps.go.id/login/index.php'],
+                    ['img' => 'gojas.png', 'title' => 'GOJAGS', 'desc' => 'Sistem Informasi Jabatan Fungsional', 'url' => 'https://gojags.web.bps.go.id/'],
+                    ['img' => 'couns.png', 'title' => 'Counseling Center BPS', 'desc' => 'Layanan Konseling BPS', 'url' => 'https://counseling.web.bps.go.id/'],
+                    ['img' => 'bbps.png', 'title' => 'Portal SDM1800', 'desc' => 'Portal Layanan SDM BPS Provinsi Lampung', 'url' => 'https://sites.google.com/view/layanansdm1800'],
+                    ['img' => 'bbps.png', 'title' => 'Parabola', 'desc' => 'Sistem Informasi Parabola', 'url' => '#'],
+                    ['img' => 'bbps.png', 'title' => 'Sivitas', 'desc' => 'Sistem Informasi Sivitas', 'url' => '#'],
+                    ['img' => 'bbps.png', 'title' => 'Digital Signature', 'desc' => 'Layanan Tanda Tangan Digital BPS', 'url' => 'https://sign.bps.go.id/'],
+                    ['img' => 'bbps.png', 'title' => 'SIADIN', 'desc' => 'Sistem Informasi Administrasi Internal', 'url' => 'https://siadin.bps.go.id/'],
+                    ['img' => 'bbps.png', 'title' => 'Website BPS', 'desc' => 'Portal Resmi BPS', 'url' => 'https://www.bps.go.id/'],
+                    ['img' => 'bbps.png', 'title' => 'PPID BPS', 'desc' => 'Pejabat Pengelola Informasi dan Dokumentasi', 'url' => 'https://ppid.bps.go.id/'],
+                    ['img' => 'bbps.png', 'title' => 'BPS Kota Bandar Lampung', 'desc' => 'Website Resmi BPS Kota Bandar Lampung', 'url' => 'https://bandarlampungkota.bps.go.id/']
+                ];
+
+                foreach ($apps as $app):
+                ?>
+                <div class="col-md-3">
                     <div class="app-card">
-                        <img src="img/lyn/bps.png" alt="Aplikasi 1" class="app-logo">
-                        <h3>SIMPEG</h3>
-                        <p>Deskripsi singkat tentang aplikasi ini dan fungsinya.</p>
-                        <a href="https://simpeg.bps.go.id/data/" class="btn-app">Buka Aplikasi</a>
+                        <img src="img/lyn/<?php echo $app['img']; ?>" alt="<?php echo $app['title']; ?>" class="app-logo">
+                        <h3><?php echo $app['title']; ?></h3>
+                        <p><?php echo $app['desc']; ?></p>
+                        <a href="<?php echo $app['url']; ?>" class="btn-app">Buka Aplikasi</a>
                     </div>
                 </div>
-                
-                <!-- App 2 -->
-                <div class="col-md-4 col-sm-6">
-                    <div class="app-card">
-                        <img src="img/lyn/sipecut.png" alt="Aplikasi 2" class="app-logo">
-                        <h3>SIPECUT</h3>
-                        <p>Deskripsi singkat tentang aplikasi ini dan fungsinya.</p>
-                        <a href="https://sipecut.bps.go.id/app/index.php/pegawai" class="btn-app">Buka Aplikasi</a>
-                    </div>
-                </div>
-                
-                <!-- App 3 -->
-                <div class="col-md-4 col-sm-6">
-                    <div class="app-card">
-                        <img src="img/lyn/KipApp.png" alt="Aplikasi 3" class="app-logo">
-                        <h3>KipApp</h3>
-                        <p>Deskripsi singkat tentang aplikasi ini dan fungsinya.</p>
-                        <a href="https://webapps.bps.go.id/kipapp/#/auth/login" class="btn-app">Buka Aplikasi</a>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="row">
-                <!-- App 4 -->
-                <div class="col-md-4 col-sm-6">
-                    <div class="app-card">
-                        <img src="img/lyn/Siimut.png" alt="Aplikasi 4" class="app-logo">
-                        <h3>SiImut</h3>
-                        <p>Deskripsi singkat tentang aplikasi ini dan fungsinya.</p>
-                        <a href="https://sdm.bps.go.id/siimut/web/" class="btn-app">Buka Aplikasi</a>
-                    </div>
-                </div>
-                
-                <!-- App 5 -->
-                <div class="col-md-4 col-sm-6">
-                    <div class="app-card">
-                        <img src="img/lyn/bps.png" alt="Aplikasi 5" class="app-logo">
-                        <h3>SIJAFUNG</h3>
-                        <p>Deskripsi singkat tentang aplikasi ini dan fungsinya.</p>
-                        <a href="https://jafung.bps.go.id/main" class="btn-app">Buka Aplikasi</a>
-                    </div>
-                </div>
-                
-                <!-- App 6 -->
-                <div class="col-md-4 col-sm-6">
-                    <div class="app-card">
-                        <img src="img/lyn/bos.png" alt="Aplikasi 6" class="app-logo">
-                        <h3>BOS</h3>
-                        <p>Deskripsi singkat tentang aplikasi ini dan fungsinya.</p>
-                        <a href="https://backoffice.bps.go.id/" class="btn-app">Buka Aplikasi</a>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="row">
-                <!-- App 7 -->
-                <div class="col-md-4 col-sm-6">
-                    <div class="app-card">
-                        <img src="img/lyn/bps.png" alt="Aplikasi 7" class="app-logo">
-                        <h3>TK Online</h3>
-                        <p>Deskripsi singkat tentang aplikasi ini dan fungsinya.</p>
-                        <a href="http://tkonline.bps.go.id/" class="btn-app">Buka Aplikasi</a>
-                    </div>
-                </div>
-                
-                <!-- App 8 -->
-                <div class="col-md-4 col-sm-6">
-                    <div class="app-card">
-                        <img src="img/lyn/warkop.png" alt="Aplikasi 8" class="app-logo">
-                        <h3>Warkop BPS</h3>
-                        <p>Deskripsi singkat tentang aplikasi ini dan fungsinya.</p>
-                        <a href="https://lms.bps.go.id/login/index.php" class="btn-app">Buka Aplikasi</a>
-                    </div>
-                </div>
-                
-                <!-- App 9 -->
-                <div class="col-md-4 col-sm-6">
-                    <div class="app-card">
-                        <img src="img/lyn/gojas.png" alt="Aplikasi 9" class="app-logo">
-                        <h3>GOJAGS</h3>
-                        <p>Deskripsi singkat tentang aplikasi ini dan fungsinya.</p>
-                        <a href="https://gojags.web.bps.go.id/" class="btn-app">Buka Aplikasi</a>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="row">
-                <!-- App 10 -->
-                <div class="col-md-4 col-sm-6">
-                    <div class="app-card">
-                        <img src="img/lyn/couns.png" alt="Aplikasi 10" class="app-logo">
-                        <h3>Counseling Centerr BPS</h3>
-                        <p>Deskripsi singkat tentang aplikasi ini dan fungsinya.</p>
-                        <a href="https://counseling.web.bps.go.id/" class="btn-app">Buka Aplikasi</a>
-                    </div>
-                </div>
-                
-                <!-- App 11 -->
-                <div class="col-md-4 col-sm-6">
-                    <div class="app-card">
-                        <img src="img/lyn/bps.png" alt="Portal SDM1800" class="app-logo">
-                        <h3>Portal SDM1800</h3>
-                        <p>Portal layanan SDM BPS Provinsi Lampung.</p>
-                        <a href="https://sites.google.com/view/layanansdm1800" class="btn-app">Buka Aplikasi</a>
-                    </div>
-                </div>
-                
-                <!-- App 12 (placeholder) -->
-                <div class="col-md-4 col-sm-6">
-                    <div class="app-card">
-                        <img src="img/lyn/placeholder.png" alt="Aplikasi 12" class="app-logo">
-                        <h3>Parabola</h3>
-                        <p>Deskripsi singkat aplikasi ke-12.</p>
-                        <a href="#" class="btn-app">Buka Aplikasi</a>
-                    </div>
-                </div>
-            </div>
-            <div class="row">
-                <!-- App 13 (placeholder) -->
-                <div class="col-md-4 col-sm-6">
-                    <div class="app-card">
-                        <img src="img/lyn/placeholder.png" alt="Aplikasi 13" class="app-logo">
-                        <h3>sivitas</h3>
-                        <p>Deskripsi singkat aplikasi ke-13.</p>
-                        <a href="#" class="btn-app">Buka Aplikasi</a>
-                    </div>
-                </div>
+                <?php endforeach; ?>
             </div>
         </div>
     </section>
@@ -245,9 +251,10 @@ $is_admin = $is_logged_in && $_SESSION['role'] === 'admin';
                 Jl. Sutan Syahrir No. 30, Pahoman, Bandar Lampung, 35215<br>
                 Telp. (0721) 255980. Mailbox : bps1871@bps.go.id
             </address>
-            <div class="copyright">
-                <p>Hak Cipta © 2025 Badan Pusat Statistik Kota Bandar Lampung<br>
-                Semua Hak Dilindungi</p>
+            <div class="text-center">
+                    <p>Hak Cipta © 2025 Badan Pusat Statistik Kota Bandar Lampung</p>
+                    <p>Semua Hak Dilindungi</p>
+                </div>
             </div>
         </div>
     </div>

@@ -55,6 +55,7 @@ if ($result && $result->num_rows > 0) {
 // Jika tidak ada data kepala atau kasubbag, gunakan data default
 if (!$kepala) {
     $kepala = [
+        'id' => 0,
         'nama' => 'Dr. Suhariyanto, M.Si.',
         'jabatan' => 'Kepala BPS Kota Bandar Lampung',
         'foto' => 'kepala.jpg',
@@ -64,6 +65,7 @@ if (!$kepala) {
 
 if (!$kasubbag) {
     $kasubbag = [
+        'id' => 0,
         'nama' => 'Dra. Maryam Hayati, M.M.',
         'jabatan' => 'Kepala Sub Bagian Tata Usaha',
         'foto' => 'kasubbag.jpg',
@@ -146,6 +148,14 @@ if (!isset($_SESSION['full_name'])) {
             border-left: 5px solid #ff9800;
             width: 220px;
             margin: 0 auto 30px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .org-chart-head:hover {
+            background-color: #234b87;
+            transform: translateY(-5px);
+            box-shadow: 0 8px 15px rgba(0,0,0,0.2);
         }
         
         .org-chart-head h4, .org-chart-head p {
@@ -159,6 +169,14 @@ if (!isset($_SESSION['full_name'])) {
             width: 200px;
             margin-left: auto;
             margin-right: 100px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .org-chart-subhead:hover {
+            background-color: #3468b5;
+            transform: translateY(-5px);
+            box-shadow: 0 8px 15px rgba(0,0,0,0.2);
         }
         
         .org-chart-subhead h4, .org-chart-subhead p {
@@ -190,6 +208,7 @@ if (!isset($_SESSION['full_name'])) {
             transform: translateY(-3px);
             box-shadow: 0 5px 10px rgba(0,0,0,0.15);
             background-color: #f0f7ff;
+            border-left-color: #ff9800;
         }
         
         .staff-photo {
@@ -392,7 +411,7 @@ if (!isset($_SESSION['full_name'])) {
             <li><a href="about.php">Layanan</a></li>
             <li><a href="services.php">Pusat Aplikasi</a></li>
             <li><a href="pricing.php">Dokumentasi</a></li>
-            <li><a href="contact.php">Pengaduan</a></li>
+            <li><a href="harmoni.php">Harmoni</a></li>
             
             <?php if ($is_admin): ?>
                 <!-- Menu Admin - hanya ditampilkan jika role adalah admin -->
@@ -427,7 +446,7 @@ if (!isset($_SESSION['full_name'])) {
                     <!-- Kepala BPS -->
                     <div class="row">
                         <div class="col-md-8 col-md-offset-2">
-                            <div class="org-chart-box org-chart-head">
+                            <div class="org-chart-box org-chart-head" onclick="window.location.href='view-profile.php?<?php echo $kepala['id'] > 0 ? 'id=' . $kepala['id'] : 'position=kepala'; ?>'">
                                 <div class="leader-photo">
                                     <img src="img/staff/<?php echo htmlspecialchars($kepala['foto']); ?>" alt="Kepala BPS">
                                 </div>
@@ -440,7 +459,7 @@ if (!isset($_SESSION['full_name'])) {
                     <!-- Kepala Sub Bagian -->
                     <div class="row">
                         <div class="col-md-6 col-md-offset-6">
-                            <div class="org-chart-box org-chart-subhead">
+                            <div class="org-chart-box org-chart-subhead" onclick="window.location.href='view-profile.php?<?php echo $kasubbag['id'] > 0 ? 'id=' . $kasubbag['id'] : 'position=kasubbag'; ?>'">
                                 <div class="leader-photo">
                                     <img src="img/staff/<?php echo htmlspecialchars($kasubbag['foto']); ?>" alt="Kepala Sub Bagian">
                                 </div>
@@ -461,7 +480,7 @@ if (!isset($_SESSION['full_name'])) {
                                 </div>
                                 <?php else: ?>
                                     <?php foreach ($staff as $profile): ?>
-                                    <div class="staff-box" data-profile="<?php echo !empty($profile['link']) ? htmlspecialchars($profile['link']) : '#'; ?>">
+                                    <div class="staff-box" onclick="window.location.href='view-profile.php?id=<?php echo $profile['id']; ?>'">
                                         <div class="staff-photo">
                                             <img src="img/staff/<?php echo htmlspecialchars($profile['foto']); ?>" alt="<?php echo htmlspecialchars($profile['nama']); ?>">
                                         </div>
@@ -474,27 +493,7 @@ if (!isset($_SESSION['full_name'])) {
                         </div>
                     </div>
                     
-                    <!-- Modal untuk profil pegawai -->
-                    <div id="profileModal" class="modal-profile">
-                        <div class="modal-content">
-                            <div class="modal-header">
-                                <span class="close-modal">&times;</span>
-                                <h2 id="modalTitle">Profil Pegawai</h2>
-                            </div>
-                            <div class="modal-body">
-                                <iframe id="canvaFrame" src="" frameborder="0" allowfullscreen></iframe>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <!-- Download Button di bawah (dihapus) -->
-                    <!-- <div class="row">
-                        <div class="col-md-12 text-center">
-                            <a href="#" class="download-btn">
-                                <i class="fa fa-download"></i> Download Publikasi Peta SDM
-                            </a>
-                        </div>
-                    </div> -->
+                    <!-- Hapus modal karena sudah tidak digunakan -->
                 </div>
             </div>
         </section>
@@ -508,9 +507,10 @@ if (!isset($_SESSION['full_name'])) {
                         Jl. Sutan Syahrir No. 30, Pahoman, Bandar Lampung, 35215<br>
                         Telp. (0721) 255980. Mailbox : bps1871@bps.go.id
                     </address>
-                    <div class="copyright">
-                        <p>Hak Cipta © 2025 Badan Pusat Statistik Kota Bandar Lampung<br>
-                        Semua Hak Dilindungi</p>
+                    <div class="text-center">
+                            <p>Hak Cipta © 2025 Badan Pusat Statistik Kota Bandar Lampung</p>
+                            <p>Semua Hak Dilindungi</p>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -536,48 +536,9 @@ if (!isset($_SESSION['full_name'])) {
     <script src="js/owl-carousel/owl.carousel.js"></script>
 
     <script>
-    // Script untuk modal profil pegawai
+    // Tambahkan style cursor pointer ke semua box yang bisa diklik
     $(document).ready(function() {
-        // Ambil elemen modal
-        var modal = document.getElementById("profileModal");
-        var modalTitle = document.getElementById("modalTitle");
-        var canvaFrame = document.getElementById("canvaFrame");
-        var closeBtn = document.getElementsByClassName("close-modal")[0];
-        
-        // Ketika kotak staff diklik
-        $(".staff-box").click(function() {
-            var name = $(this).find("h4").text();
-            var profileUrl = $(this).data("profile");
-            
-            // Hanya tampilkan modal jika ada URL profil
-            if (profileUrl && profileUrl !== '#') {
-                // Set judul modal dan URL iframe
-                modalTitle.innerText = "Profil " + name;
-                canvaFrame.src = profileUrl;
-                
-                // Tampilkan modal
-                modal.style.display = "block";
-                
-                // Nonaktifkan scroll pada body
-                $("body").css("overflow", "hidden");
-            }
-        });
-        
-        // Tutup modal ketika tombol close diklik
-        closeBtn.onclick = function() {
-            modal.style.display = "none";
-            canvaFrame.src = "";
-            $("body").css("overflow", "auto");
-        }
-        
-        // Tutup modal ketika klik di luar modal
-        window.onclick = function(event) {
-            if (event.target == modal) {
-                modal.style.display = "none";
-                canvaFrame.src = "";
-                $("body").css("overflow", "auto");
-            }
-        }
+        $('.org-chart-head, .org-chart-subhead, .staff-box').css('cursor', 'pointer');
     });
     </script>
 </body>

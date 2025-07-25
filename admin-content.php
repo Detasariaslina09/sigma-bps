@@ -317,10 +317,36 @@ if (!$image || !file_exists('img/' . $image)) {
         }
         
         footer {
-            background-color: #fff;
-            padding: 15px 0;
-            margin-top: 30px;
-            border-top: 1px solid #eee;
+            background-color: #1a3c6e;
+            color: #fff;
+            padding: 40px 0;
+            position: relative;
+            margin-top: 50px;
+        }
+
+        footer h4 {
+            color: #fff;
+            font-size: 24px;
+            margin-bottom: 20px;
+            font-weight: 600;
+        }
+
+        footer address {
+            color: #fff;
+            margin-bottom: 30px;
+            line-height: 1.8;
+            font-size: 16px;
+        }
+
+        footer .text-center {
+            position: relative;
+        }
+
+        footer p {
+            color: #fff;
+            margin: 5px 0;
+            font-size: 15px;
+            opacity: 0.9;
         }
         
         .help-block {
@@ -381,7 +407,7 @@ if (!$image || !file_exists('img/' . $image)) {
             <li><a href="about.php">Layanan</a></li>
             <li><a href="services.php">Pusat Aplikasi</a></li>
             <li><a href="pricing.php">Dokumentasi</a></li>
-            <li><a href="contact.php">Pengaduan</a></li>
+            <li><a href="harmoni.php">Harmoni</a></li>
             
             <?php if ($_SESSION['role'] === 'admin'): ?>
                 <!-- Menu Admin - hanya ditampilkan jika role adalah admin -->
@@ -458,7 +484,7 @@ if (!$image || !file_exists('img/' . $image)) {
                                         <img id="imagePreview" src="img/<?php echo htmlspecialchars($image); ?>" class="img-responsive" alt="Preview" style="max-height: 200px; max-width: 100%;">
                                     </div>
                                     <div class="card-body text-center">
-                                        <small>Klik area di atas untuk memilih gambar baru</small>
+                                        <small>Preview Gambar akan muncul setelah Perubahan disimpan</small>
                                     </div>
                                 </div>
                                 
@@ -478,21 +504,21 @@ if (!$image || !file_exists('img/' . $image)) {
         </section>
         
         <footer>
-        <div class="container">
-            <div class="row">
-                <div class="col-lg-12 text-center">
-                    <h4>Badan Pusat Statistik Kota Bandar Lampung</h4>
-                    <address>
-                        Jl. Sutan Syahrir No. 30, Pahoman, Bandar Lampung, 35215<br>
-                        Telp. (0721) 255980. Mailbox : bps1871@bps.go.id
-                    </address>
-                    <div class="copyright">
-                        <p>Hak Cipta © 2025 Badan Pusat Statistik Kota Bandar Lampung<br>
-                        Semua Hak Dilindungi</p>
+            <div class="container">
+                <div class="row">
+                    <div class="col-lg-12 text-center">
+                        <h4>BADAN PUSAT STATISTIK KOTA BANDAR LAMPUNG</h4>
+                        <address>
+                            Jl. Sutan Syahrir No. 30, Pahoman, Bandar Lampung, 35215<br>
+                            Telp. (0721) 255980. Mailbox : bps1871@bps.go.id
+                        </address>
+                        <div class="text-center">
+                            <p>Hak Cipta © 2025 Badan Pusat Statistik Kota Bandar Lampung</p>
+                            <p>Semua Hak Dilindungi</p>
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
         </footer>
     </div>
     

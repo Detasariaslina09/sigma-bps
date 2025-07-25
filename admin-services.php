@@ -293,7 +293,7 @@ if ($result->num_rows > 0) {
             <li><a href="about.php">Layanan</a></li>
             <li><a href="services.php">Pusat Aplikasi</a></li>
             <li><a href="pricing.php">Dokumentasi</a></li>
-            <li><a href="contact.php">Pengaduan</a></li>
+            <li><a href="harmoni.php">Harmoni</a></li>
             
             <?php if ($_SESSION['role'] === 'admin'): ?>
                 <!-- Menu Admin - hanya ditampilkan jika role adalah admin -->
@@ -326,12 +326,9 @@ if ($result->num_rows > 0) {
                 <div class="admin-content">
                     <div class="admin-header clearfix">
                         <div class="row">
-                            <div class="col-md-8">
+                            <div class="col-md-12">
                                 <h2><i class="fa fa-cogs"></i> Manajemen Layanan</h2>
                                 <p>Kelola 4 layanan utama dan sublink yang ditampilkan di halaman Layanan</p>
-                            </div>
-                            <div class="col-md-4 text-right">
-                                <button id="btnSaveAllServices" class="btn btn-save"><i class="fa fa-save"></i> Simpan Semua Perubahan</button>
                             </div>
                         </div>
                     </div>
@@ -398,9 +395,10 @@ if ($result->num_rows > 0) {
                         Jl. Sutan Syahrir No. 30, Pahoman, Bandar Lampung, 35215<br>
                         Telp. (0721) 255980. Mailbox : bps1871@bps.go.id
                     </address>
-                    <div class="copyright">
-                        <p>Hak Cipta © 2025 Badan Pusat Statistik Kota Bandar Lampung<br>
-                        Semua Hak Dilindungi</p>
+                    <div class="text-center">
+                            <p>Hak Cipta © 2025 Badan Pusat Statistik Kota Bandar Lampung</p>
+                            <p>Semua Hak Dilindungi</p>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -420,12 +418,6 @@ if ($result->num_rows > 0) {
             setTimeout(function() {
                 $('.alert').fadeOut();
             }, 3000);
-            
-            // Submit form ketika tombol btnSaveAllServices diklik
-            $('#btnSaveAllServices').on('click', function(e) {
-                e.preventDefault();
-                $('#servicesForm').submit();
-            });
         });
     </script>
 </body>

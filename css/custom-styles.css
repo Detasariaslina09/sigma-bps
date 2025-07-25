@@ -349,17 +349,21 @@ footer address {
     margin-bottom: 20px;
     font-size: 16px;
     color: #f0f0f0;
+    text-align: center;
 }
 
 footer .copyright {
     margin-top: 20px;
     padding-top: 20px;
     border-top: 1px solid rgba(255,255,255,0.1);
+    text-align: center;
 }
 
 footer .copyright p {
     font-size: 14px;
     color: #ddd;
+    margin: 0;
+    line-height: 1.5;
 }
 
 footer address i {
@@ -456,9 +460,12 @@ footer .social-network li a:hover {
         font-size: 18px;
     }
     
-    footer address,
-    footer p {
+    footer address {
         font-size: 14px;
+    }
+    
+    footer .copyright p {
+        font-size: 13px;
     }
 }
 
@@ -1187,4 +1194,311 @@ hr,
   border-color: #e65100 !important;
   color: #fff !important;
   box-shadow: 0 4px 16px rgba(230,81,0,0.12);
+} 
+
+/* Footer Styles - Global Override */
+footer {
+    background: #1a3c6e !important;
+    padding: 40px 0 !important;
+    color: #fff !important;
+    margin-top: auto !important;
+    border-top: 5px solid #ff9800 !important;
+    text-align: center !important;
+}
+
+/* Force center alignment for all elements inside footer */
+footer *,
+footer .container,
+footer .row,
+footer [class*="col-"],
+footer .text-center,
+footer p,
+footer h1,
+footer h2,
+footer h3,
+footer h4,
+footer h5,
+footer h6,
+footer address,
+footer div,
+footer .copyright,
+footer .copyright p,
+footer .copyright div {
+    text-align: center !important;
+    display: block !important;
+    float: none !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
+}
+
+footer h4 {
+    color: #fff !important;
+    font-weight: 600 !important;
+    margin-bottom: 20px !important;
+    padding-bottom: 10px !important;
+    position: relative !important;
+    text-transform: uppercase !important;
+    font-size: 20px !important;
+}
+
+footer h4:after {
+    content: '' !important;
+    position: absolute !important;
+    left: 50% !important;
+    transform: translateX(-50%) !important;
+    bottom: 0 !important;
+    width: 80px !important;
+    height: 3px !important;
+    background: #ff9800 !important;
+}
+
+footer address {
+    line-height: 1.8 !important;
+    margin-bottom: 20px !important;
+    font-size: 16px !important;
+    color: #f0f0f0 !important;
+}
+
+footer .copyright {
+    margin-top: 20px !important;
+    padding-top: 20px !important;
+    border-top: 1px solid rgba(255,255,255,0.1) !important;
+    width: 100% !important;
+}
+
+footer .copyright p {
+    font-size: 14px !important;
+    color: #ddd !important;
+    margin: 0 !important;
+    line-height: 1.5 !important;
+    width: 100% !important;
+    text-align: center !important;
+}
+
+/* Override any text alignment classes */
+footer .text-left,
+footer .text-right,
+footer .text-center,
+footer [class*="text-"] {
+    text-align: center !important;
+}
+
+/* Override Bootstrap grid classes */
+footer .col-lg-1, footer .col-lg-2, footer .col-lg-3, 
+footer .col-lg-4, footer .col-lg-5, footer .col-lg-6,
+footer .col-lg-7, footer .col-lg-8, footer .col-lg-9, 
+footer .col-lg-10, footer .col-lg-11, footer .col-lg-12,
+footer .col-md-1, footer .col-md-2, footer .col-md-3,
+footer .col-md-4, footer .col-md-5, footer .col-md-6,
+footer .col-md-7, footer .col-md-8, footer .col-md-9,
+footer .col-md-10, footer .col-md-11, footer .col-md-12 {
+    text-align: center !important;
+    float: none !important;
+    margin: 0 auto !important;
+}
+
+@media (max-width: 768px) {
+    footer {
+        padding: 30px 0 !important;
+    }
+    
+    footer h4 {
+        font-size: 18px !important;
+    }
+    
+    footer address {
+        font-size: 14px !important;
+    }
+    
+    footer .copyright p {
+        font-size: 13px !important;
+    }
+} 
+
+/* Footer Styles - Extra Specific */
+footer .container {
+    width: 100% !important;
+    max-width: 100% !important;
+    padding: 0 !important;
+}
+
+footer .row {
+    margin: 0 !important;
+    width: 100% !important;
+}
+
+footer .col-lg-12 {
+    padding: 0 !important;
+    float: none !important;
+    text-align: center !important;
+    width: 100% !important;
+}
+
+footer h4,
+footer address,
+footer .copyright,
+footer .copyright p,
+footer .copyright div,
+footer .text-center {
+    width: 100% !important;
+    max-width: 100% !important;
+    text-align: center !important;
+    float: none !important;
+    display: block !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
+}
+
+footer .copyright p {
+    padding: 0 !important;
+    margin: 5px 0 !important;
+}
+
+footer .copyright div.text-center {
+    width: 100% !important;
+    display: block !important;
+}
+
+/* Reset any floating or alignment from other styles */
+footer [class*="pull-"],
+footer [class*="text-"],
+footer [class*="align-"] {
+    float: none !important;
+    text-align: center !important;
+    vertical-align: middle !important;
+}
+
+/* Ensure copyright text stays centered */
+footer .copyright {
+    text-align: center !important;
+    width: 100% !important;
+    display: block !important;
+}
+
+footer .copyright > * {
+    text-align: center !important;
+    width: 100% !important;
+    display: block !important;
+    margin: 0 auto !important;
+}
+
+/* Force center on homepage specifically */
+body:not(.inner-page) footer .copyright,
+body:not(.inner-page) footer .copyright p,
+body:not(.inner-page) footer .copyright div {
+    text-align: center !important;
+    width: 100% !important;
+    display: block !important;
+    float: none !important;
+    margin: 0 auto !important;
+} 
+
+/* Footer Styles - New Design */
+footer {
+    background: #1a3c6e !important;
+    padding: 40px 0 30px !important;
+    color: #fff !important;
+    margin-top: auto !important;
+    border-top: 5px solid #ff9800 !important;
+}
+
+.footer-content {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 20px !important;
+    max-width: 800px !important;
+    margin: 0 auto !important;
+    padding: 0 20px !important;
+}
+
+.footer-logo h4 {
+    color: #fff !important;
+    font-size: 24px !important;
+    font-weight: 700 !important;
+    letter-spacing: 1px !important;
+    margin: 0 !important;
+    text-transform: uppercase !important;
+    text-align: center !important;
+}
+
+.footer-address {
+    text-align: center !important;
+    font-size: 16px !important;
+    line-height: 1.6 !important;
+    color: rgba(255, 255, 255, 0.9) !important;
+}
+
+.footer-address p {
+    margin: 0 !important;
+    padding: 0 !important;
+    text-align: center !important;
+}
+
+.footer-divider {
+    width: 100% !important;
+    max-width: 200px !important;
+    height: 1px !important;
+    background: rgba(255, 255, 255, 0.2) !important;
+    margin: 10px auto !important;
+}
+
+.footer-copyright {
+    text-align: center !important;
+    font-size: 14px !important;
+    color: rgba(255, 255, 255, 0.8) !important;
+}
+
+.footer-copyright p {
+    margin: 5px 0 !important;
+    padding: 0 !important;
+    text-align: center !important;
+}
+
+@media (max-width: 768px) {
+    footer {
+        padding: 30px 0 20px !important;
+    }
+
+    .footer-logo h4 {
+        font-size: 20px !important;
+    }
+
+    .footer-address {
+        font-size: 14px !important;
+    }
+
+    .footer-copyright {
+        font-size: 13px !important;
+    }
+
+    .footer-content {
+        gap: 15px !important;
+    }
+}
+
+/* Ensure all footer text is centered */
+footer *,
+footer .container *,
+footer .row *,
+footer [class*="col-"] *,
+footer [class*="text-"] * {
+    text-align: center !important;
+}
+
+/* Animation for footer content */
+.footer-content {
+    animation: fadeInUp 0.5s ease-out !important;
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 } 

@@ -32,25 +32,26 @@ $is_admin = $is_logged_in && $_SESSION['role'] === 'admin';
 
 <style>
     .category-container {
-        margin-top: 50px;
+        margin-top: 30px;
     }
     
     .category-item {
         background: #fff;
-        border-radius: 10px;
+        border-radius: 8px;
         overflow: hidden;
-        box-shadow: 0 5px 20px rgba(0,0,0,0.1);
-        margin-bottom: 30px;
+        box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+        margin-bottom: 20px;
         transition: all 0.3s ease;
+        height: 100%;
     }
     
     .category-item:hover {
-        transform: translateY(-10px);
-        box-shadow: 0 15px 30px rgba(0,0,0,0.2);
+        transform: translateY(-5px);
+        box-shadow: 0 5px 15px rgba(0,0,0,0.2);
     }
     
     .category-image {
-        height: 300px;
+        height: 150px;
         background-size: cover;
         background-position: center;
         position: relative;
@@ -67,30 +68,33 @@ $is_admin = $is_logged_in && $_SESSION['role'] === 'admin';
     }
     
     .category-content {
-        padding: 30px;
+        padding: 15px;
         text-align: center;
     }
     
     .category-content h3 {
-        font-size: 24px;
+        font-size: 16px;
         margin-top: 0;
-        margin-bottom: 15px;
+        margin-bottom: 8px;
         color: #333;
     }
     
     .category-content p {
         color: #666;
-        margin-bottom: 20px;
+        margin-bottom: 10px;
+        font-size: 13px;
+        line-height: 1.4;
     }
     
     .btn-category {
         background: #ff9800 !important;
         color: #fff !important;
-        padding: 12px 25px;
-        border-radius: 30px;
+        padding: 8px 15px;
+        border-radius: 20px;
         display: inline-block;
         text-decoration: none;
-        font-weight: bold;
+        font-weight: 600;
+        font-size: 13px;
         transition: all 0.3s ease;
     }
     
@@ -104,6 +108,7 @@ $is_admin = $is_logged_in && $_SESSION['role'] === 'admin';
     .btn-category i {
         margin-left: 5px;
         color: #fff !important;
+        font-size: 12px;
     }
     
     /* Mobile menu toggle - REMOVED to use global styling */
@@ -141,7 +146,7 @@ $is_admin = $is_logged_in && $_SESSION['role'] === 'admin';
             <li><a href="about.php">Layanan</a></li>
             <li><a href="services.php">Pusat Aplikasi</a></li>
             <li class="active"><a href="pricing.php">Dokumentasi</a></li>
-            <li><a href="contact.php">Pengaduan</a></li>
+            <li><a href="harmoni.php">Harmoni</a></li>
             
             <?php if ($is_admin): ?>
             <!-- Menu Admin - hanya ditampilkan jika role adalah admin -->
@@ -169,49 +174,49 @@ $is_admin = $is_logged_in && $_SESSION['role'] === 'admin';
     		
     		<div class="row category-container">
                 <!-- Dokumentasi -->
-                <div class="col-md-6">
+                <div class="col-md-3">
                     <div class="category-item">
                         <div class="category-image" style="background-image: url('img/doc/dokument.png');"></div>
                         <div class="category-content">
-                            <h3>Dokumentasi Foto Kegiatan</h3>
-                            <p>Akses ke seluruh dokumentasi foto kegiatan rapat dan acara BPS Kota Bandar Lampung</p>
-                            <a href="https://drive.google.com/drive/folders/1234567890abcdefghijklmnopqrstuvwxyz" target="_blank" class="btn-category">Lihat Dokumentasi <i class="fa fa-camera"></i></a>
+                            <h3>Dokumentasi Foto</h3>
+                            <p>Dokumentasi kegiatan BPS Kota Bandar Lampung</p>
+                            <a href="https://drive.google.com/drive/folders/1234567890abcdefghijklmnopqrstuvwxyz" target="_blank" class="btn-category">Lihat <i class="fa fa-camera"></i></a>
                         </div>
                     </div>
                 </div>
                 
                 <!-- Notulensi -->
-                <div class="col-md-6">
+                <div class="col-md-3">
                     <div class="category-item">
                         <div class="category-image" style="background-image: url('img/doc/notulen.png');"></div>
                         <div class="category-content">
                             <h3>Notulensi Rapat</h3>
-                            <p>Akses ke seluruh notulensi dan hasil-hasil rapat BPS Kota Bandar Lampung</p>
-                            <a href="https://drive.google.com/drive/folders/abcdefghijklmnopqrstuvwxyz1234567890" target="_blank" class="btn-category">Lihat Notulensi <i class="fa fa-file-text"></i></a>
+                            <p>Notulensi dan hasil-hasil rapat BPS Kota Bandar Lampung</p>
+                            <a href="https://drive.google.com/drive/folders/abcdefghijklmnopqrstuvwxyz1234567890" target="_blank" class="btn-category">Lihat <i class="fa fa-file-text"></i></a>
                         </div>
                     </div>
                 </div>
                 
                 <!-- Dokumentasi Humas -->
-                <div class="col-md-6">
+                <div class="col-md-3">
                     <div class="category-item">
                         <div class="category-image" style="background-image: url('img/doc/humas.png');"></div>
                         <div class="category-content">
                             <h3>Dokumentasi Humas</h3>
-                            <p>Akses ke seluruh dokumentasi kegiatan kehumasan dan publikasi BPS Kota Bandar Lampung</p>
-                            <a href="https://drive.google.com/drive/folders/humas12345" target="_blank" class="btn-category">Lihat Dokumentasi Humas <i class="fa fa-bullhorn"></i></a>
+                            <p>Dokumentasi kegiatan kehumasan dan publikasi</p>
+                            <a href="https://drive.google.com/drive/folders/humas12345" target="_blank" class="btn-category">Lihat <i class="fa fa-bullhorn"></i></a>
                         </div>
                     </div>
                 </div>
                 
                 <!-- Link Quotes -->
-                <div class="col-md-6">
+                <div class="col-md-3">
                     <div class="category-item">
                         <div class="category-image" style="background-image: url('img/doc/quote.png');"></div>
                         <div class="category-content">
                             <h3>Link Quotes</h3>
-                            <p>Kumpulan quotes inspiratif dan motivasi untuk pegawai BPS Kota Bandar Lampung</p>
-                            <a href="https://docs.google.com/spreadsheets/d/1Mc9ECxVqkr5Sm2IGWhenOnS3lSErxouZEDNHe6REkX8/edit?gid=0#gid=0" target="_blank" class="btn-category">Lihat Quotes <i class="fa fa-quote-right"></i></a>
+                            <p>Kumpulan quotes inspiratif untuk pegawai</p>
+                            <a href="https://docs.google.com/spreadsheets/d/1Mc9ECxVqkr5Sm2IGWhenOnS3lSErxouZEDNHe6REkX8/edit?gid=0#gid=0" target="_blank" class="btn-category">Lihat <i class="fa fa-quote-right"></i></a>
                         </div>
                     </div>
                 </div>
@@ -228,9 +233,10 @@ $is_admin = $is_logged_in && $_SESSION['role'] === 'admin';
                         Jl. Sutan Syahrir No. 30, Pahoman, Bandar Lampung, 35215<br>
                         Telp. (0721) 255980. Mailbox : bps1871@bps.go.id
                     </address>
-                    <div class="copyright">
-                        <p>Hak Cipta © 2025 Badan Pusat Statistik Kota Bandar Lampung<br>
-                        Semua Hak Dilindungi</p>
+                    <div class="text-center">
+                            <p>Hak Cipta © 2025 Badan Pusat Statistik Kota Bandar Lampung</p>
+                            <p>Semua Hak Dilindungi</p>
+                        </div>
                     </div>
                 </div>
             </div>

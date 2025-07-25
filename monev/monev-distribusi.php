@@ -143,13 +143,14 @@ $is_admin = $is_logged_in && $_SESSION['role'] === 'admin';
             <li><a href="../about.php">Layanan</a></li>
             <li><a href="../services.php">Pusat Aplikasi</a></li>
             <li><a href="../pricing.php">Dokumentasi</a></li>
-            <li><a href="../contact.php">Pengaduan</a></li>
+            <li><a href="../harmoni.php">Harmoni</a></li>
             
             <?php if ($is_admin): ?>
             <!-- Menu Admin - hanya ditampilkan jika role adalah admin -->
             <li class="admin-menu"><a href="../admin-users.php"><i class="fa fa-users"></i> Manajemen User</a></li>
             <li class="admin-menu"><a href="../admin-services.php"><i class="fa fa-cogs"></i> Manajemen Layanan</a></li>
             <li class="admin-menu"><a href="../admin-content.php"><i class="fa fa-file-text"></i> Manajemen Konten</a></li>
+            <li class="admin-menu"><a href="admin-profil.php"><i class="fa fa-id-card"></i> Manajemen Profil</a></li>
             <?php endif; ?>
             
             <?php if ($is_logged_in): ?>
@@ -175,25 +176,23 @@ $is_admin = $is_logged_in && $_SESSION['role'] === 'admin';
             
             <!-- Apps List -->
             <div class="service-category-container">
-                <!-- Aplikasi 1: SIMDIS -->
                 <div class="service-category-item">
                     <div class="service-category-content">
                         <div class="service-category-info">
-                            <h3>SIMDIS</h3>
+                            <h3>KSA Padi</h3>
                             <ul class="service-links-list">
-                                <li><a href="https://webapps.bps.go.id/simdis" target="_blank">Sistem Informasi Monitoring Distribusi</a></li>
+                                <li><a href="https://ksapro-manajemen.bps.go.id/" target="_blank">Buka Aplikasi</a></li>
                             </ul>
                         </div>
                     </div>
                 </div>
-                
-                <!-- Aplikasi 2: SIMDAG -->
+
                 <div class="service-category-item">
                     <div class="service-category-content">
                         <div class="service-category-info">
-                            <h3>SIMDAG</h3>
+                            <h3>KSA Jagung</h3>
                             <ul class="service-links-list">
-                                <li><a href="https://webapps.bps.go.id/simdag" target="_blank">Sistem Informasi Monitoring Perdagangan</a></li>
+                                <li><a href="https://manajemen-ksapro.bps.go.id/" target="_blank">Buka Aplikasi</a></li>
                             </ul>
                         </div>
                     </div>
@@ -203,9 +202,9 @@ $is_admin = $is_logged_in && $_SESSION['role'] === 'admin';
                 <div class="service-category-item">
                     <div class="service-category-content">
                         <div class="service-category-info">
-                            <h3>SIMHARGA</h3>
+                            <h3>Ubinan Padi</h3>
                             <ul class="service-links-list">
-                                <li><a href="https://webapps.bps.go.id/simharga" target="_blank">Sistem Informasi Monitoring Harga</a></li>
+                                <li><a href="https://webapps.bps.go.id/simharga" target="_blank">Buka Aplikasi</a></li>
                             </ul>
                         </div>
                     </div>
@@ -215,9 +214,9 @@ $is_admin = $is_logged_in && $_SESSION['role'] === 'admin';
                 <div class="service-category-item">
                     <div class="service-category-content">
                         <div class="service-category-info">
-                            <h3>SIMINDAG</h3>
+                            <h3>Ubinan Palawija</h3>
                             <ul class="service-links-list">
-                                <li><a href="https://webapps.bps.go.id/simindag" target="_blank">Sistem Informasi Monitoring Indeks Harga</a></li>
+                                <li><a href="https://pengolahan.bps.go.id/produksi/TanamanPangan/" target="_blank">Buka Aplikasi</a></li>
                             </ul>
                         </div>
                     </div>
@@ -227,9 +226,9 @@ $is_admin = $is_logged_in && $_SESSION['role'] === 'admin';
                 <div class="service-category-item">
                     <div class="service-category-content">
                         <div class="service-category-info">
-                            <h3>SIMEKS</h3>
+                            <h3>Sistem sampel Ubinan Padi</h3>
                             <ul class="service-links-list">
-                                <li><a href="https://webapps.bps.go.id/simeks" target="_blank">Sistem Informasi Monitoring Ekspor dan Impor</a></li>
+                                <li><a href="https://iframe.bps.go.id/sampling/padi/" target="_blank">Buka Aplikasi</a></li>
                             </ul>
                         </div>
                     </div>
@@ -239,21 +238,64 @@ $is_admin = $is_logged_in && $_SESSION['role'] === 'admin';
                 <div class="service-category-item">
                     <div class="service-category-content">
                         <div class="service-category-info">
-                            <h3>SIMPAR</h3>
+                            <h3>Sistem sampel Ubinan Palawija</h3>
                             <ul class="service-links-list">
-                                <li><a href="https://webapps.bps.go.id/simpar" target="_blank">Sistem Informasi Monitoring Pariwisata</a></li>
+                                <li><a href="https://iframe.bps.go.id/sampling/palawija/" target="_blank">Buka Aplikasi</a></li>
                             </ul>
                         </div>
                     </div>
                 </div>
                 
-                <!-- Aplikasi 7: SIMTRANS -->
                 <div class="service-category-item">
                     <div class="service-category-content">
                         <div class="service-category-info">
-                            <h3>SIMTRANS</h3>
+                            <h3>Monitoring Statistik Distribusi 2025</h3>
                             <ul class="service-links-list">
-                                <li><a href="https://webapps.bps.go.id/simtrans" target="_blank">Sistem Informasi Monitoring Transportasi</a></li>
+                                <li><a href="http://s.bps.go.id/modis2025" target="_blank">Buka Aplikasi</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="service-category-item">
+                    <div class="service-category-content">
+                        <div class="service-category-info">
+                            <h3>Webentry Survei Harga Konsumen</h3>
+                            <ul class="service-links-list">
+                                <li><a href="https://shp.web.bps.go.id/" target="_blank">Buka Aplikasi</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="service-category-item">
+                    <div class="service-category-content">
+                        <div class="service-category-info">
+                            <h3>Webentry Survei Harga Produsen</h3>
+                            <ul class="service-links-list">
+                                <li><a href="https://webentry.bps.go.id/shpb" target="_blank">Buka Aplikasi</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="service-category-item">
+                    <div class="service-category-content">
+                        <div class="service-category-info">
+                            <h3>Webentry Survei Harga Perdagangan Besar</h3>
+                            <ul class="service-links-list">
+                                <li><a href="https://webentry.bps.go.id/shpb" target="_blank">Buka Aplikasi</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="service-category-item">
+                    <div class="service-category-content">
+                        <div class="service-category-info">
+                            <h3>Webentry Survei Harga Kemahalan Kontruksi</h3>
+                            <ul class="service-links-list">
+                                <li><a href="https://webentry.bps.go.id/shkk" target="_blank">Buka Aplikasi</a></li>
                             </ul>
                         </div>
                     </div>
@@ -270,9 +312,9 @@ $is_admin = $is_logged_in && $_SESSION['role'] === 'admin';
                         Jl. Sutan Syahrir No. 30, Pahoman, Bandar Lampung, 35215<br>
                         Telp. (0721) 255980. Mailbox : bps1871@bps.go.id
                     </address>
-                    <div class="copyright">
-                        <p>Hak Cipta © 2025 Badan Pusat Statistik Kota Bandar Lampung<br>
-                        Semua Hak Dilindungi</p>
+                    <div class="text-center">
+                        <p>Hak Cipta © 2025 Badan Pusat Statistik Kota Bandar Lampung</p>
+                        <p>Semua Hak Dilindungi</p>
                     </div>
                 </div>
             </div>

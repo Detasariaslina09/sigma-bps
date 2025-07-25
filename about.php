@@ -154,10 +154,15 @@ $is_admin = $is_logged_in && $_SESSION['role'] === 'admin';
     /* Styling untuk kategori layanan baru */
     .service-category-container {
         margin-top: 30px;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 30px;
+        justify-content: space-between;
     }
     
     .service-category-item {
-        margin-bottom: 30px;
+        flex: 0 0 calc(50% - 15px);
+        margin-bottom: 0;
         background: #fff;
         border-radius: 8px;
         box-shadow: 0 2px 10px rgba(0,0,0,0.1);
@@ -166,15 +171,8 @@ $is_admin = $is_logged_in && $_SESSION['role'] === 'admin';
     
     .service-category-content {
         display: flex;
-        flex-direction: row;
-    }
-    
-    .service-category-image {
-        width: 120px;
-        background-size: contain;
-        background-position: center;
-        background-repeat: no-repeat;
-        background-color: #f5f5f5;
+        flex-direction: column;
+        height: 100%;
         padding: 20px;
     }
     
@@ -189,6 +187,7 @@ $is_admin = $is_logged_in && $_SESSION['role'] === 'admin';
         margin-bottom: 15px;
         padding-bottom: 10px;
         border-bottom: 1px dashed #eee;
+        font-size: 18px;
     }
     
     .service-links-list {
@@ -198,7 +197,11 @@ $is_admin = $is_logged_in && $_SESSION['role'] === 'admin';
     }
     
     .service-links-list li {
-        margin-bottom: 10px;
+        margin-bottom: 8px;
+    }
+    
+    .service-links-list li:last-child {
+        margin-bottom: 0;
     }
     
     .service-links-list li a {
@@ -209,11 +212,12 @@ $is_admin = $is_logged_in && $_SESSION['role'] === 'admin';
         background: #f9f9f9;
         border-radius: 4px;
         transition: all 0.3s ease;
+        font-size: 14px;
     }
     
     .service-links-list li a:hover {
         background: #ff9800;
-        color: #111 !important;
+        color: #fff !important;
         padding-left: 15px;
     }
     
@@ -250,13 +254,21 @@ $is_admin = $is_logged_in && $_SESSION['role'] === 'admin';
             margin-left: 0;
         }
         
-        .service-category-content {
+        .service-category-container {
             flex-direction: column;
+            gap: 20px;
         }
         
-        .service-category-image {
-            width: 100%;
-            height: 100px;
+        .service-category-item {
+            flex: 0 0 100%;
+        }
+
+        .service-category-info h3 {
+            font-size: 16px;
+        }
+
+        .service-links-list li a {
+            font-size: 13px;
         }
     }
 </style>
@@ -278,7 +290,7 @@ $is_admin = $is_logged_in && $_SESSION['role'] === 'admin';
             <li class="active"><a href="about.php">Layanan</a></li>
             <li><a href="services.php">Pusat Aplikasi</a></li>
             <li><a href="pricing.php">Dokumentasi</a></li>
-            <li><a href="contact.php">Pengaduan</a></li>
+            <li><a href="harmoni.php">Harmoni</a></li>
             
             <?php if ($is_admin): ?>
             <!-- Menu Admin - hanya ditampilkan jika role adalah admin -->
@@ -313,42 +325,9 @@ $is_admin = $is_logged_in && $_SESSION['role'] === 'admin';
 			
 			<!-- Area untuk Layanan dengan format baru -->
 			<div class="service-category-container">
-                <?php
-                // Daftar gambar yang sesuai untuk masing-masing layanan
-                $service_images = [
-                    1 => 'img/layanan/satu.png',
-                    2 => 'img/layanan/dua.png',
-                    3 => 'img/layanan/tiga.png',
-                    4 => 'img/layanan/empat.png'
-                ];
-                
-                // Cek apakah gambar ada, jika tidak gunakan gambar default dari folder img
-                foreach ($service_images as $id => $path) {
-                    if (!file_exists($path)) {
-                        switch ($id) {
-                            case 1:
-                                $service_images[$id] = 'img/satu.png';
-                                break;
-                            case 2:
-                                $service_images[$id] = 'img/dua.png';
-                                break;
-                            case 3:
-                                $service_images[$id] = 'img/tiga.png';
-                                break;
-                            case 4:
-                                $service_images[$id] = 'img/empat.png';
-                                break;
-                        }
-                    }
-                }
-                
-                // Loop untuk setiap layanan
-                foreach ($services as $service_id => $service):
-                    $image_path = isset($service_images[$service_id]) ? $service_images[$service_id] : 'img/layanan/default.png';
-                ?>
+                <?php foreach ($services as $service_id => $service): ?>
                 <div class="service-category-item">
                     <div class="service-category-content">
-                        <div class="service-category-image" style="background-image: url('<?php echo $image_path; ?>');"></div>
                         <div class="service-category-info">
                             <h3><?php echo htmlspecialchars($service['name']); ?></h3>
                             <ul class="service-links-list">
@@ -372,9 +351,10 @@ $is_admin = $is_logged_in && $_SESSION['role'] === 'admin';
                         Jl. Sutan Syahrir No. 30, Pahoman, Bandar Lampung, 35215<br>
                         Telp. (0721) 255980. Mailbox : bps1871@bps.go.id
                     </address>
-                    <div class="copyright">
-                        <p>Hak Cipta © 2025 Badan Pusat Statistik Kota Bandar Lampung<br>
-                        Semua Hak Dilindungi</p>
+                    <div class="text-center">
+                            <p>Hak Cipta © 2025 Badan Pusat Statistik Kota Bandar Lampung</p>
+                            <p>Semua Hak Dilindungi</p>
+                        </div>
                     </div>
                 </div>
             </div>

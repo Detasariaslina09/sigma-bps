@@ -35,6 +35,40 @@ $conn = check_connection($conn);
 $message = '';
 $messageType = '';
 
+// Fungsi untuk menangani jabatan khusus
+function handleSpecialPosition($conn, $jabatan, $nama, $foto, $link) {
+    // Cek apakah jabatan adalah kepala BPS atau kasubbag
+    $isKepala = stripos($jabatan, 'kepala bps') !== false;
+    $isKasubbag = stripos($jabatan, 'kepala sub bagian') !== false;
+    
+    if ($isKepala || $isKasubbag) {
+        // Cari profil dengan jabatan yang sama
+        $searchTerm = $isKepala ? '%kepala bps%' : '%kepala sub bagian%';
+        $stmt = $conn->prepare("SELECT id, foto FROM profil WHERE jabatan LIKE ?");
+        $stmt->bind_param("s", $searchTerm);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        
+        if ($row = $result->fetch_assoc()) {
+            // Update profil yang sudah ada
+            $oldFoto = $row['foto'];
+            $stmt = $conn->prepare("UPDATE profil SET nama = ?, jabatan = ?, foto = ?, link = ? WHERE id = ?");
+            $stmt->bind_param("ssssi", $nama, $jabatan, $foto, $link, $row['id']);
+            
+            // Hapus foto lama jika bukan default
+            if ($stmt->execute() && $oldFoto != 'default-male.jpg' && $oldFoto != 'default-female.jpg' && 
+                $oldFoto != 'kepala.jpg' && $oldFoto != 'kasubbag.jpg' && $oldFoto != $foto) {
+                $old_path = "img/staff/" . $oldFoto;
+                if (file_exists($old_path)) {
+                    unlink($old_path);
+                }
+            }
+            return true;
+        }
+    }
+    return false;
+}
+
 // Proses hapus profil
 if (isset($_GET['delete']) && !empty($_GET['delete'])) {
     $id = $_GET['delete'];
@@ -92,7 +126,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 
                 if (move_uploaded_file($_FILES['foto']['tmp_name'], $upload_path)) {
                     // Hapus foto lama jika bukan default
-                    if ($old_foto != '' && $old_foto != 'default-male.jpg' && $old_foto != 'default-female.jpg' && $old_foto != 'kepala.jpg' && $old_foto != 'kasubbag.jpg') {
+                    if ($old_foto != '' && $old_foto != 'default-male.jpg' && $old_foto != 'default-female.jpg' && 
+                        $old_foto != 'kepala.jpg' && $old_foto != 'kasubbag.jpg') {
                         $old_path = "img/staff/" . $old_foto;
                         if (file_exists($old_path)) {
                             unlink($old_path);
@@ -111,24 +146,30 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         
         // Jika tidak ada error, simpan ke database
         if ($messageType != "danger") {
-            if ($id) {
-                // Update profil
-                $stmt = $conn->prepare("UPDATE profil SET nama = ?, jabatan = ?, foto = ?, link = ? WHERE id = ?");
-                $stmt->bind_param("ssssi", $nama, $jabatan, $foto, $link, $id);
-            } else {
-                // Tambah profil baru
-                $stmt = $conn->prepare("INSERT INTO profil (nama, jabatan, foto, link) VALUES (?, ?, ?, ?)");
-                $stmt->bind_param("ssss", $nama, $jabatan, $foto, $link);
-            }
-            
-            if ($stmt->execute()) {
-                $message = ($id ? "Profil berhasil diperbarui!" : "Profil baru berhasil ditambahkan!");
+            // Cek apakah ini jabatan khusus
+            if (!$id && handleSpecialPosition($conn, $jabatan, $nama, $foto, $link)) {
+                $message = "Profil " . $jabatan . " berhasil diperbarui!";
                 $messageType = "success";
             } else {
-                $message = "Error: " . $stmt->error;
-                $messageType = "danger";
+                if ($id) {
+                    // Update profil
+                    $stmt = $conn->prepare("UPDATE profil SET nama = ?, jabatan = ?, foto = ?, link = ? WHERE id = ?");
+                    $stmt->bind_param("ssssi", $nama, $jabatan, $foto, $link, $id);
+                } else {
+                    // Tambah profil baru
+                    $stmt = $conn->prepare("INSERT INTO profil (nama, jabatan, foto, link) VALUES (?, ?, ?, ?)");
+                    $stmt->bind_param("ssss", $nama, $jabatan, $foto, $link);
+                }
+                
+                if ($stmt->execute()) {
+                    $message = ($id ? "Profil berhasil diperbarui!" : "Profil baru berhasil ditambahkan!");
+                    $messageType = "success";
+                } else {
+                    $message = "Error: " . $stmt->error;
+                    $messageType = "danger";
+                }
+                $stmt->close();
             }
-            $stmt->close();
         }
     }
 }
@@ -213,6 +254,61 @@ $conn->close();
         
         .btn-action {
             margin: 2px;
+            padding: 6px 12px;
+            border-radius: 4px;
+            transition: all 0.3s ease;
+            color: #fff !important;
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .btn-action.btn-primary {
+            background-color: #ff9800;
+            border-color: #ff9800;
+            color: #fff !important;
+        }
+
+        .btn-action.btn-primary:hover {
+            background-color: #f57c00;
+            border-color: #f57c00;
+            color: #fff !important;
+        }
+
+        .btn-action.btn-danger {
+            background-color: #ff9800;
+            border-color: #ff9800;
+            color: #fff !important;
+        }
+
+        .btn-action.btn-danger:hover {
+            background-color: #f57c00;
+            border-color: #f57c00;
+            color: #fff !important;
+        }
+
+        .btn-action i {
+            margin-right: 5px;
+            color: #fff !important;
+        }
+
+        /* Tambahan untuk memastikan teks selalu putih */
+        .btn-action span,
+        .btn-action:link,
+        .btn-action:visited,
+        .btn-action:hover,
+        .btn-action:active {
+            color: #fff !important;
+            text-decoration: none !important;
+        }
+
+        .btn-action:focus {
+            box-shadow: 0 0 0 0.2rem rgba(255, 152, 0, 0.25);
+            outline: none;
+        }
+
+        .btn-action:active {
+            background-color: #ef6c00 !important;
+            border-color: #ef6c00 !important;
         }
         
         .alert {
@@ -222,6 +318,53 @@ $conn->close();
         .required-field::after {
             content: " *";
             color: red;
+        }
+        .modal {
+            z-index: 9999;
+        }
+        
+        .modal-backdrop {
+            z-index: 9998;
+        }
+
+        .modal-dialog {
+            margin: 30px auto;
+        }
+
+        .modal-content {
+            border-radius: 8px;
+            box-shadow: 0 3px 15px rgba(0,0,0,0.2);
+        }
+
+        .modal-header {
+            background: #f8f9fa;
+            border-radius: 8px 8px 0 0;
+            border-bottom: 1px solid #e9ecef;
+        }
+
+        .modal-footer {
+            background: #f8f9fa;
+            border-radius: 0 0 8px 8px;
+            border-top: 1px solid #e9ecef;
+        }
+
+        /* Style untuk tombol di modal */
+        .modal-footer .btn-default {
+            background-color: #6c757d;
+            border-color: #6c757d;
+            color: #fff;
+        }
+
+        .modal-footer .btn-default:hover {
+            background-color: #5a6268;
+            border-color: #545b62;
+            color: #fff;
+        }
+
+        .modal-footer .btn {
+            padding: 8px 16px;
+            font-weight: 500;
+            transition: all 0.3s ease;
         }
     </style>
 </head>
@@ -241,7 +384,7 @@ $conn->close();
             <li><a href="about.php">Layanan</a></li>
             <li><a href="services.php">Pusat Aplikasi</a></li>
             <li><a href="pricing.php">Dokumentasi</a></li>
-            <li><a href="contact.php">Pengaduan</a></li>
+            <li><a href="harmoni.php">Harmoni</a></li>
             
             <!-- Menu Admin - hanya ditampilkan jika role adalah admin -->
             <li class="admin-menu"><a href="admin-users.php"><i class="fa fa-users"></i> Manajemen User</a></li>
@@ -276,58 +419,68 @@ $conn->close();
                 </div>
                 <?php endif; ?>
                 
-                <!-- Form Tambah/Edit Profil -->
+                <!-- Button to trigger modal -->
                 <div class="row">
                     <div class="col-md-12">
-                        <div class="form-section">
-                            <h3><?php echo $edit_profile ? 'Edit Profil' : 'Tambah Profil Baru'; ?></h3>
-                            <form action="admin-profil.php" method="post" enctype="multipart/form-data">
-                                <?php if ($edit_profile): ?>
-                                <input type="hidden" name="id" value="<?php echo $edit_profile['id']; ?>">
-                                <input type="hidden" name="old_foto" value="<?php echo $edit_profile['foto']; ?>">
-                                <?php endif; ?>
-                                
-                                <div class="row">
-                                    <div class="col-md-4">
-                                        <div class="form-group text-center">
-                                            <label>Foto Profil</label><br>
-                                            <img id="preview-image" class="profile-img-preview" src="<?php echo $edit_profile ? 'img/staff/' . $edit_profile['foto'] : 'img/staff/default-male.jpg'; ?>" alt="Preview">
-                                            <input type="file" name="foto" id="foto" class="form-control" onchange="previewImage(this);">
-                                            <small class="text-muted">Format: JPG, JPEG, PNG, GIF. Ukuran maksimal: 2MB.</small>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-8">
-                                        <div class="form-group">
-                                            <label for="nama" class="required-field">Nama Lengkap</label>
-                                            <input type="text" name="nama" id="nama" class="form-control" value="<?php echo $edit_profile ? $edit_profile['nama'] : ''; ?>" required>
-                                        </div>
-                                        <div class="form-group">
-                                            <label for="jabatan" class="required-field">Jabatan</label>
-                                            <input type="text" name="jabatan" id="jabatan" class="form-control" value="<?php echo $edit_profile ? $edit_profile['jabatan'] : ''; ?>" required>
-                                        </div>
-                                        <div class="form-group">
-                                            <label for="link">Link Profil Canva</label>
-                                            <input type="text" name="link" id="link" class="form-control" value="<?php echo $edit_profile ? $edit_profile['link'] : ''; ?>" placeholder="https://www.canva.com/design/...">
-                                            <small class="text-muted">Masukkan link profil dari Canva (opsional).</small>
-                                        </div>
-                                    </div>
-                                </div>
-                                
-                                <div class="form-group text-center">
-                                    <button type="submit" name="save_profile" class="btn btn-primary">
-                                        <i class="fa fa-save"></i> <?php echo $edit_profile ? 'Update Profil' : 'Simpan Profil'; ?>
-                                    </button>
-                                    <?php if ($edit_profile): ?>
-                                    <a href="admin-profil.php" class="btn btn-default">
-                                        <i class="fa fa-times"></i> Batal
-                                    </a>
-                                    <?php endif; ?>
-                                </div>
-                            </form>
+                        <div class="form-section text-center">
+                            <button type="button" class="btn btn-primary btn-lg" data-toggle="modal" data-target="#profileModal">
+                                <i class="fa fa-plus"></i> Tambah Profil Baru
+                            </button>
                         </div>
                     </div>
                 </div>
                 
+                <!-- Modal for Add/Edit Profile -->
+                <div class="modal fade" id="profileModal" tabindex="-1" role="dialog" aria-labelledby="profileModalLabel">
+                    <div class="modal-dialog modal-lg" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                                <h4 class="modal-title" id="profileModalLabel">Tambah Profil Baru</h4>
+                            </div>
+                            <div class="modal-body">
+                                <form action="admin-profil.php" method="post" enctype="multipart/form-data" id="profileForm">
+                                    <input type="hidden" name="id" id="profile_id">
+                                    <input type="hidden" name="old_foto" id="old_foto">
+                                    <div class="row">
+                                        <div class="col-md-4">
+                                            <div class="form-group text-center">
+                                                <label>Foto Profil</label><br>
+                                                <img id="preview-image" class="profile-img-preview" src="img/staff/default-male.jpg" alt="Preview">
+                                                <input type="file" name="foto" id="foto" class="form-control" onchange="previewImage(this);">
+                                                <small class="text-muted">Format: JPG, JPEG, PNG, GIF. Ukuran maksimal: 2MB.</small>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-8">
+                                            <div class="form-group">
+                                                <label for="nama" class="required-field">Nama Lengkap</label>
+                                                <input type="text" name="nama" id="nama" class="form-control" required>
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="jabatan" class="required-field">Jabatan</label>
+                                                <input type="text" name="jabatan" id="jabatan" class="form-control" required>
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="link">Link Profil Canva</label>
+                                                <input type="text" name="link" id="link" class="form-control" placeholder="https://www.canva.com/design/...">
+                                                <small class="text-muted">Masukkan link profil dari Canva (opsional).</small>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-default" data-dismiss="modal">
+                                    <i class="fa fa-times"></i> Batal
+                                </button>
+                                <button type="submit" form="profileForm" name="save_profile" class="btn btn-primary">
+                                    <i class="fa fa-save"></i> Simpan Profil
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
                 <!-- Tabel Data Profil -->
                 <div class="row">
                     <div class="col-md-12">
@@ -368,11 +521,11 @@ $conn->close();
                                                 <?php endif; ?>
                                             </td>
                                             <td>
-                                                <a href="admin-profil.php?edit=<?php echo $profile['id']; ?>" class="btn btn-sm btn-primary btn-action">
-                                                    <i class="fa fa-edit"></i> Edit
+                                                <a href="javascript:void(0);" onclick="editProfile(<?php echo htmlspecialchars(json_encode($profile)); ?>)" class="btn btn-sm btn-primary btn-action">
+                                                    <i class="fa fa-edit"></i><span>Edit</span>
                                                 </a>
                                                 <a href="javascript:void(0);" onclick="confirmDelete(<?php echo $profile['id']; ?>)" class="btn btn-sm btn-danger btn-action">
-                                                    <i class="fa fa-trash"></i> Hapus
+                                                    <i class="fa fa-trash"></i><span>Hapus</span>
                                                 </a>
                                             </td>
                                         </tr>
@@ -395,9 +548,10 @@ $conn->close();
                         Jl. Sutan Syahrir No. 30, Pahoman, Bandar Lampung, 35215<br>
                         Telp. (0721) 255980. Mailbox : bps1871@bps.go.id
                     </address>
-                    <div class="copyright">
-                        <p>Hak Cipta © 2025 Badan Pusat Statistik Kota Bandar Lampung<br>
-                        Semua Hak Dilindungi</p>
+                    <div class="text-center">
+                            <p>Hak Cipta © 2025 Badan Pusat Statistik Kota Bandar Lampung</p>
+                            <p>Semua Hak Dilindungi</p>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -442,6 +596,45 @@ $conn->close();
                 window.location.href = "admin-profil.php?delete=" + id;
             }
         }
+
+        // Edit profile
+        function editProfile(profile) {
+            // Set modal title
+            $('#profileModalLabel').text('Edit Profil');
+            
+            // Fill form with profile data
+            $('#profile_id').val(profile.id);
+            $('#nama').val(profile.nama);
+            $('#jabatan').val(profile.jabatan);
+            $('#link').val(profile.link);
+            $('#old_foto').val(profile.foto);
+            $('#preview-image').attr('src', 'img/staff/' + profile.foto);
+            
+            // Show modal
+            $('#profileModal').modal('show');
+        }
+
+        // Reset form when modal is closed
+        $('#profileModal').on('hidden.bs.modal', function () {
+            $('#profileForm')[0].reset();
+            $('#profile_id').val('');
+            $('#old_foto').val('');
+            $('#preview-image').attr('src', 'img/staff/default-male.jpg');
+            $('#profileModalLabel').text('Tambah Profil Baru');
+        });
+
+        // Show success message in modal if exists
+        $(document).ready(function() {
+            <?php if ($messageType == 'success'): ?>
+            $('#profileModal').modal('hide');
+            <?php endif; ?>
+
+            // Trigger modal for add new profile
+            $('.btn-add-profile').click(function() {
+                $('#profileModalLabel').text('Tambah Profil Baru');
+                $('#profileModal').modal('show');
+            });
+        });
     </script>
 </body>
 </html> 
