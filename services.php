@@ -2,11 +2,8 @@
 // Mulai session
 session_start();
 
-// Periksa status login - jika belum login, redirect ke halaman login
-if (!isset($_SESSION['user_id'])) {
-    header("Location: login.php");
-    exit;
-}
+// Halaman ini dapat diakses tanpa login, tapi kita tetap perlu cek status untuk menu-menu tertentu
+// yang memerlukan login (seperti menu admin)
 
 // Cek status login dan role
 $is_logged_in = isset($_SESSION['user_id']);
@@ -170,30 +167,27 @@ $is_admin = $is_logged_in && $_SESSION['role'] === 'admin';
     
     <!-- Sidebar menu -->
     <div class="sidebar">
-        <a class="navbar-brand" href="index.php"><img src="img/logoo.png" alt="logo"/></a>
+        <a class="navbar-brand" href="index.php"><img src="img/logo.png" alt="logo"/></a>
         <ul class="nav navbar-nav">
             <li><a href="index.php">Beranda</a></li>
             <li><a href="profil.php">Profil dan Roadmap</a></li>
-            <li><a href="monev.php">Monev</a></li>
-            <li><a href="about.php">Layanan</a></li>
             <li class="active"><a href="services.php">Pusat Aplikasi</a></li>
-            <li><a href="pricing.php">Dokumentasi</a></li>
-            <li><a href="harmoni.php">Harmoni</a></li>
-        
-        <?php if ($is_admin): ?>
-        <!-- Menu Admin - hanya ditampilkan jika role adalah admin -->
-        <li class="admin-menu"><a href="admin-users.php"><i class="fa fa-users"></i> Manajemen User</a></li>
-        <li class="admin-menu"><a href="admin-services.php"><i class="fa fa-cogs"></i> Manajemen Layanan</a></li>
-        <li class="admin-menu"><a href="admin-content.php"><i class="fa fa-file-text"></i> Manajemen Konten</a></li>
-        <li class="admin-menu"><a href="admin-profil.php"><i class="fa fa-id-card"></i> Manajemen Profil</a></li>
-        <?php endif; ?>
-        
-        <?php if ($is_logged_in): ?>
-            <li class="logout-menu"><a href="logout.php" class="logout-link"><i class="fa fa-sign-out"></i> Logout (<?php echo htmlspecialchars($_SESSION['username']); ?>)</a></li>
-        <?php else: ?>
-            <li><a href="login.php"><i class="fa fa-sign-in"></i> Login</a></li>
-        <?php endif; ?>
-    </ul>
+            <?php if (isset($_SESSION['user_id'])): ?>
+                <li><a href="monev.php">Monev</a></li>
+                <li><a href="about.php">Layanan</a></li>
+                <li><a href="pricing.php">Dokumentasi</a></li>
+                <li><a href="harmoni.php">Harmoni</a></li>
+                <?php if ($is_admin): ?>
+                    <li class="admin-menu"><a href="admin-users.php"><i class="fa fa-users"></i> Manajemen User</a></li>
+                    <li class="admin-menu"><a href="admin-services.php"><i class="fa fa-cogs"></i> Manajemen Layanan</a></li>
+                    <li class="admin-menu"><a href="admin-content.php"><i class="fa fa-file-text"></i> Manajemen Konten</a></li>
+                    <li class="admin-menu"><a href="admin-profil.php"><i class="fa fa-user"></i> Manajemen Profil</a></li>
+                <?php endif; ?>
+                <li class="logout-menu"><a href="logout.php" class="logout-link"><i class="fa fa-sign-out"></i> Logout (<?php echo htmlspecialchars($_SESSION['username']); ?>)</a></li>
+            <?php else: ?>
+                <li><a href="login.php"><i class="fa fa-sign-in"></i> Login</a></li>
+            <?php endif; ?>
+        </ul>
 </div>
 
 <div id="wrapper">
@@ -278,14 +272,19 @@ $is_admin = $is_logged_in && $_SESSION['role'] === 'admin';
 <script>
     // Cek apakah sudah login
     function checkLogin() {
-        var isLoggedIn = sessionStorage.getItem('isLoggedIn');
-        if (!isLoggedIn) {
-            // Jika belum login, alihkan ke halaman utama
-            window.location.href = 'index.php';
-        } else {
-            // Jika sudah login, cek role untuk menampilkan/sembunyikan menu admin
-            showHideAdminMenu();
+        const isLoggedIn = sessionStorage.getItem('isLoggedIn') === 'true';
+        const publicPages = ['index.php', 'login.php', 'profil.php', 'services.php'];
+        const currentPage = window.location.pathname.split('/').pop() || 'index.php';
+        
+        if (publicPages.includes(currentPage.toLowerCase())) {
+            return;
         }
+
+        if (!isLoggedIn) {
+            window.location.href = 'login.php';
+            return;
+        }
+        showHideAdminMenu();
     }
     
     // Fungsi untuk menampilkan/menyembunyikan menu admin berdasarkan role

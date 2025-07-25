@@ -56,16 +56,16 @@ $is_admin = $is_logged_in && $_SESSION['role'] === 'admin';
 
     .harmoni-content h3 {
         color: #1a3c6e;
-        font-size: 24px;
-        margin-bottom: 20px;
-        font-weight: 600;
+        font-size: 16px;
+        margin-bottom: 12px;
+        font-weight: 500;
     }
 
     .harmoni-content p {
         color: #666;
-        font-size: 16px;
-        line-height: 1.6;
-        margin-bottom: 30px;
+        font-size: 13px;
+        line-height: 1.5;
+        margin-bottom: 18px;
     }
 
     .harmoni-cta {
@@ -140,7 +140,7 @@ $is_admin = $is_logged_in && $_SESSION['role'] === 'admin';
     
     <!-- Sidebar menu -->
     <div class="sidebar">
-        <a class="navbar-brand" href="index.php"><img src="img/logoo.png" alt="logo"/></a>
+        <a class="navbar-brand" href="index.php"><img src="img/logo.png" alt="logo"/></a>
         <ul class="nav navbar-nav">
             <li><a href="index.php">Beranda</a></li>
             <li><a href="profil.php">Profil dan Roadmap</a></li>
@@ -155,7 +155,7 @@ $is_admin = $is_logged_in && $_SESSION['role'] === 'admin';
             <li class="admin-menu"><a href="admin-users.php"><i class="fa fa-users"></i> Manajemen User</a></li>
             <li class="admin-menu"><a href="admin-services.php"><i class="fa fa-cogs"></i> Manajemen Layanan</a></li>
             <li class="admin-menu"><a href="admin-content.php"><i class="fa fa-file-text"></i> Manajemen Konten</a></li>
-            <li class="admin-menu"><a href="admin-profil.php"><i class="fa fa-id-card"></i> Manajemen Profil</a></li>
+            <li class="admin-menu"><a href="admin-profil.php"><i class="fa fa-user"></i> Manajemen Profil</a></li>
             <?php endif; ?>
             
             <?php if ($is_logged_in): ?>
@@ -167,29 +167,29 @@ $is_admin = $is_logged_in && $_SESSION['role'] === 'admin';
     </div>
 
 <div id="wrapper">
-	<section id="content">
-	<div class="container">
-	    <div class="section-title">
-	        <h2>Layanan Harmoni</h2>
-	        <p>Platform Aspirasi dan Komunikasi BPS Kota Bandar Lampung</p>
-	    </div>
-	    
-	    <div class="harmoni-container">
-	        <img src="img/2pengaduan.png" alt="Layanan Harmoni" class="harmoni-image">
-	        
-	        <div class="harmoni-content">
-	            <h3>Tentang Layanan Harmoni</h3>
-	            <p>Harmoni adalah platform komunikasi terpadu yang disediakan oleh BPS Kota Bandar Lampung untuk memfasilitasi aspirasi, saran, dan komunikasi antar pegawai. Platform ini dirancang untuk menciptakan lingkungan kerja yang harmonis dan kolaboratif.</p>
-	            
-	            <div class="harmoni-cta">
-	                <a href="https://sipena.bps.go.id" target="_blank" class="btn-harmoni">
-	                    <i class="fa fa-comments"></i><span>Akses Harmoni</span>
-	                </a>
-	            </div>
-	        </div>
-	    </div>
-	</section>
-	<footer>
+    <section id="content">
+    <div class="container">
+        <div class="section-title">
+            <h2>Layanan Harmoni</h2>
+            <p>Platform Aspirasi dan Komunikasi BPS Kota Bandar Lampung</p>
+        </div>
+        
+        <div class="harmoni-container">
+            <img src="img/2pengaduan.png" alt="Layanan Harmoni" class="harmoni-image">
+            
+            <div class="harmoni-content">
+                <h3>Hamparan Saran dan Komentar untuk Kantor Nyaman BPS Kota Bandar Lampung</h3>
+                <p>Harmoni adalah platform komunikasi terpadu yang disediakan oleh BPS Kota Bandar Lampung untuk memfasilitasi aspirasi, saran, dan komunikasi antar pegawai. Platform ini dirancang untuk menciptakan lingkungan kerja yang harmonis dan kolaboratif.</p>
+                
+                <div class="harmoni-cta">
+                    <a href="http://s.bps.go.id/Harmony1871" target="_blank" class="btn-harmoni">
+                        <i class="fa fa-comments"></i><span>Akses Harmoni</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+    <footer>
         <div class="container">
             <div class="row">
                 <div class="col-lg-12 text-center">

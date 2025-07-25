@@ -29,6 +29,18 @@ function check_connection($conn) {
 }
 
 // Pastikan koneksi aktif
+if (!isset($conn) || !$conn instanceof mysqli) {
+    $servername = "127.0.0.1";
+    $username   = "root";
+    $password   = "";
+    $dbname     = "sigap";
+    $port       = 3306;
+    $conn = new mysqli($servername, $username, $password, $dbname, $port);
+    if ($conn->connect_error) {
+        die("Initial Connection failed: " . $conn->connect_error);
+    }
+}
+
 $conn = check_connection($conn);
 
 // Inisialisasi variabel pesan
@@ -36,51 +48,61 @@ $message = '';
 $messageType = '';
 
 // Fungsi untuk menangani jabatan khusus
-function handleSpecialPosition($conn, $jabatan, $nama, $foto, $link) {
-    // Cek apakah jabatan adalah kepala BPS atau kasubbag
-    $isKepala = stripos($jabatan, 'kepala bps') !== false;
-    $isKasubbag = stripos($jabatan, 'kepala sub bagian') !== false;
+function handleSpecialPosition($conn, $jabatan_input, $nama, $foto, $link) {
+    $jabatan_lower = trim(strtolower($jabatan_input));
+
+    $isKepala = strpos($jabatan_lower, 'kepala bps kota bandar lampung') !== false;
+    $isKasubbag = strpos($jabatan_lower, 'kepala subbagian umum') !== false || strpos($jabatan_lower, 'kasubbag umum') !== false;
     
     if ($isKepala || $isKasubbag) {
-        // Cari profil dengan jabatan yang sama
-        $searchTerm = $isKepala ? '%kepala bps%' : '%kepala sub bagian%';
-        $stmt = $conn->prepare("SELECT id, foto FROM profil WHERE jabatan LIKE ?");
-        $stmt->bind_param("s", $searchTerm);
-        $stmt->execute();
-        $result = $stmt->get_result();
-        
-        if ($row = $result->fetch_assoc()) {
-            // Update profil yang sudah ada
-            $oldFoto = $row['foto'];
-            $stmt = $conn->prepare("UPDATE profil SET nama = ?, jabatan = ?, foto = ?, link = ? WHERE id = ?");
-            $stmt->bind_param("ssssi", $nama, $jabatan, $foto, $link, $row['id']);
-            
-            // Hapus foto lama jika bukan default
-            if ($stmt->execute() && $oldFoto != 'default-male.jpg' && $oldFoto != 'default-female.jpg' && 
-                $oldFoto != 'kepala.jpg' && $oldFoto != 'kasubbag.jpg' && $oldFoto != $foto) {
-                $old_path = "img/staff/" . $oldFoto;
-                if (file_exists($old_path)) {
-                    unlink($old_path);
-                }
-            }
-            return true;
+        $searchTerm = '';
+        if ($isKepala) {
+            $searchTerm = 'Kepala BPS Kota Bandar Lampung';
+        } else if ($isKasubbag) {
+            $searchTerm = 'Kepala Subbagian Umum';
         }
+        
+        $stmt_check = $conn->prepare("SELECT id, foto FROM profil WHERE jabatan LIKE ?");
+        $like_term = '%' . $searchTerm . '%';
+        $stmt_check->bind_param("s", $like_term);
+        $stmt_check->execute();
+        $result_check = $stmt_check->get_result();
+        
+        if ($row_check = $result_check->fetch_assoc()) {
+            $oldFoto = $row_check['foto'];
+            $stmt_update = $conn->prepare("UPDATE profil SET nama = ?, jabatan = ?, foto = ?, link = ? WHERE id = ?");
+            $stmt_update->bind_param("ssssi", $nama, $jabatan_input, $foto, $link, $row_check['id']);
+            
+            if ($stmt_update->execute()) {
+                if ($oldFoto != 'default-male.jpg' && $oldFoto != 'default-female.jpg' && 
+                    $oldFoto != 'kepala.jpg' && $oldFoto != 'kasubbag.jpg' && $oldFoto != $foto) {
+                    $old_path = "img/staff/" . $oldFoto;
+                    if (file_exists($old_path)) {
+                        unlink($old_path);
+                    }
+                }
+                $stmt_update->close();
+                $stmt_check->close();
+                return true;
+            }
+            $stmt_update->close();
+        }
+        $stmt_check->close();
     }
     return false;
 }
+
 
 // Proses hapus profil
 if (isset($_GET['delete']) && !empty($_GET['delete'])) {
     $id = $_GET['delete'];
     
-    // Ambil informasi foto sebelum menghapus
     $stmt = $conn->prepare("SELECT foto FROM profil WHERE id = ?");
     $stmt->bind_param("i", $id);
     $stmt->execute();
     $result = $stmt->get_result();
     if ($row = $result->fetch_assoc()) {
         $foto = $row['foto'];
-        // Hapus file foto jika bukan default
         if ($foto != 'default-male.jpg' && $foto != 'default-female.jpg' && $foto != 'kepala.jpg' && $foto != 'kasubbag.jpg') {
             $file_path = "img/staff/" . $foto;
             if (file_exists($file_path)) {
@@ -90,7 +112,6 @@ if (isset($_GET['delete']) && !empty($_GET['delete'])) {
     }
     $stmt->close();
     
-    // Hapus data dari database
     $stmt = $conn->prepare("DELETE FROM profil WHERE id = ?");
     $stmt->bind_param("i", $id);
     
@@ -113,8 +134,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $link = $_POST['link'];
         $old_foto = isset($_POST['old_foto']) ? $_POST['old_foto'] : '';
         $foto = $old_foto;
-        
-        // Proses upload foto jika ada
+
         if (isset($_FILES['foto']) && $_FILES['foto']['error'] == 0) {
             $allowed = ['jpg', 'jpeg', 'png', 'gif'];
             $filename = $_FILES['foto']['name'];
@@ -125,12 +145,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 $upload_path = 'img/staff/' . $new_filename;
                 
                 if (move_uploaded_file($_FILES['foto']['tmp_name'], $upload_path)) {
-                    // Hapus foto lama jika bukan default
-                    if ($old_foto != '' && $old_foto != 'default-male.jpg' && $old_foto != 'default-female.jpg' && 
-                        $old_foto != 'kepala.jpg' && $old_foto != 'kasubbag.jpg') {
-                        $old_path = "img/staff/" . $old_foto;
-                        if (file_exists($old_path)) {
-                            unlink($old_path);
+                    if (!empty($old_foto) && $old_foto != 'default-male.jpg' && $old_foto != 'default-female.jpg' && 
+                        $old_foto != 'kepala.jpg' && $old_foto != 'kasubbag.jpg' && $old_foto != $new_filename) {
+                        $old_path_to_delete = "img/staff/" . $old_foto;
+                        if (file_exists($old_path_to_delete)) {
+                            unlink($old_path_to_delete);
                         }
                     }
                     $foto = $new_filename;
@@ -144,19 +163,15 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             }
         }
         
-        // Jika tidak ada error, simpan ke database
         if ($messageType != "danger") {
-            // Cek apakah ini jabatan khusus
-            if (!$id && handleSpecialPosition($conn, $jabatan, $nama, $foto, $link)) {
-                $message = "Profil " . $jabatan . " berhasil diperbarui!";
+            if (handleSpecialPosition($conn, $jabatan, $nama, $foto, $link)) {
+                $message = "Profil jabatan khusus (" . htmlspecialchars($jabatan) . ") berhasil diperbarui!";
                 $messageType = "success";
             } else {
                 if ($id) {
-                    // Update profil
                     $stmt = $conn->prepare("UPDATE profil SET nama = ?, jabatan = ?, foto = ?, link = ? WHERE id = ?");
                     $stmt->bind_param("ssssi", $nama, $jabatan, $foto, $link, $id);
                 } else {
-                    // Tambah profil baru
                     $stmt = $conn->prepare("INSERT INTO profil (nama, jabatan, foto, link) VALUES (?, ?, ?, ?)");
                     $stmt->bind_param("ssss", $nama, $jabatan, $foto, $link);
                 }
@@ -174,32 +189,35 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     }
 }
 
-// Ambil data profil untuk ditampilkan
+
+// Ambil data profil untuk ditampilkan di tabel
 $profiles = [];
-$sql = "SELECT * FROM profil ORDER BY id ASC";
-$result = $conn->query($sql);
-if ($result) {
-    while ($row = $result->fetch_assoc()) {
-        $profiles[] = $row;
+$sql_select_all = "SELECT * FROM profil ORDER BY id ASC";
+$result_all = $conn->query($sql_select_all);
+if ($result_all) {
+    while ($row_all = $result_all->fetch_assoc()) {
+        $profiles[] = $row_all;
     }
 }
 
 // Ambil data profil untuk diedit jika ada parameter edit
 $edit_profile = null;
 if (isset($_GET['edit']) && !empty($_GET['edit'])) {
-    $id = $_GET['edit'];
-    $stmt = $conn->prepare("SELECT * FROM profil WHERE id = ?");
-    $stmt->bind_param("i", $id);
-    $stmt->execute();
-    $result = $stmt->get_result();
-    if ($result->num_rows > 0) {
-        $edit_profile = $result->fetch_assoc();
+    $id_edit = $_GET['edit'];
+    $stmt_edit = $conn->prepare("SELECT * FROM profil WHERE id = ?");
+    $stmt_edit->bind_param("i", $id_edit);
+    $stmt_edit->execute();
+    $result_edit = $stmt_edit->get_result();
+    if ($result_edit->num_rows > 0) {
+        $edit_profile = $result_edit->fetch_assoc();
     }
-    $stmt->close();
+    $stmt_edit->close();
 }
 
 // Tutup koneksi database
-$conn->close();
+if ($conn instanceof mysqli) {
+    $conn->close();
+}
 ?>
 
 <!DOCTYPE html>
@@ -210,7 +228,6 @@ $conn->close();
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="description" content="Manajemen Profil BPS Kota Bandar Lampung" />
     <meta name="author" content="" />
-    <!-- css -->
     <link href="css/bootstrap.min.css" rel="stylesheet" />
     <link href="css/fancybox/jquery.fancybox.css" rel="stylesheet">
     <link href="css/jcarousel.css" rel="stylesheet" />
@@ -235,14 +252,6 @@ $conn->close();
             object-fit: cover;
             border-radius: 50%;
             border: 2px solid #1a3c6e;
-        }
-        
-        .form-section {
-            background: #f9f9f9;
-            padding: 20px;
-            border-radius: 8px;
-            margin-bottom: 30px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
         }
         
         .table-responsive {
@@ -275,14 +284,14 @@ $conn->close();
         }
 
         .btn-action.btn-danger {
-            background-color: #ff9800;
-            border-color: #ff9800;
+            background-color: #d9534f; /* Default red for danger */
+            border-color: #d43f3a;
             color: #fff !important;
         }
 
         .btn-action.btn-danger:hover {
-            background-color: #f57c00;
-            border-color: #f57c00;
+            background-color: #c9302c;
+            border-color: #ac2925;
             color: #fff !important;
         }
 
@@ -366,17 +375,47 @@ $conn->close();
             font-weight: 500;
             transition: all 0.3s ease;
         }
+
+        /* --- STYLE BARU UNTUK JUdul Tabel dan Tombol Tambah Profil --- */
+        .table-header-row {
+            display: flex; /* Menggunakan flexbox */
+            justify-content: space-between; /* Menjaga elemen di ujung-ujung */
+            align-items: center; /* Memusatkan secara vertikal */
+            margin-bottom: 15px; /* Jarak antara header tabel dan tabel */
+            padding-right: 20px; /* Sesuaikan dengan padding tabel */
+            padding-left: 20px; /* Sesuaikan dengan padding tabel */
+        }
+        .table-header-row h3 {
+            margin: 0; /* Menghilangkan margin default h3 */
+            font-size: 24px; /* Sesuaikan ukuran font jika perlu */
+            color: #333; /* Warna teks judul tabel */
+        }
+        .table-header-row .btn-add-profile-table {
+            background: #ff9800;
+            color: #fff;
+            border: none;
+            padding: 8px 15px; /* Sedikit lebih kecil dari tombol utama */
+            border-radius: 5px;
+            font-weight: 600;
+            transition: all 0.3s;
+            white-space: nowrap; /* Mencegah tombol pecah baris */
+        }
+        .table-header-row .btn-add-profile-table:hover {
+            background: #e65100;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(255,152,0,0.15);
+        }
+        /* --- AKHIR STYLE BARU --- */
+
     </style>
 </head>
 <body>
-    <!-- Mobile Menu Toggle Button -->
     <button class="mobile-menu-toggle">
         <i class="fa fa-bars"></i> Menu
     </button>
     
-    <!-- Sidebar menu -->
     <div class="sidebar">
-        <a class="navbar-brand" href="index.php"><img src="img/logoo.png" alt="logo"/></a>
+        <a class="navbar-brand" href="index.php"><img src="img/logo.png" alt="logo"/></a>
         <ul class="nav navbar-nav">
             <li><a href="index.php">Beranda</a></li>
             <li><a href="profil.php">Profil dan Roadmap</a></li>
@@ -386,11 +425,12 @@ $conn->close();
             <li><a href="pricing.php">Dokumentasi</a></li>
             <li><a href="harmoni.php">Harmoni</a></li>
             
-            <!-- Menu Admin - hanya ditampilkan jika role adalah admin -->
-            <li class="admin-menu"><a href="admin-users.php"><i class="fa fa-users"></i> Manajemen User</a></li>
-            <li class="admin-menu"><a href="admin-services.php"><i class="fa fa-cogs"></i> Manajemen Layanan</a></li>
-            <li class="admin-menu"><a href="admin-content.php"><i class="fa fa-file-text"></i> Manajemen Konten</a></li>
-            <li class="admin-menu active"><a href="admin-profil.php"><i class="fa fa-id-card"></i> Manajemen Profil</a></li>
+            <?php if ($_SESSION['role'] === 'admin'): ?>
+                <li class="admin-menu"><a href="admin-users.php"><i class="fa fa-users"></i> Manajemen User</a></li>
+                <li class="admin-menu"><a href="admin-services.php"><i class="fa fa-cogs"></i> Manajemen Layanan</a></li>
+                <li class="admin-menu"><a href="admin-content.php"><i class="fa fa-file-text"></i> Manajemen Konten</a></li>
+                <li class="admin-menu active"><a href="admin-profil.php"><i class="fa fa-user"></i> Manajemen Profil</a></li>
+            <?php endif; ?>
             
             <li class="logout-menu"><a href="logout.php" class="logout-link"><i class="fa fa-sign-out"></i> Logout (<?php echo htmlspecialchars($_SESSION['username']); ?>)</a></li>
         </ul>
@@ -399,141 +439,125 @@ $conn->close();
     <div id="wrapper">
         <section id="content">
             <div class="container">
-                <div class="row">
-                    <div class="col-md-12">
-                        <div class="section-title">
-                            <h2>Manajemen Profil</h2>
-                            <p>Kelola data profil pegawai BPS Kota Bandar Lampung</p>
+                <div class="admin-content">
+                    <div class="section-title">
+                        <h2>Manajemen Profil</h2>
+                        <p>Kelola data profil pegawai BPS Kota Bandar Lampung</p>
+                    </div>
+                
+                    <?php if (!empty($message)): ?>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="alert alert-<?php echo $messageType; ?> alert-dismissible" role="alert">
+                                <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                                <?php echo $message; ?>
+                            </div>
                         </div>
                     </div>
-                </div>
-                
-                <?php if (!empty($message)): ?>
-                <div class="row">
-                    <div class="col-md-12">
-                        <div class="alert alert-<?php echo $messageType; ?> alert-dismissible" role="alert">
-                            <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                            <?php echo $message; ?>
+                    <?php endif; ?>
+                    
+                    <div class="modal fade" id="profileModal" tabindex="-1" role="dialog" aria-labelledby="profileModalLabel">
+                        <div class="modal-dialog modal-lg" role="document">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                                    <h4 class="modal-title" id="profileModalLabel">Tambah Profil Baru</h4>
+                                </div>
+                                <div class="modal-body">
+                                    <form action="admin-profil.php" method="post" enctype="multipart/form-data" id="profileForm">
+                                        <input type="hidden" name="id" id="profile_id">
+                                        <input type="hidden" name="old_foto" id="old_foto">
+                                        <div class="row">
+                                            <div class="col-md-4">
+                                                <div class="form-group text-center">
+                                                    <label>Foto Profil</label><br>
+                                                    <img id="preview-image" class="profile-img-preview" src="img/staff/default-male.jpg" alt="Preview">
+                                                    <input type="file" name="foto" id="foto" class="form-control" onchange="previewImage(this);">
+                                                    <small class="text-muted">Format: JPG, JPEG, PNG, GIF. Ukuran maksimal: 2MB.</small>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-8">
+                                                <div class="form-group">
+                                                    <label for="nama" class="required-field">Nama Lengkap</label>
+                                                    <input type="text" name="nama" id="nama" class="form-control" required>
+                                                </div>
+                                                <div class="form-group">
+                                                    <label for="jabatan" class="required-field">Jabatan</label>
+                                                    <input type="text" name="jabatan" id="jabatan" class="form-control" required>
+                                                </div>
+                                                <div class="form-group">
+                                                    <label for="link">Link Profil Canva</label>
+                                                    <input type="text" name="link" id="link" class="form-control" placeholder="https://www.canva.com/design/...">
+                                                    <small class="text-muted">Masukkan link profil dari Canva (opsional).</small>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </form>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-default" data-dismiss="modal">
+                                        <i class="fa fa-times"></i> Batal
+                                    </button>
+                                    <button type="submit" form="profileForm" name="save_profile" class="btn btn-primary">
+                                        <i class="fa fa-save"></i> Simpan Profil
+                                    </button>
+                                </div>
+                            </div>
                         </div>
                     </div>
-                </div>
-                <?php endif; ?>
-                
-                <!-- Button to trigger modal -->
-                <div class="row">
-                    <div class="col-md-12">
-                        <div class="form-section text-center">
-                            <button type="button" class="btn btn-primary btn-lg" data-toggle="modal" data-target="#profileModal">
+
+                    <div class="table-responsive">
+                        <div class="table-header-row">
+                            <h3>Daftar Profil Pegawai</h3>
+                            <button type="button" class="btn btn-primary btn-add-profile-table" data-toggle="modal" data-target="#profileModal">
                                 <i class="fa fa-plus"></i> Tambah Profil Baru
                             </button>
                         </div>
-                    </div>
-                </div>
-                
-                <!-- Modal for Add/Edit Profile -->
-                <div class="modal fade" id="profileModal" tabindex="-1" role="dialog" aria-labelledby="profileModalLabel">
-                    <div class="modal-dialog modal-lg" role="document">
-                        <div class="modal-content">
-                            <div class="modal-header">
-                                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                                <h4 class="modal-title" id="profileModalLabel">Tambah Profil Baru</h4>
-                            </div>
-                            <div class="modal-body">
-                                <form action="admin-profil.php" method="post" enctype="multipart/form-data" id="profileForm">
-                                    <input type="hidden" name="id" id="profile_id">
-                                    <input type="hidden" name="old_foto" id="old_foto">
-                                    <div class="row">
-                                        <div class="col-md-4">
-                                            <div class="form-group text-center">
-                                                <label>Foto Profil</label><br>
-                                                <img id="preview-image" class="profile-img-preview" src="img/staff/default-male.jpg" alt="Preview">
-                                                <input type="file" name="foto" id="foto" class="form-control" onchange="previewImage(this);">
-                                                <small class="text-muted">Format: JPG, JPEG, PNG, GIF. Ukuran maksimal: 2MB.</small>
-                                            </div>
-                                        </div>
-                                        <div class="col-md-8">
-                                            <div class="form-group">
-                                                <label for="nama" class="required-field">Nama Lengkap</label>
-                                                <input type="text" name="nama" id="nama" class="form-control" required>
-                                            </div>
-                                            <div class="form-group">
-                                                <label for="jabatan" class="required-field">Jabatan</label>
-                                                <input type="text" name="jabatan" id="jabatan" class="form-control" required>
-                                            </div>
-                                            <div class="form-group">
-                                                <label for="link">Link Profil Canva</label>
-                                                <input type="text" name="link" id="link" class="form-control" placeholder="https://www.canva.com/design/...">
-                                                <small class="text-muted">Masukkan link profil dari Canva (opsional).</small>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </form>
-                            </div>
-                            <div class="modal-footer">
-                                <button type="button" class="btn btn-default" data-dismiss="modal">
-                                    <i class="fa fa-times"></i> Batal
-                                </button>
-                                <button type="submit" form="profileForm" name="save_profile" class="btn btn-primary">
-                                    <i class="fa fa-save"></i> Simpan Profil
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Tabel Data Profil -->
-                <div class="row">
-                    <div class="col-md-12">
-                        <div class="table-responsive">
-                            <h3>Daftar Profil Pegawai</h3>
-                            <table class="table table-striped table-hover">
-                                <thead>
+                        <table class="table table-striped table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Foto</th>
+                                    <th>Nama</th>
+                                    <th>Jabatan</th>
+                                    <th>Link Profil</th>
+                                    <th>Aksi</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <?php if (empty($profiles)): ?>
+                                <tr>
+                                    <td colspan="5" class="text-center">Tidak ada data profil.</td>
+                                </tr>
+                                <?php else: ?>
+                                    <?php foreach ($profiles as $profile): ?>
                                     <tr>
-                                        <th>ID</th>
-                                        <th>Foto</th>
-                                        <th>Nama</th>
-                                        <th>Jabatan</th>
-                                        <th>Link Profil</th>
-                                        <th>Aksi</th>
+                                        <td>
+                                            <img src="img/staff/<?php echo htmlspecialchars($profile['foto']); ?>" alt="<?php echo htmlspecialchars($profile['nama']); ?>" class="profile-img-table">
+                                        </td>
+                                        <td><?php echo htmlspecialchars($profile['nama']); ?></td>
+                                        <td><?php echo htmlspecialchars($profile['jabatan']); ?></td>
+                                        <td>
+                                            <?php if (!empty($profile['link'])): ?>
+                                            <a href="<?php echo htmlspecialchars($profile['link']); ?>" target="_blank" title="<?php echo htmlspecialchars($profile['link']); ?>">
+                                                <i class="fa fa-external-link"></i> Lihat Profil
+                                            </a>
+                                            <?php else: ?>
+                                            <span class="text-muted">-</span>
+                                            <?php endif; ?>
+                                        </td>
+                                        <td>
+                                            <a href="javascript:void(0);" onclick="editProfile(<?php echo htmlspecialchars(json_encode($profile)); ?>)" class="btn btn-sm btn-primary btn-action">
+                                                <i class="fa fa-edit"></i><span>Edit</span>
+                                            </a>
+                                            <a href="javascript:void(0);" onclick="confirmDelete(<?php echo htmlspecialchars($profile['id']); ?>)" class="btn btn-sm btn-danger btn-action">
+                                                <i class="fa fa-trash"></i><span>Hapus</span>
+                                            </a>
+                                        </td>
                                     </tr>
-                                </thead>
-                                <tbody>
-                                    <?php if (empty($profiles)): ?>
-                                    <tr>
-                                        <td colspan="6" class="text-center">Tidak ada data profil.</td>
-                                    </tr>
-                                    <?php else: ?>
-                                        <?php foreach ($profiles as $profile): ?>
-                                        <tr>
-                                            <td><?php echo $profile['id']; ?></td>
-                                            <td>
-                                                <img src="img/staff/<?php echo $profile['foto']; ?>" alt="<?php echo $profile['nama']; ?>" class="profile-img-table">
-                                            </td>
-                                            <td><?php echo $profile['nama']; ?></td>
-                                            <td><?php echo $profile['jabatan']; ?></td>
-                                            <td>
-                                                <?php if (!empty($profile['link'])): ?>
-                                                <a href="<?php echo $profile['link']; ?>" target="_blank" title="<?php echo $profile['link']; ?>">
-                                                    <i class="fa fa-external-link"></i> Lihat Profil
-                                                </a>
-                                                <?php else: ?>
-                                                <span class="text-muted">-</span>
-                                                <?php endif; ?>
-                                            </td>
-                                            <td>
-                                                <a href="javascript:void(0);" onclick="editProfile(<?php echo htmlspecialchars(json_encode($profile)); ?>)" class="btn btn-sm btn-primary btn-action">
-                                                    <i class="fa fa-edit"></i><span>Edit</span>
-                                                </a>
-                                                <a href="javascript:void(0);" onclick="confirmDelete(<?php echo $profile['id']; ?>)" class="btn btn-sm btn-danger btn-action">
-                                                    <i class="fa fa-trash"></i><span>Hapus</span>
-                                                </a>
-                                            </td>
-                                        </tr>
-                                        <?php endforeach; ?>
-                                    <?php endif; ?>
-                                </tbody>
-                            </table>
-                        </div>
+                                    <?php endforeach; ?>
+                                <?php endif; ?>
+                            </tbody>
+                        </table>
                     </div>
                 </div>
             </div>
@@ -561,9 +585,6 @@ $conn->close();
 
     <a href="#" class="scrollup"><i class="fa fa-angle-up active"></i></a>
 
-    <!-- javascript
-    ================================================== -->
-    <!-- Placed at the end of the document so the pages load faster -->
     <script src="js/jquery.js"></script>
     <script src="js/jquery.easing.1.3.js"></script>
     <script src="js/bootstrap.min.js"></script>
@@ -619,22 +640,23 @@ $conn->close();
             $('#profileForm')[0].reset();
             $('#profile_id').val('');
             $('#old_foto').val('');
-            $('#preview-image').attr('src', 'img/staff/default-male.jpg');
+            $('#preview-image').attr('src', 'img/staff/default-male.jpg'); // Reset to default image
             $('#profileModalLabel').text('Tambah Profil Baru');
         });
 
-        // Show success message in modal if exists
+        // Show success message in modal if exists (ini logika untuk halaman lain jika alert muncul setelah redirect)
         $(document).ready(function() {
-            <?php if ($messageType == 'success'): ?>
-            $('#profileModal').modal('hide');
+            <?php if (!empty($message) && $messageType == 'success'): ?>
+            // Logika untuk menampilkan alert jika perlu, atau ini bisa dihilangkan jika pesan sudah muncul otomatis
+            // alert('<?php echo $message; ?>');
             <?php endif; ?>
 
-            // Trigger modal for add new profile
-            $('.btn-add-profile').click(function() {
+            // Trigger modal for add new profile (menggunakan class btn-add-profile-table yang baru)
+            $('.btn-add-profile-table').click(function() {
                 $('#profileModalLabel').text('Tambah Profil Baru');
                 $('#profileModal').modal('show');
             });
         });
     </script>
 </body>
-</html> 
+</html>

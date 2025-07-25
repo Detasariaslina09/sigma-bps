@@ -267,24 +267,33 @@ jQuery(document).ready(function($) {
 	/*  4. ADMIN MENU MANAGEMENT
 	/* ----------------------------------------------------------- */
 	
-	// Cek apakah sudah login
+    // Cek apakah sudah login
     function checkLogin() {
-        var isLoggedIn = sessionStorage.getItem('isLoggedIn');
-        if (!isLoggedIn) {
-            // Jika belum login, alihkan ke halaman utama (jika bukan di index.php atau login.php)
-            if (window.location.pathname.indexOf('index.php') === -1 && 
-                window.location.pathname.indexOf('login.php') === -1 &&
-                window.location.pathname !== '/' && 
-                window.location.pathname !== '/index.php') {
-                window.location.href = 'index.php';
-            }
-        } else {
-            // Jika sudah login, cek role untuk menampilkan/sembunyikan menu admin
-            showHideAdminMenu();
+        const isLoggedIn = sessionStorage.getItem('isLoggedIn') === 'true';
+        // Definisikan halaman yang bisa diakses publik
+        const publicPages = ['index.php', 'login.php', 'profil.php', 'services.php'];
+        const currentPath = window.location.pathname;
+        const currentPage = currentPath.split('/').pop() || 'index.php';
+        
+        // Jika halaman publik, langsung return
+        if (publicPages.some(page => currentPath.toLowerCase().endsWith(page.toLowerCase()))) {
+            return;
         }
-    }
-    
-    // Fungsi untuk menampilkan/menyembunyikan menu admin berdasarkan role
+        
+        // Jika belum login dan bukan halaman publik, redirect ke halaman login
+        if (!isLoggedIn) {
+            window.location.href = 'login.php';
+            return;
+        }
+        
+        // Jika sudah login, atur menu admin
+        if (isLoggedIn) {
+            showHideAdminMenu();
+        } else {
+            // Sembunyikan menu admin untuk user yang belum login
+            $('.admin-menu').hide();
+        }
+    }    // Fungsi untuk menampilkan/menyembunyikan menu admin berdasarkan role
     function showHideAdminMenu() {
         var role = sessionStorage.getItem('userRole');
         if (role === 'admin') {

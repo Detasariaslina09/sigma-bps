@@ -2,14 +2,9 @@
 session_start();
 require_once 'koneksi.php';
 
-// Periksa status login
-if (!isset($_SESSION['user_id'])) {
-    header("Location: login.php");
-    exit;
-}
-
-// Cek status admin
-$is_admin = isset($_SESSION['role']) && $_SESSION['role'] === 'admin';
+// Halaman ini adalah halaman publik, tidak perlu cek login
+$is_logged_in = isset($_SESSION['user_id']);
+$is_admin = $is_logged_in && isset($_SESSION['role']) && $_SESSION['role'] === 'admin';
 
 // Ambil ID profil dari parameter URL
 $profile_id = isset($_GET['id']) ? (int)$_GET['id'] : 0;
@@ -57,7 +52,7 @@ if ($profile_id > 0) {
     if ($position === 'kepala') {
         $profile = [
             'id' => 0,
-            'nama' => 'Dr. Suhariyanto, M.Si.',
+            'nama' => 'Dr. Hady Suryono M.Si.',
             'jabatan' => 'Kepala BPS Kota Bandar Lampung',
             'foto' => 'kepala.jpg',
             'link' => ''
@@ -65,8 +60,8 @@ if ($profile_id > 0) {
     } elseif ($position === 'kasubbag') {
         $profile = [
             'id' => 0,
-            'nama' => 'Dra. Maryam Hayati, M.M.',
-            'jabatan' => 'Kepala Sub Bagian Tata Usaha',
+            'nama' => 'Gun Gun Nugraha S.Si, M.S.E',
+            'jabatan' => 'Kepala Subbagian Umum',
             'foto' => 'kasubbag.jpg',
             'link' => ''
         ];

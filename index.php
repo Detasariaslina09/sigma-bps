@@ -6,10 +6,7 @@ session_start();
 require_once 'koneksi.php';
 
 // Periksa status login - jika belum login, redirect ke halaman login
-if (!isset($_SESSION['user_id'])) {
-    header("Location: login.php");
-    exit;
-}
+// Halaman ini dapat diakses tanpa login
 
 // Fungsi untuk memeriksa koneksi database dan melakukan reconnect jika terputus
 function check_connection($conn) {
@@ -111,25 +108,26 @@ if (!isset($_SESSION['full_name'])) {
     
     <!-- Sidebar menu -->
     <div class="sidebar">
-        <a class="navbar-brand" href="index.php"><img src="img/logoo.png" alt="logo"/></a>
+        <a class="navbar-brand" href="index.php"><img src="img/logo.png" alt="logo"/></a>
         <ul class="nav navbar-nav">
-            <li class="active"><a href="index.php">Beranda</a></li> 
-            <li><a href="profil.php">Profil dan Roadmap</a></li>
-            <li><a href="monev.php">Monev</a></li>
-            <li><a href="about.php">Layanan</a></li>
+            <li class="active"><a href="index.php">Beranda</a></li>
+            <li><a href="profil.php">Roadmap</a></li>
             <li><a href="services.php">Pusat Aplikasi</a></li>
-            <li><a href="pricing.php">Dokumentasi</a></li>
-            <li><a href="harmoni.php">Harmoni</a></li>
-            
-            <?php if ($is_admin): ?>
-                <!-- Menu Admin - hanya ditampilkan jika role adalah admin -->
-                <li class="admin-menu"><a href="admin-users.php"><i class="fa fa-users"></i> Manajemen User</a></li>
-                <li class="admin-menu"><a href="admin-services.php"><i class="fa fa-cogs"></i> Manajemen Layanan</a></li>
-                <li class="admin-menu"><a href="admin-content.php"><i class="fa fa-file-text"></i> Manajemen Konten</a></li>
-                <li class="admin-menu"><a href="admin-profil.php"><i class="fa fa-id-card"></i> Manajemen Profil</a></li>
+            <?php if (isset($_SESSION['user_id'])): ?>
+                <li><a href="monev.php">Monev</a></li>
+                <li><a href="about.php">Layanan</a></li>
+                <li><a href="pricing.php">Dokumentasi</a></li>
+                <li><a href="harmoni.php">Harmoni</a></li>
+                <?php if ($is_admin): ?>
+                    <li class="admin-menu"><a href="admin-users.php"><i class="fa fa-users"></i> Manajemen User</a></li>
+                    <li class="admin-menu"><a href="admin-services.php"><i class="fa fa-cogs"></i> Manajemen Layanan</a></li>
+                    <li class="admin-menu"><a href="admin-content.php"><i class="fa fa-file-text"></i> Manajemen Konten</a></li>
+                    <li class="admin-menu"><a href="admin-profil.php"><i class="fa fa-user"></i> Manajemen Profil</a></li>
                 <?php endif; ?>
-            
-            <li class="logout-menu"><a href="logout.php" class="logout-link"><i class="fa fa-sign-out"></i> Logout (<?php echo htmlspecialchars($_SESSION['username']); ?>)</a></li>
+                <li class="logout-menu"><a href="logout.php" class="logout-link"><i class="fa fa-sign-out"></i> Logout (<?php echo htmlspecialchars($_SESSION['username']); ?>)</a></li>
+            <?php else: ?>
+                <li><a href="login.php"><i class="fa fa-sign-in"></i> Login</a></li>
+            <?php endif; ?>
         </ul>
     </div>
 

@@ -96,19 +96,83 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             background-color: #dff0d8;
             border-color: #d6e9c6;
         }
+        .login-container {
+            max-width: 400px;
+            margin: 40px auto;
+            background: #fff;
+            border-radius: 12px;
+            box-shadow: 0 4px 24px rgba(0,0,0,0.10);
+            padding: 35px 30px 30px 30px;
+            position: relative;
+        }
+        .login-logo {
+            text-align: center;
+            margin-bottom: 18px;
+        }
+        .login-logo img {
+            width: 80px;
+            height: auto;
+        }
+        .login-title {
+            text-align: center;
+            font-size: 18px;
+            color: #1a3c6e;
+            margin-bottom: 18px;
+            font-weight: 500;
+        }
+        .login-form {
+            margin-top: 10px;
+        }
+        .login-form .form-group {
+            margin-bottom: 18px;
+        }
+        .login-form label {
+            font-weight: 500;
+            color: #1a3c6e;
+        }
+        .login-form .form-control {
+            border-radius: 6px;
+            border: 1px solid #bfcad6;
+            padding: 10px 12px;
+            font-size: 15px;
+        }
+        .login-form .checkbox label {
+            font-size: 14px;
+            color: #666;
+        }
+        .btn-login {
+            width: 100%;
+            background: linear-gradient(90deg, #1a3c6e 0%, #ff9800 100%);
+            color: #fff;
+            border: none;
+            border-radius: 6px;
+            padding: 12px 0;
+            font-size: 16px;
+            font-weight: 600;
+            box-shadow: 0 2px 8px rgba(26,60,110,0.10);
+            transition: background 0.3s, box-shadow 0.3s;
+        }
+        .btn-login:hover {
+            background: linear-gradient(90deg, #ff9800 0%, #1a3c6e 100%);
+            color: #fff;
+            box-shadow: 0 4px 16px rgba(255,152,0,0.15);
+        }
+        .login-footer {
+            text-align: center;
+            margin-top: 18px;
+            color: #888;
+            font-size: 13px;
+        }
     </style>
 </head>
 <body>
     <!-- Sidebar menu -->
     <div class="sidebar">
-        <a class="navbar-brand" href="index.php"><img src="img/logoo.png" alt="logo"/></a>
+        <a class="navbar-brand" href="index.php"><img src="img/logo.png" alt="logo"/></a>
         <ul class="nav navbar-nav">
-            <li><a href="index.php">Beranda</a></li> 
-            <li><a href="about.php">Layanan</a></li>
+            <li><a href="index.php">Beranda</a></li>
+            <li><a href="profil.php">Roadmap</a></li>
             <li><a href="services.php">Pusat Aplikasi</a></li>
-            <li><a href="pricing.php">Dokumentasi</a></li>
-            <li><a href="harmoni.php">Harmoni</a></li>
-            <li class="active"><a href="login.php">Login</a></li>
         </ul>
     </div>
 
@@ -120,7 +184,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             <div class="container">
                 <div class="login-container">
                     <div class="login-logo">
-                        <img src="img/logoo.png" alt="BPS Logo">
+                        <img src="img/logo.png" alt="BPS Logo">
                     </div>
                     <div class="login-title">
                         <p>Silahkan login untuk mengakses sistem</p>
