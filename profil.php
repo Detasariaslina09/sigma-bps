@@ -3,8 +3,8 @@ session_start();
 require_once 'koneksi.php'; // Pastikan file koneksi.php sudah benar dan berfungsi
 
 // Halaman ini adalah halaman publik, tidak perlu cek login
-$is_logged_in = isset($_SESSION['user_id']);
-$is_admin = $is_logged_in && isset($_SESSION['role']) && $_SESSION['role'] === 'admin';
+// $is_logged_in = isset($_SESSION['user_id']);
+// $is_admin = $is_logged_in && isset($_SESSION['role']) && $_SESSION['role'] === 'admin';
 
 // Fungsi untuk memeriksa koneksi database dan melakukan reconnect jika terputus
 function check_connection($conn) {

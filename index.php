@@ -71,7 +71,7 @@ $is_admin = $is_logged_in && $_SESSION['role'] === 'admin';
 
 // Set default full_name jika tidak ada dalam session
 if (!isset($_SESSION['full_name'])) {
-    $_SESSION['full_name'] = $_SESSION['username'];
+    $_SESSION['full_name'] = isset($_SESSION['username']) ? $_SESSION['username'] : '';
 }
 ?>
 <!DOCTYPE html>
