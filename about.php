@@ -282,7 +282,7 @@ $is_admin = $is_logged_in && $_SESSION['role'] === 'admin';
     
     <!-- Sidebar menu -->
     <div class="sidebar">
-        <a class="navbar-brand" href="index.php"><img src="img/logo.png" alt="logo"/></a>
+        <a class="navbar-brand" href="index.php"><img src="img/sigma.png" alt="logo"/></a>
         <ul class="nav navbar-nav">
             <li><a href="index.php">Beranda</a></li>
             <li><a href="profil.php">Profil dan Roadmap</a></li>
@@ -315,7 +315,7 @@ $is_admin = $is_logged_in && $_SESSION['role'] === 'admin';
 			<!-- Bagian Gambar Utama -->
 			<div class="row">
 				<div class="col-md-12">
-					<img src="img/slides/b.png" class="service-image img-responsive" alt="Layanan Kami">
+					<img src="img/kantorr.jpeg" class="service-image img-responsive" alt="Layanan Kami">
                     <div class="text-center">
                         <h2>Layanan BPS Kota Bandar Lampung</h2>
                         <p>Berikut adalah layanan-layanan yang tersedia di BPS Kota Bandar Lampung</p>

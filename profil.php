@@ -454,7 +454,7 @@ if (!isset($_SESSION['full_name'])) {
     </button>
     
     <div class="sidebar">
-        <a class="navbar-brand" href="index.php"><img src="img/logo.png" alt="logo"/></a>
+        <a class="navbar-brand" href="index.php"><img src="img/sigma.png" alt="logo"/></a>
         <ul class="nav navbar-nav">
             <li><a href="index.php">Beranda</a></li>
             <li class="active"><a href="profil.php">Profil dan Roadmap</a></li>

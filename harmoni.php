@@ -140,7 +140,7 @@ $is_admin = $is_logged_in && $_SESSION['role'] === 'admin';
     
     <!-- Sidebar menu -->
     <div class="sidebar">
-        <a class="navbar-brand" href="index.php"><img src="img/logo.png" alt="logo"/></a>
+        <a class="navbar-brand" href="index.php"><img src="img/sigma.png" alt="logo"/></a>
         <ul class="nav navbar-nav">
             <li><a href="index.php">Beranda</a></li>
             <li><a href="profil.php">Profil dan Roadmap</a></li>
@@ -175,7 +175,7 @@ $is_admin = $is_logged_in && $_SESSION['role'] === 'admin';
         </div>
         
         <div class="harmoni-container">
-            <img src="img/2pengaduan.png" alt="Layanan Harmoni" class="harmoni-image">
+            <img src="img/pengaduan.png" alt="Layanan Harmoni" class="harmoni-image">
             
             <div class="harmoni-content">
                 <h3>Hamparan Saran dan Komentar untuk Kantor Nyaman BPS Kota Bandar Lampung</h3>

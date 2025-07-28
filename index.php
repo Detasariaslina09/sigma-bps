@@ -108,7 +108,7 @@ if (!isset($_SESSION['full_name'])) {
     
     <!-- Sidebar menu -->
     <div class="sidebar">
-        <a class="navbar-brand" href="index.php"><img src="img/logo.png" alt="logo"/></a>
+        <a class="navbar-brand" href="index.php"><img src="img/sigma.png" alt="logo"/></a>
         <ul class="nav navbar-nav">
             <li class="active"><a href="index.php">Beranda</a></li>
             <li><a href="profil.php">Roadmap</a></li>
@@ -137,7 +137,7 @@ if (!isset($_SESSION['full_name'])) {
             <div id="main-slider" class="flexslider">
                 <ul class="slides">
                     <li>
-                        <img src="img/slides/b.png" alt="" />
+                        <img src="img/kantorr.jpeg" alt="" />
                         <div class="flex-caption">
                             <h3>BPS Kota Bandar Lampung</h3> 
                         </div>

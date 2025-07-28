@@ -168,7 +168,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 <body>
     <!-- Sidebar menu -->
     <div class="sidebar">
-        <a class="navbar-brand" href="index.php"><img src="img/logo.png" alt="logo"/></a>
+        <a class="navbar-brand" href="index.php"><img src="img/sigma.png" alt="logo"/></a>
         <ul class="nav navbar-nav">
             <li><a href="index.php">Beranda</a></li>
             <li><a href="profil.php">Roadmap</a></li>
@@ -184,7 +184,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             <div class="container">
                 <div class="login-container">
                     <div class="login-logo">
-                        <img src="img/logo.png" alt="BPS Logo">
+                        <img src="img/sigma.png" alt="BPS Logo">
                     </div>
                     <div class="login-title">
                         <p>Silahkan login untuk mengakses sistem</p>
