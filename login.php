@@ -73,111 +73,27 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     <meta name="author" content="" />
     <!-- css -->
     <link href="css/bootstrap.min.css" rel="stylesheet" />
-    <link href="css/fancybox/jquery.fancybox.css" rel="stylesheet">
-    <link href="css/jcarousel.css" rel="stylesheet" />
-    <link href="css/flexslider.css" rel="stylesheet" />
     <link href="css/style.css" rel="stylesheet" />
     <link href="css/font-awesome.css" rel="stylesheet" />
     <link href="css/custom-styles.css" rel="stylesheet" />
-    <style>
-        .alert {
-            padding: 15px;
-            margin-bottom: 20px;
-            border: 1px solid transparent;
-            border-radius: 4px;
-        }
-        .alert-danger {
-            color: #a94442;
-            background-color: #f2dede;
-            border-color: #ebccd1;
-        }
-        .alert-success {
-            color: #3c763d;
-            background-color: #dff0d8;
-            border-color: #d6e9c6;
-        }
-        .login-container {
-            max-width: 400px;
-            margin: 40px auto;
-            background: #fff;
-            border-radius: 12px;
-            box-shadow: 0 4px 24px rgba(0,0,0,0.10);
-            padding: 35px 30px 30px 30px;
-            position: relative;
-        }
-        .login-logo {
-            text-align: center;
-            margin-bottom: 18px;
-        }
-        .login-logo img {
-            width: 80px;
-            height: auto;
-        }
-        .login-title {
-            text-align: center;
-            font-size: 18px;
-            color: #1a3c6e;
-            margin-bottom: 18px;
-            font-weight: 500;
-        }
-        .login-form {
-            margin-top: 10px;
-        }
-        .login-form .form-group {
-            margin-bottom: 18px;
-        }
-        .login-form label {
-            font-weight: 500;
-            color: #1a3c6e;
-        }
-        .login-form .form-control {
-            border-radius: 6px;
-            border: 1px solid #bfcad6;
-            padding: 10px 12px;
-            font-size: 15px;
-        }
-        .login-form .checkbox label {
-            font-size: 14px;
-            color: #666;
-        }
-        .btn-login {
-            width: 100%;
-            background: linear-gradient(90deg, #1a3c6e 0%, #ff9800 100%);
-            color: #fff;
-            border: none;
-            border-radius: 6px;
-            padding: 12px 0;
-            font-size: 16px;
-            font-weight: 600;
-            box-shadow: 0 2px 8px rgba(26,60,110,0.10);
-            transition: background 0.3s, box-shadow 0.3s;
-        }
-        .btn-login:hover {
-            background: linear-gradient(90deg, #ff9800 0%, #1a3c6e 100%);
-            color: #fff;
-            box-shadow: 0 4px 16px rgba(255,152,0,0.15);
-        }
-        .login-footer {
-            text-align: center;
-            margin-top: 18px;
-            color: #888;
-            font-size: 13px;
-        }
-    </style>
+    <link href="css/login.css" rel="stylesheet" />
 </head>
-<body>
+<body class="login-background">
+    <!-- Mobile Menu Toggle Button -->
+    <button class="mobile-menu-toggle">
+        <i class="fa fa-bars"></i> Menu
+    </button>
+    
     <!-- Sidebar menu -->
     <div class="sidebar">
         <a class="navbar-brand" href="index.php"><img src="img/sigma.png" alt="logo"/></a>
         <ul class="nav navbar-nav">
             <li><a href="index.php">Beranda</a></li>
-            <li><a href="profil.php">Roadmap</a></li>
+            <li><a href="profil.php">Profil dan Roadmap</a></li>
             <li><a href="services.php">Pusat Aplikasi</a></li>
+            <li class="active"><a href="login.php">Login</a></li>
         </ul>
     </div>
-
-    <!-- Tombol menu untuk versi mobile -->
-    <button class="mobile-menu-toggle" style="display:none;">☰ Menu</button>
 
     <div id="wrapper">
         <section id="content">
@@ -187,7 +103,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                         <img src="img/sigma.png" alt="BPS Logo">
                     </div>
                     <div class="login-title">
-                        <p>Silahkan login untuk mengakses sistem</p>
+                        Login SIGMA
+                    </div>
+                    <div class="login-subtitle">
+                        Sistem Informasi Pegawai dan Manajemen Aktivitas
                     </div>
                     
                     <?php if (!empty($login_error)): ?>
@@ -218,8 +137,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                 </label>
                             </div>
                         </div>
-                        <button type="submit" class="btn-login">Login</button>
+                        <button type="submit" class="btn-login">
+                            <i class="fa fa-sign-in"></i> Login
+                        </button>
                     </form>
+                    
+                    <div class="login-footer">
+                        <small>© 2025 BPS Kota Bandar Lampung. Semua Hak Dilindungi.</small>
+                    </div>
                 </div>
             </div>
         </section>
@@ -238,7 +163,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                             <p>Semua Hak Dilindungi</p>
                         </div>
                     </div>
-                    </div>
                 </div>
             </div>
         </footer>
@@ -246,31 +170,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     <a href="#" class="scrollup"><i class="fa fa-angle-up active"></i></a>
 
-    <!-- javascript
-    ================================================== -->
-    <!-- Placed at the end of the document so the pages load faster -->
+    <!-- javascript -->
     <script src="js/jquery.js"></script>
-    <script src="js/jquery.easing.1.3.js"></script>
     <script src="js/bootstrap.min.js"></script>
-    <script src="js/jquery.fancybox.pack.js"></script>
-    <script src="js/jquery.fancybox-media.js"></script> 
-    <script src="js/portfolio/jquery.quicksand.js"></script>
-    <script src="js/portfolio/setting.js"></script>
-    <script src="js/jquery.flexslider.js"></script>
-    <script src="js/animate.js"></script>
     <script src="js/custom.js"></script>
-    <script>
-        // Mobile menu toggle
-        $(document).ready(function() {
-            $('.mobile-menu-toggle').click(function() {
-                $('.sidebar').toggleClass('open');
-            });
-            
-            // Auto hide alerts after 5 seconds
-            setTimeout(function() {
-                $('.alert').fadeOut('slow');
-            }, 5000);
-        });
-    </script>
+    <script src="js/login.js"></script>
 </body>
 </html> 

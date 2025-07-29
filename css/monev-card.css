@@ -1,0 +1,199 @@
+.section-title {
+    text-align: center;
+    margin-bottom: 50px;
+    position: relative;
+    padding-bottom: 20px;
+}
+
+.section-title:after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 100px;
+    height: 3px;
+    background: linear-gradient(to right, #ff9800, #e65100);
+    border-radius: 2px;
+}
+
+.section-title h2 {
+    color: #1a3c6e;
+    font-size: 32px;
+    font-weight: 600;
+    margin-bottom: 10px;
+}
+
+.section-title p {
+    color: #666;
+    font-size: 16px;
+}
+
+.monev-container {
+    margin-top: 30px;
+    position: relative;
+}
+
+.monev-card {
+    background: #fff;
+    border-radius: 15px;
+    overflow: hidden;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    margin-bottom: 30px;
+    transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+    height: 200px;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    border: 2px solid rgba(255, 255, 255, 0.1);
+}
+
+.monev-card:hover {
+    transform: translateY(-5px) scale(1.02);
+    box-shadow: 0 15px 30px rgba(0,0,0,0.2);
+    border-color: rgba(255, 152, 0, 0.3);
+}
+
+.monev-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(to bottom, 
+        rgba(0,0,0,0), 
+        rgba(0,0,0,0.2) 50%,
+        rgba(0,0,0,0.7));
+    z-index: 1;
+    transition: all 0.3s ease;
+}
+
+.monev-card:hover::before {
+    background: linear-gradient(to bottom, 
+        rgba(0,0,0,0), 
+        rgba(0,0,0,0.3) 50%,
+        rgba(0,0,0,0.8));
+}
+
+.monev-content {
+    padding: 15px;
+    text-align: center;
+    position: relative;
+    z-index: 2;
+    background: transparent;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.monev-card:hover .monev-content {
+    padding-bottom: 20px;
+}
+
+.monev-content h3 {
+    color: #fff;
+    font-size: 18px;
+    margin: 0;
+    text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
+    transition: all 0.3s ease;
+}
+
+.monev-card:hover .monev-content h3 {
+    transform: translateY(-2px);
+}
+
+.monev-content p {
+    color: #fff;
+    font-size: 13px;
+    margin-bottom: 15px;
+    min-height: 40px;
+    opacity: 0.95;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
+}
+
+.btn-monev {
+    background: #ff9800;
+    color: white !important;
+    padding: 6px 25px;
+    border-radius: 25px;
+    border: none;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    margin-bottom: 5px;
+    display: inline-block;
+    position: relative;
+    z-index: 2;
+    font-size: 13px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.btn-monev i {
+    margin-left: 8px;
+    transition: transform 0.3s ease;
+}
+
+.btn-monev:hover {
+    background: #e65100;
+    color: white !important;
+    text-decoration: none;
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(230,81,0,0.3);
+}
+
+.btn-monev:hover i {
+    transform: translateX(3px);
+}
+
+.monev-content .btn-monev,
+.monev-content .btn-monev:hover,
+.monev-content .btn-monev:focus,
+.monev-content .btn-monev:active {
+    color: white !important;
+}
+
+.monev-content .btn-monev i {
+    color: white !important;
+}
+
+@media (max-width: 768px) {
+    .section-title h2 {
+        font-size: 28px;
+    }
+
+    .section-title p {
+        font-size: 14px;
+    }
+
+    .monev-card {
+        height: 180px;
+    }
+
+    .monev-content {
+        padding: 15px 12px;
+    }
+
+    .monev-content h3 {
+        font-size: 16px;
+    }
+
+    .monev-content p {
+        font-size: 12px;
+        margin-bottom: 12px;
+        min-height: 35px;
+    }
+
+    .btn-monev {
+        padding: 5px 20px;
+        font-size: 12px;
+    }
+}

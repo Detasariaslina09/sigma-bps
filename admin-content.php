@@ -9,6 +9,10 @@ if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'admin') {
     exit;
 }
 
+// Definisi variabel status login dan admin
+$is_logged_in = isset($_SESSION['user_id']);
+$is_admin = $is_logged_in && $_SESSION['role'] === 'admin';
+
 // Include koneksi database
 require_once 'koneksi.php';
 
@@ -178,210 +182,11 @@ if (!$image || !file_exists('img/' . $image)) {
     <link href="css/style.css" rel="stylesheet" />
     <link href="css/custom-styles.css" rel="stylesheet" />
     <link href="css/font-awesome.css" rel="stylesheet" />
-    <link href="css/sidebar.css" rel="stylesheet" />
+    <link href="css/admin-content.css" rel="stylesheet" />
     
-    <script>
-        // Simpan informasi login di sessionStorage
-        sessionStorage.setItem('isLoggedIn', 'true');
-        sessionStorage.setItem('username', '<?php echo addslashes($_SESSION['username']); ?>');
-        sessionStorage.setItem('userRole', '<?php echo addslashes($_SESSION['role']); ?>');
-    </script>
-    
-    <style>
-        .admin-content {
-            background: #fff;
-            padding: 30px;
-            border-radius: 10px;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-            margin-bottom: 30px;
-        }
-        
-        .admin-header {
-            margin-bottom: 30px;
-            padding-bottom: 20px;
-            border-bottom: 1px solid #eee;
-        }
-        
-        .admin-header h2 {
-            font-size: 24px;
-            color: #333;
-            margin-top: 0;
-        }
-        
-        .content-preview {
-            margin-top: 20px;
-        }
-        
-        .content-preview img {
-            max-width: 100%;
-            height: auto;
-            border-radius: 5px;
-            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
-        }
-        
-        /* Mobile menu toggle - REMOVED to use global styling */
-        
-        @media (max-width: 768px) {
-            
-            
-            
-            
-            
-            
-            
-            
-            .admin-content {
-                padding: 20px;
-            }
-        }
-        
-        .loading-overlay {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(255,255,255,0.8);
-            z-index: 9999;
-            text-align: center;
-        }
-        
-        .loading-spinner {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            color: #ff9800;
-        }
-        
-        .card {
-            border: none;
-            border-radius: 8px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-            margin-bottom: 20px;
-            background-color: #fff;
-        }
-        
-        .card-header {
-            background-color: #f8f9fa;
-            border-bottom: 1px solid #eee;
-            padding: 15px 20px;
-            border-radius: 8px 8px 0 0;
-            font-weight: 600;
-        }
-        
-        .card-body {
-            padding: 15px;
-        }
-        
-        .file-upload-wrapper {
-            position: relative;
-            overflow: hidden;
-            margin: 10px 0;
-        }
-        
-        .file-upload-input {
-            position: absolute;
-            top: 0;
-            right: 0;
-            margin: 0;
-            padding: 0;
-            font-size: 20px;
-            cursor: pointer;
-            opacity: 0;
-            filter: alpha(opacity=0);
-            width: 100%;
-            height: 100%;
-        }
-        
-        .file-upload-button {
-            display: block;
-            padding: 12px 16px;
-            background: #f8f9fa;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            cursor: pointer;
-            width: 100%;
-            text-align: left;
-            transition: all 0.3s;
-        }
-        
-        .file-upload-button:hover {
-            background: #f0f0f0;
-            border-color: #ccc;
-        }
-        
-        .header-action-buttons {
-            margin-bottom: 20px;
-        }
-        
-        footer {
-            background-color: #1a3c6e;
-            color: #fff;
-            padding: 40px 0;
-            position: relative;
-            margin-top: 50px;
-        }
-
-        footer h4 {
-            color: #fff;
-            font-size: 24px;
-            margin-bottom: 20px;
-            font-weight: 600;
-        }
-
-        footer address {
-            color: #fff;
-            margin-bottom: 30px;
-            line-height: 1.8;
-            font-size: 16px;
-        }
-
-        footer .text-center {
-            position: relative;
-        }
-
-        footer p {
-            color: #fff;
-            margin: 5px 0;
-            font-size: 15px;
-            opacity: 0.9;
-        }
-        
-        .help-block {
-            color: #777;
-            font-size: 12px;
-            margin-top: 5px;
-        }
-        
-        .text-muted {
-            color: #777;
-        }
-
-        .btn-primary {
-            background-color: #ff9800;
-            border-color: #ff9800;
-        }
-        
-        .btn-primary:hover, .btn-primary:focus {
-            background-color: #e65100;
-            border-color: #e65100;
-        }
-        .sidebar ul.nav.navbar-nav li.active a {
-            background-color: #444;
-            border-left: 4px solid #007bff;
-            color: #fff;
-            font-weight: bold;
-        }
-        
-        .sidebar .admin-menu.active a {
-            background-color: #ff9800;
-            border-left: 4px solid #007bff;
-            color: #fff;
-            font-weight: bold;
-        }
-    </style>
+    <!-- Meta tags for JavaScript -->
+    <meta name="username" content="<?php echo htmlspecialchars($_SESSION['username']); ?>">
+    <meta name="role" content="<?php echo htmlspecialchars($_SESSION['role']); ?>">
 </head>
 <body>
     <!-- Loading overlay -->
@@ -403,21 +208,22 @@ if (!$image || !file_exists('img/' . $image)) {
         <ul class="nav navbar-nav">
             <li><a href="index.php">Beranda</a></li>
             <li><a href="profil.php">Profil dan Roadmap</a></li>
-            <li><a href="monev.php">Monev</a></li>
-            <li><a href="about.php">Layanan</a></li>
             <li><a href="services.php">Pusat Aplikasi</a></li>
-            <li><a href="pricing.php">Dokumentasi</a></li>
-            <li><a href="harmoni.php">Harmoni</a></li>
-            
-            <?php if ($_SESSION['role'] === 'admin'): ?>
-                <!-- Menu Admin - hanya ditampilkan jika role adalah admin -->
-                <li class="admin-menu"><a href="admin-users.php"><i class="fa fa-users"></i> Manajemen User</a></li>
-                <li class="admin-menu"><a href="admin-services.php"><i class="fa fa-cogs"></i> Manajemen Layanan</a></li>
-                <li class="admin-menu active"><a href="admin-content.php"><i class="fa fa-file-text"></i> Manajemen Konten</a></li>
-                <li class="admin-menu"><a href="admin-profil.php"><i class="fa fa-user"></i> Manajemen Profil</a></li>
+            <?php if ($is_logged_in): ?>
+                <li><a href="monev.php">Monev</a></li>
+                <li><a href="about.php">Layanan</a></li>
+                <li><a href="pricing.php">Dokumentasi</a></li>
+                <li><a href="harmoni.php">Harmoni</a></li>
+                <?php if ($is_admin): ?>
+                    <li class="admin-menu"><a href="admin-users.php"><i class="fa fa-users"></i> Manajemen User</a></li>
+                    <li class="admin-menu"><a href="admin-services.php"><i class="fa fa-cogs"></i> Manajemen Layanan</a></li>
+                    <li class="admin-menu active"><a href="admin-content.php"><i class="fa fa-file-text"></i> Manajemen Konten</a></li>
+                    <li class="admin-menu"><a href="admin-profil.php"><i class="fa fa-user"></i> Manajemen Profil</a></li>
+                <?php endif; ?>
+                <li class="logout-menu"><a href="logout.php" class="logout-link"><i class="fa fa-sign-out"></i> Logout (<?php echo htmlspecialchars($_SESSION['username']); ?>)</a></li>
+            <?php else: ?>
+                <li><a href="login.php">Login</a></li>
             <?php endif; ?>
-            
-            <li class="logout-menu"><a href="logout.php" class="logout-link"><i class="fa fa-sign-out"></i> Logout (<?php echo htmlspecialchars($_SESSION['username']); ?>)</a></li>
         </ul>
     </div>
 
@@ -481,10 +287,10 @@ if (!$image || !file_exists('img/' . $image)) {
                                         <strong><i class="fa fa-eye"></i> Preview Gambar</strong>
                                     </div>
                                     <div class="image-preview-container" id="imagePreviewContainer">
-                                        <img id="imagePreview" src="img/<?php echo htmlspecialchars($image); ?>" class="img-responsive" alt="Preview" style="max-height: 200px; max-width: 100%;">
+                                        <img id="imagePreview" src="img/<?php echo htmlspecialchars($image); ?>" class="img-responsive" alt="Preview">
                                     </div>
                                     <div class="card-body text-center">
-                                        <small>Preview Gambar akan muncul setelah Perubahan disimpan</small>
+                                        <small>Simpan untuk melihat perubahan</small>
                                     </div>
                                 </div>
                                 
@@ -528,62 +334,7 @@ if (!$image || !file_exists('img/' . $image)) {
     <script src="js/jquery.js"></script>
     <script src="js/bootstrap.min.js"></script>
     <script src="js/custom.js"></script>
-    <script src="js/sidebar.js"></script>
-    <script>
-        $(document).ready(function() {
-            // Preview gambar saat dipilih
-            $('#image').change(function() {
-                var file = this.files[0];
-                if (file) {
-                    var reader = new FileReader();
-                    reader.onload = function(e) {
-                        $('#imagePreview').attr('src', e.target.result);
-                    }
-                    reader.readAsDataURL(file);
-                }
-            });
-            
-            // Trigger file input when clicking on preview container
-            $('#imagePreviewContainer').on('click', function() {
-                $('#image').click();
-            });
-            
-            // File input label update
-            $('.file-upload-input').on('change', function() {
-                var fileName = $(this).val().split('\\').pop();
-                if(fileName) {
-                    $('.file-upload-button').text(fileName);
-                } else {
-                    $('.file-upload-button').text('Pilih File Gambar');
-                }
-            });
-            
-            // Form submission with loading overlay
-            $('#contentForm').on('submit', function() {
-                $('#loadingOverlay').fadeIn(300);
-            });
-            
-            // Auto-hide alerts after 5 seconds
-            setTimeout(function() {
-                $('.alert').slideUp();
-            }, 5000);
-            
-            // Initialize TinyMCE if available
-            if(typeof tinymce !== 'undefined') {
-                tinymce.init({
-                    selector: '#description',
-                    height: 300,
-                    menubar: false,
-                    plugins: [
-                        'advlist autolink lists link image charmap print preview anchor',
-                        'searchreplace visualblocks code fullscreen',
-                        'insertdatetime media table paste code help wordcount'
-                    ],
-                    toolbar: 'undo redo | formatselect | bold italic backcolor | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | removeformat | help'
-                });
-            }
-        });
-    </script>
+    <script src="js/admin-content.js"></script>
 </body>
 </html>
 <?php $conn->close(); ?> 

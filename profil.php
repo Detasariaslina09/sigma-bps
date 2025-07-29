@@ -1,49 +1,9 @@
 <?php
 session_start();
-require_once 'koneksi.php'; // Pastikan file koneksi.php sudah benar dan berfungsi
+require_once 'koneksi.php';
+require_once 'includes/database.php';
 
-// Halaman ini adalah halaman publik, tidak perlu cek login
-// $is_logged_in = isset($_SESSION['user_id']);
-// $is_admin = $is_logged_in && isset($_SESSION['role']) && $_SESSION['role'] === 'admin';
-
-// Fungsi untuk memeriksa koneksi database dan melakukan reconnect jika terputus
-function check_connection($conn) {
-    // Pastikan $conn adalah objek mysqli sebelum memanggil ping()
-    if ($conn instanceof mysqli && !$conn->ping()) {
-        // Reconnect jika koneksi terputus
-        $conn->close();
-        $servername = "127.0.0.1";
-        $username   = "root";
-        $password   = "";
-        $dbname     = "sigap";
-        $port       = 3306;
-        
-        $conn = new mysqli($servername, $username, $password, $dbname, $port);
-        
-        if ($conn->connect_error) {
-            die("Connection failed: " . $conn->connect_error);
-        }
-    }
-    return $conn;
-}
-
-// Pastikan koneksi aktif
-// Variabel $conn seharusnya sudah tersedia dari require_once 'koneksi.php';
-// Jika koneksi.php hanya mendefinisikan variabel tanpa membuat koneksi,
-// Anda perlu membuatnya di sini atau di koneksi.php
-// Contoh asumsi $conn sudah ada dari koneksi.php:
-if (!isset($conn) || !$conn instanceof mysqli) {
-    // Jika koneksi belum dibuat atau bukan objek mysqli yang valid
-    $servername = "127.0.0.1";
-    $username   = "root";
-    $password   = "";
-    $dbname     = "sigap";
-    $port       = 3306;
-    $conn = new mysqli($servername, $username, $password, $dbname, $port);
-    if ($conn->connect_error) {
-        die("Initial Connection failed: " . $conn->connect_error);
-    }
-}
+$conn = get_database_connection();
 
 $conn = check_connection($conn);
 
@@ -56,35 +16,22 @@ $staff = [];
 $sql = "SELECT * FROM profil ORDER BY id ASC";
 $result = $conn->query($sql);
 
-if ($result) { // Pastikan query berhasil
-    if ($result->num_rows > 0) {
-        while ($row = $result->fetch_assoc()) {
-            // --- Bagian Debugging Jabatan dari DB ---
-            // echo "Processing DB row: ID=" . $row['id'] . ", Nama=" . htmlspecialchars($row['nama']) . ", Jabatan Asli DB='" . htmlspecialchars($row['jabatan']) . "'<br>";
-            // --- Akhir Bagian Debugging Jabatan dari DB ---
+if ($result && $result->num_rows > 0) {
+    while ($row = $result->fetch_assoc()) {
+        $jabatan_lower_trimmed = trim(strtolower($row['jabatan']));
 
-            $jabatan_lower_trimmed = trim(strtolower($row['jabatan']));
-
-            // Pisahkan data berdasarkan jabatan
-            if (strpos($jabatan_lower_trimmed, 'kepala bps kota bandar lampung') !== false) {
-                $kepala = $row;
-                // echo "--> Masuk KEPALA<br>"; // Debugging
-            } else if (strpos($jabatan_lower_trimmed, 'kepala subbagian umum') !== false || strpos($jabatan_lower_trimmed, 'kasubbag umum') !== false) {
-                // Penambahan `trim()` dan opsi `kasubbag umum` untuk fleksibilitas
-                $kasubbag = $row;
-                // echo "--> Masuk KASUBBAG<br>"; // Debugging
-            } else {
-                $staff[] = $row;
-                // echo "--> Masuk STAFF<br>"; // Debugging
-            }
+        if (strpos($jabatan_lower_trimmed, 'kepala bps kota bandar lampung') !== false) {
+            $kepala = $row;
+        } else if (strpos($jabatan_lower_trimmed, 'kepala subbagian umum') !== false || 
+                   strpos($jabatan_lower_trimmed, 'kasubbag umum') !== false) {
+            $kasubbag = $row;
+        } else {
+            $staff[] = $row;
         }
     }
-} else {
-    // echo "Error dalam query: " . $conn->error . "<br>"; // Debugging jika query gagal
 }
 
 
-// Jika tidak ada data kepala atau kasubbag dari database, gunakan data default
 if (!$kepala) {
     $kepala = [
         'id' => 0,
@@ -93,7 +40,6 @@ if (!$kepala) {
         'foto' => 'kepala.jpg',
         'link' => ''
     ];
-    // echo "Menggunakan data KEPALA default.<br>"; // Debugging
 }
 
 if (!$kasubbag) {
@@ -104,7 +50,6 @@ if (!$kasubbag) {
         'foto' => 'kasubbag.jpg',
         'link' => ''
     ];
-    // echo "Menggunakan data KASUBBAG default.<br>"; // Debugging
 }
 
 // Tutup koneksi database
@@ -131,320 +76,68 @@ if (!isset($_SESSION['full_name'])) {
     <meta name="description" content="Profil dan Roadmap BPS Kota Bandar Lampung" />
     <meta name="author" content="" />
     <link href="css/bootstrap.min.css" rel="stylesheet" />
-    <link href="css/fancybox/jquery.fancybox.css" rel="stylesheet">
-    <link href="css/jcarousel.css" rel="stylesheet" />
-    <link href="css/flexslider.css" rel="stylesheet" />
-    <link href="js/owl-carousel/owl.carousel.css" rel="stylesheet"> 
     <link href="css/style.css" rel="stylesheet" />
     <link href="css/custom-styles.css" rel="stylesheet" />
     <link href="css/font-awesome.css" rel="stylesheet" />
-    
+    <link href="css/org-chart.css" rel="stylesheet" />
     <style>
-        /* Styling untuk struktur organisasi */
-        .org-chart {
-            margin: 30px auto;
-            max-width: 1000px;
+        /* Custom styling untuk halaman profil */
+        body {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
         }
         
-        .org-chart-box {
-            padding: 15px;
-            border-radius: 8px;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-            margin-bottom: 20px;
-            text-align: center;
-            transition: all 0.3s ease;
-            background-color: #fff;
-            border-left: 5px solid #1a3c6e;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
+        #wrapper {
+            background: transparent;
         }
         
-        .org-chart-box:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 8px 15px rgba(0,0,0,0.2);
+        #content {
+            padding-top: 20px;
+            background: transparent;
         }
         
-        .org-chart-box h4 {
-            margin: 10px 0 5px;
-            color: #1a3c6e;
-            font-weight: 600;
-            font-size: 16px;
+        .container {
+            padding-top: 10px;
         }
-        
-        .org-chart-box p {
-            margin: 0;
-            color: #666;
-            font-size: 14px;
-        }
-        
-        .org-chart-head {
-            background-color: #1a3c6e;
-            color: white;
-            border-left: 2px solid #ff9800;
-            width: calc(16.666% - 8px);
-            min-width: 160px;
-            max-width: 180px;
-            margin: 0 auto 8px auto;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            border-radius: 8px;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.08);
-            padding: 8px;
-            text-align: center;
-        }
-        
-        .org-chart-head:hover {
-            background-color: #234b87;
-            transform: translateY(-5px);
-            box-shadow: 0 8px 15px rgba(0,0,0,0.2);
-        }
-        
-        .org-chart-head h4, .org-chart-head p {
-            color: white;
-        }
-        
-        .org-chart-subhead {
-            background-color: #2c5aa0;
-            color: white;
-            border-left: 2px solid #ff9800;
-            width: calc(16.666% - 8px);
-            min-width: 160px;
-            max-width: 180px;
-            margin: 0 8px 8px 8px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            border-radius: 8px;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.08);
-            padding: 8px;
-            text-align: center;
-        }
-        
-        .org-chart-subhead:hover {
-            background-color: #3468b5;
-            transform: translateY(-5px);
-            box-shadow: 0 8px 15px rgba(0,0,0,0.2);
-        }
-        
-        .org-chart-subhead h4, .org-chart-subhead p {
-            color: white;
-        }
-        
-        .org-chart-staff {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
-            gap: 8px;
-            margin-top: 10px;
-        }
-        
-        .staff-box {
-            flex: 0 0 calc(16.666% - 8px);
-            padding: 8px;
-            border-radius: 8px;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.08);
-            text-align: center;
-            background-color: #f9f9f9;
-            border-left: 2px solid #2c5aa0;
-            transition: all 0.3s ease;
-            cursor: pointer;
-            margin-bottom: 8px;
-        }
-        
-        .staff-box:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 3px 6px rgba(0,0,0,0.12);
-            background-color: #f0f7ff;
-            border-left-color: #ff9800;
-        }
-        
-        .staff-photo {
-            width: 80px;
-            height: 80px;
-            border-radius: 50%;
-            margin: 0 auto 10px;
-            overflow: hidden;
-            border: 3px solid #1a3c6e;
-        }
-        
-        .leader-photo {
-            width: 80px;
-            height: 80px;
-            border-radius: 50%;
-            margin: 0 auto 10px;
-            overflow: hidden;
-            border: 3px solid #ff9800;
-        }
-        
-        .staff-photo img, .leader-photo img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-        
-        .staff-box h4 {
-            font-size: 14px;
-            margin: 0;
-            color: #1a3c6e;
-        }
-        
-        .staff-box p {
-            font-size: 12px;
-            margin: 5px 0 0;
-            color: #666;
-        }
-        
-        .download-btn {
-            display: inline-block;
-            background-color: #1a3c6e;
-            color: white;
-            padding: 10px 20px;
-            border-radius: 30px;
-            text-decoration: none;
-            font-weight: 600;
-            transition: all 0.3s ease;
-            margin-top: 10px;
-            box-shadow: 0 3px 10px rgba(0,0,0,0.2);
-            border: 2px solid #1a3c6e;
-        }
-        
-        .download-btn:hover {
-            background-color: #ff9800;
-            color: white;
-            transform: translateY(-3px);
-            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
-            border-color: #ff9800;
-        }
-        
-        .download-btn i {
-            margin-right: 8px;
-        }
-        
         .section-title {
-            text-align: center;
-            margin-bottom: 20px;
+            margin-bottom: 0;
+            margin-top: 0;
         }
-        
         .section-title h2 {
-            font-size: 32px;
-            font-weight: 600;
-            position: relative;
-            margin-bottom: 20px;
-            padding-bottom: 20px;
-            text-transform: uppercase;
+            margin-bottom: 0;
+            padding-bottom: 0;
+            color: #1a3c6e;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.1);
         }
-        
         .section-title h2:after {
-            content: '';
-            position: absolute;
-            display: block;
-            width: 60px;
-            height: 4px;
-            margin: 20px auto 0;
-            background: #ff9800;
-            border-radius: 2px;
-            bottom: 0;
-            left: 50%;
-            transform: translateX(-50%);
-        }
-        
-        .section-actions {
-            text-align: center;
-            margin-bottom: 30px;
-        }
-        
-        /* Modal untuk profil pegawai */
-        .modal-profile {
             display: none;
-            position: fixed;
-            z-index: 9999;
-            left: 0;
-            top: 0;
-            width: 100%;
-            height: 100%;
-            overflow: auto;
-            background-color: rgba(0,0,0,0.7);
+        }
+        .section-title p {
+            margin-bottom: 5px;
+        }
+        .org-chart {
+            margin-top: 0;
+        }
+        .org-chart-head {
+            margin-top: 0;
+            margin-bottom: 10px;
+        }
+        .org-chart .row:first-child {
+            margin-bottom: 5px;
+        }
+        .org-chart .row:nth-child(2) {
+            margin-bottom: 5px;
         }
         
-        .modal-content {
-            position: relative;
-            background-color: #fefefe;
-            margin: 5% auto;
-            padding: 0;
-            width: 80%;
-            max-width: 800px;
-            border-radius: 8px;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
-            animation: modalopen 0.4s;
+        /* Enhanced styling untuk kotak pegawai */
+        .org-chart-box, .staff-box {
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            border: 1px solid rgba(255,255,255,0.8);
         }
         
-        .modal-header {
-            padding: 15px;
-            background-color: #1a3c6e;
-            color: white;
-            border-top-left-radius: 8px;
-            border-top-right-radius: 8px;
-        }
-        
-        .modal-body {
-            padding: 0;
-            height: 80vh;
-        }
-        
-        .modal-body iframe {
-            width: 100%;
-            height: 100%;
-            border: none;
-        }
-        
-        .close-modal {
-            color: white;
-            float: right;
-            font-size: 28px;
-            font-weight: bold;
-            cursor: pointer;
-        }
-        
-        .close-modal:hover {
-            color: #ff9800;
-        }
-        
-        @keyframes modalopen {
-            from {opacity: 0; transform: translateY(-50px);}
-            to {opacity: 1; transform: translateY(0);}
-        }
-        
-        @media (max-width: 992px) {
-            .staff-box {
-                flex: 0 0 calc(33.333% - 15px);
-            }
-            
-            .org-chart-subhead {
-                margin-right: 50px;
-            }
-        }
-        
-        @media (max-width: 768px) {
-            .staff-box {
-                flex: 0 0 calc(50% - 15px);
-            }
-            
-            .org-chart-subhead {
-                margin-right: auto;
-                margin-left: auto;
-            }
-        }
-        
-        @media (max-width: 480px) {
-            .staff-box {
-                flex: 0 0 100%;
-            }
+        .org-chart-box:hover, .staff-box:hover {
+            box-shadow: 0 8px 25px rgba(0,0,0,0.2);
+            transform: translateY(-3px);
         }
     </style>
 </head>
@@ -484,15 +177,9 @@ if (!isset($_SESSION['full_name'])) {
         <section id="content">
             <div class="container">
                 <div class="row">
-                    <div class="col-md-12">
+                    <div class="col-md-12 text-center">
                         <div class="section-title">
                             <h2>Profil dan Roadmap</h2>
-                            <p>Struktur Kepegawaian BPS Kota Bandar Lampung</p>
-                        </div>
-                        <div class="section-actions">
-                            <a href="#" class="download-btn">
-                                <i class="fa fa-download"></i> Download Publikasi Peta SDM
-                            </a>
                         </div>
                     </div>
                 </div>
@@ -565,6 +252,17 @@ if (!isset($_SESSION['full_name'])) {
                     </div>
                     
                     </div>
+                </div>
+                
+                <div class="row">
+                    <div class="col-md-12 text-center">
+                        <div class="section-actions text-center" style="margin-top: 40px;">
+                            <a href="#" class="download-btn">
+                                <i class="fa fa-download"></i> Download Publikasi Peta SDM
+                            </a>
+                        </div>
+                    </div>
+                </div>
             </div>
         </section>
         
@@ -593,20 +291,8 @@ if (!isset($_SESSION['full_name'])) {
     <script src="js/jquery.js"></script>
     <script src="js/jquery.easing.1.3.js"></script>
     <script src="js/bootstrap.min.js"></script>
-    <script src="js/jquery.fancybox.pack.js"></script>
-    <script src="js/jquery.fancybox-media.js"></script> 
-    <script src="js/portfolio/jquery.quicksand.js"></script>
-    <script src="js/portfolio/setting.js"></script>
-    <script src="js/jquery.flexslider.js"></script>
     <script src="js/animate.js"></script>
     <script src="js/custom.js"></script>
-    <script src="js/owl-carousel/owl.carousel.js"></script>
-
-    <script>
-    // Tambahkan style cursor pointer ke semua box yang bisa diklik
-    $(document).ready(function() {
-        $('.org-chart-head, .org-chart-subhead, .staff-box').css('cursor', 'pointer');
-    });
-    </script>
+    <script src="js/org-chart.js"></script>
 </body>
 </html>

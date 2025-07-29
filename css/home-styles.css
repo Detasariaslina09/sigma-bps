@@ -1,0 +1,43 @@
+.admin-content {
+    background: #fff;
+    padding: 20px;
+    border-radius: 5px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    margin-bottom: 20px;
+}
+
+.admin-header {
+    margin-bottom: 20px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #eee;
+}
+
+.admin-header h2 {
+    font-size: 24px;
+    font-weight: 600;
+    color: #333;
+    margin-top: 0;
+}
+
+.admin-header p {
+    color: #777;
+    margin-bottom: 0;
+}
+
+@media (max-width: 768px) {
+    .mobile-menu-toggle {
+        display: block;
+    }
+    
+    .sidebar {
+        display: none;
+    }
+    
+    .sidebar.open {
+        display: block;
+    }
+    
+    #wrapper {
+        margin-left: 0;
+    }
+}

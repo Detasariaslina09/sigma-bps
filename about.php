@@ -87,191 +87,13 @@ $is_admin = $is_logged_in && $_SESSION['role'] === 'admin';
 <link href="css/style.css" rel="stylesheet" />
 <link href="css/custom-styles.css" rel="stylesheet" />
 <link href="css/font-awesome.css" rel="stylesheet" />
+<link href="css/sidebar.css" rel="stylesheet" />
+<link href="css/service-category.css" rel="stylesheet" />
  
 <!-- HTML5 shim, for IE6-8 support of HTML5 elements -->
 <!--[if lt IE 9]>
       <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
     <![endif]-->
-
-<style>
-    .service-category {
-        margin-bottom: 40px;
-        border-bottom: 1px solid #eee;
-        padding-bottom: 20px;
-    }
-    
-    .service-category h3 {
-        color: #ff9800;
-        margin-bottom: 20px;
-        padding-bottom: 10px;
-        border-bottom: 1px dashed #ccc;
-    }
-    
-    .service-item {
-        background: #f9f9f9;
-        padding: 15px;
-        border-radius: 5px;
-        margin-bottom: 20px;
-        transition: all 0.3s ease;
-        height: 100%;
-        box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-    }
-    
-    .service-item:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-    }
-    
-    .service-item img {
-        max-width: 64px;
-        margin-bottom: 15px;
-    }
-    
-    .service-item h4 {
-        color: #333;
-        font-size: 18px;
-        margin-top: 0;
-    }
-    
-    .service-item p {
-        color: #666;
-        font-size: 14px;
-        margin-bottom: 15px;
-    }
-    
-    .service-item .btn {
-        background: #ff9800;
-        color: white;
-        border: none;
-        padding: 5px 15px;
-        transition: all 0.3s ease;
-    }
-    
-    .service-item .btn:hover {
-        background: #e65100;
-    }
-    
-    /* Styling untuk kategori layanan baru */
-    .service-category-container {
-        margin-top: 30px;
-        display: flex;
-        flex-wrap: wrap;
-        gap: 30px;
-        justify-content: space-between;
-    }
-    
-    .service-category-item {
-        flex: 0 0 calc(50% - 15px);
-        margin-bottom: 0;
-        background: #fff;
-        border-radius: 8px;
-        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-        overflow: hidden;
-    }
-    
-    .service-category-content {
-        display: flex;
-        flex-direction: column;
-        height: 100%;
-        padding: 20px;
-    }
-    
-    .service-category-info {
-        flex: 1;
-        padding: 20px;
-    }
-    
-    .service-category-info h3 {
-        color: #ff9800;
-        margin-top: 0;
-        margin-bottom: 15px;
-        padding-bottom: 10px;
-        border-bottom: 1px dashed #eee;
-        font-size: 18px;
-    }
-    
-    .service-links-list {
-        list-style: none;
-        padding: 0;
-        margin: 0;
-    }
-    
-    .service-links-list li {
-        margin-bottom: 8px;
-    }
-    
-    .service-links-list li:last-child {
-        margin-bottom: 0;
-    }
-    
-    .service-links-list li a {
-        color: #111 !important;
-        text-decoration: none;
-        display: block;
-        padding: 8px 10px;
-        background: #f9f9f9;
-        border-radius: 4px;
-        transition: all 0.3s ease;
-        font-size: 14px;
-    }
-    
-    .service-links-list li a:hover {
-        background: #ff9800;
-        color: #fff !important;
-        padding-left: 15px;
-    }
-    
-    /* Mobile Menu Toggle Button */
-    .mobile-menu-toggle {
-        display: none;
-        position: fixed;
-        top: 10px;
-        left: 10px;
-        z-index: 1000;
-        background: #ff9800;
-        color: white;
-        border: none;
-        padding: 8px 15px;
-        border-radius: 5px;
-        cursor: pointer;
-    }
-    
-    /* Media query for mobile */
-    @media (max-width: 768px) {
-        .mobile-menu-toggle {
-            display: block;
-        }
-        
-        .sidebar {
-            display: none;
-        }
-        
-        .sidebar.open {
-            display: block;
-        }
-        
-        #wrapper {
-            margin-left: 0;
-        }
-        
-        .service-category-container {
-            flex-direction: column;
-            gap: 20px;
-        }
-        
-        .service-category-item {
-            flex: 0 0 100%;
-        }
-
-        .service-category-info h3 {
-            font-size: 16px;
-        }
-
-        .service-links-list li a {
-            font-size: 13px;
-        }
-    }
-</style>
 
 </head>
 <body>
@@ -286,24 +108,21 @@ $is_admin = $is_logged_in && $_SESSION['role'] === 'admin';
         <ul class="nav navbar-nav">
             <li><a href="index.php">Beranda</a></li>
             <li><a href="profil.php">Profil dan Roadmap</a></li>
-            <li><a href="monev.php">Monev</a></li>
-            <li class="active"><a href="about.php">Layanan</a></li>
             <li><a href="services.php">Pusat Aplikasi</a></li>
-            <li><a href="pricing.php">Dokumentasi</a></li>
-            <li><a href="harmoni.php">Harmoni</a></li>
-            
-            <?php if ($is_admin): ?>
-            <!-- Menu Admin - hanya ditampilkan jika role adalah admin -->
-            <li class="admin-menu"><a href="admin-users.php"><i class="fa fa-users"></i> Manajemen User</a></li>
-            <li class="admin-menu"><a href="admin-services.php"><i class="fa fa-cogs"></i> Manajemen Layanan</a></li>
-            <li class="admin-menu"><a href="admin-content.php"><i class="fa fa-file-text"></i> Manajemen Konten</a></li>
-            <li class="admin-menu"><a href="admin-profil.php"><i class="fa fa-user"></i> Manajemen Profil</a></li>
-            <?php endif; ?>
-            
             <?php if ($is_logged_in): ?>
+                <li><a href="monev.php">Monev</a></li>
+                <li class="active"><a href="about.php">Layanan</a></li>
+                <li><a href="pricing.php">Dokumentasi</a></li>
+                <li><a href="harmoni.php">Harmoni</a></li>
+                <?php if ($is_admin): ?>
+                    <li class="admin-menu"><a href="admin-users.php"><i class="fa fa-users"></i> Manajemen User</a></li>
+                    <li class="admin-menu"><a href="admin-services.php"><i class="fa fa-cogs"></i> Manajemen Layanan</a></li>
+                    <li class="admin-menu"><a href="admin-content.php"><i class="fa fa-file-text"></i> Manajemen Konten</a></li>
+                    <li class="admin-menu"><a href="admin-profil.php"><i class="fa fa-user"></i> Manajemen Profil</a></li>
+                <?php endif; ?>
                 <li class="logout-menu"><a href="logout.php" class="logout-link"><i class="fa fa-sign-out"></i> Logout (<?php echo htmlspecialchars($_SESSION['username']); ?>)</a></li>
             <?php else: ?>
-                <li><a href="login.php"><i class="fa fa-sign-in"></i> Login</a></li>
+                <li><a href="login.php">Login</a></li>
             <?php endif; ?>
         </ul>
     </div>
@@ -376,51 +195,6 @@ $is_admin = $is_logged_in && $_SESSION['role'] === 'admin';
 <script src="js/jquery.flexslider.js"></script>
 <script src="js/animate.js"></script>
 <script src="js/custom.js"></script>
-<script>
-    // Cek apakah sudah login
-    function checkLogin() {
-        var isLoggedIn = sessionStorage.getItem('isLoggedIn');
-        if (!isLoggedIn) {
-            // Jika belum login, alihkan ke halaman utama
-            window.location.href = 'index.php';
-        } else {
-            // Jika sudah login, cek role untuk menampilkan/sembunyikan menu admin
-            showHideAdminMenu();
-        }
-    }
-    
-    // Fungsi untuk menampilkan/menyembunyikan menu admin berdasarkan role
-    function showHideAdminMenu() {
-        var role = sessionStorage.getItem('userRole');
-        if (role === 'admin') {
-            // Tampilkan menu admin
-            $('.admin-menu').show();
-        } else {
-            // Sembunyikan menu admin
-            $('.admin-menu').hide();
-        }
-    }
-    
-    $(document).ready(function() {
-        // Sembunyikan menu admin secara default
-        $('.admin-menu').hide();
-        
-        // Cek login saat halaman dimuat
-        checkLogin();
-        
-        // Handle logout button
-        $('.logout-link').on('click', function(e) {
-            e.preventDefault();
-            
-            // Hapus session storage
-            sessionStorage.removeItem('isLoggedIn');
-            sessionStorage.removeItem('username');
-            sessionStorage.removeItem('userRole');
-            
-            // Alihkan ke halaman utama
-            window.location.href = 'logout.php';
-        });
-    });
-</script>
+<script src="js/auth.js"></script>
 </body>
 </html>

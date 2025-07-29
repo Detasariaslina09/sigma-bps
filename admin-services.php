@@ -9,6 +9,10 @@ if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'admin') {
     exit;
 }
 
+// Definisi variabel status login dan admin
+$is_logged_in = isset($_SESSION['user_id']);
+$is_admin = $is_logged_in && $_SESSION['role'] === 'admin';
+
 // Include koneksi database
 require_once 'koneksi.php';
 
@@ -155,127 +159,11 @@ if ($result->num_rows > 0) {
     <link href="css/style.css" rel="stylesheet" />
     <link href="css/custom-styles.css" rel="stylesheet" />
     <link href="css/font-awesome.css" rel="stylesheet" />
+    <link href="css/admin-services.css" rel="stylesheet" />
     
-    <script>
-        // Simpan informasi login di sessionStorage
-        sessionStorage.setItem('isLoggedIn', 'true');
-        sessionStorage.setItem('username', '<?php echo addslashes($_SESSION['username']); ?>');
-        sessionStorage.setItem('userRole', '<?php echo addslashes($_SESSION['role']); ?>');
-    </script>
-    <style>
-        .admin-content {
-            background: #fff;
-            padding: 20px;
-            border-radius: 5px;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-            margin-bottom: 20px;
-        }
-        
-        .admin-header {
-            margin-bottom: 20px;
-            padding-bottom: 10px;
-            border-bottom: 1px solid #eee;
-        }
-        
-        .admin-header h2 {
-            font-size: 24px;
-            font-weight: 600;
-            color: #333;
-            margin-top: 0;
-        }
-        
-        .admin-header p {
-            color: #777;
-            margin-bottom: 0;
-        }
-        
-        .service-panel {
-            margin-bottom: 30px;
-            border: 1px solid #eee;
-            border-radius: 5px;
-        }
-        
-        .service-header {
-            padding: 15px;
-            background-color: #f5f5f5;
-            border-bottom: 1px solid #eee;
-            border-radius: 5px 5px 0 0;
-        }
-        
-        .service-header h3 {
-            margin: 0;
-            font-size: 18px;
-            color: #ff9800;
-        }
-        
-        .service-body {
-            padding: 15px;
-        }
-        
-        .link-group {
-            margin-bottom: 15px;
-            padding-bottom: 15px;
-            border-bottom: 1px dashed #eee;
-        }
-        
-        .link-group:last-child {
-            margin-bottom: 0;
-            padding-bottom: 0;
-            border-bottom: none;
-        }
-        
-        .alert {
-            padding: 15px;
-            margin-bottom: 20px;
-            border-radius: 4px;
-        }
-        
-        .alert-success {
-            background-color: #dff0d8;
-            color: #3c763d;
-            border: 1px solid #d6e9c6;
-        }
-
-        .alert-danger {
-            background-color: #f2dede;
-            color: #a94442;
-            border: 1px solid #ebccd1;
-        }
-        
-        .btn-save {
-            background-color: #ff9800;
-            color: white;
-            padding: 10px 20px;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            font-weight: bold;
-        }
-        
-        .btn-save:hover {
-            background-color: #e65100;
-        }
-        
-        /* Mobile menu toggle - REMOVED to use global styling */
-        
-        @media (max-width: 768px) {
-            .mobile-menu-toggle {
-                display: block;
-            }
-            
-            .sidebar {
-                display: none;
-            }
-            
-            .sidebar.open {
-                display: block;
-            }
-            
-            #wrapper {
-                margin-left: 0;
-            }
-        }
-    </style>
+    <!-- Meta tags for JavaScript -->
+    <meta name="username" content="<?php echo htmlspecialchars($_SESSION['username']); ?>">
+    <meta name="role" content="<?php echo htmlspecialchars($_SESSION['role']); ?>">
 </head>
 <body>
     <!-- Mobile Menu Toggle Button -->
@@ -289,21 +177,22 @@ if ($result->num_rows > 0) {
         <ul class="nav navbar-nav">
             <li><a href="index.php">Beranda</a></li>
             <li><a href="profil.php">Profil dan Roadmap</a></li>
-            <li><a href="monev.php">Monev</a></li>
-            <li><a href="about.php">Layanan</a></li>
             <li><a href="services.php">Pusat Aplikasi</a></li>
-            <li><a href="pricing.php">Dokumentasi</a></li>
-            <li><a href="harmoni.php">Harmoni</a></li>
-            
-            <?php if ($_SESSION['role'] === 'admin'): ?>
-                <!-- Menu Admin - hanya ditampilkan jika role adalah admin -->
-                <li class="admin-menu"><a href="admin-users.php"><i class="fa fa-users"></i> Manajemen User</a></li>
-                <li class="admin-menu active"><a href="admin-services.php"><i class="fa fa-cogs"></i> Manajemen Layanan</a></li>
-                <li class="admin-menu"><a href="admin-content.php"><i class="fa fa-file-text"></i> Manajemen Konten</a></li>
-                <li class="admin-menu"><a href="admin-profil.php"><i class="fa fa-user"></i> Manajemen Profil</a></li>
+            <?php if ($is_logged_in): ?>
+                <li><a href="monev.php">Monev</a></li>
+                <li><a href="about.php">Layanan</a></li>
+                <li><a href="pricing.php">Dokumentasi</a></li>
+                <li><a href="harmoni.php">Harmoni</a></li>
+                <?php if ($is_admin): ?>
+                    <li class="admin-menu"><a href="admin-users.php"><i class="fa fa-users"></i> Manajemen User</a></li>
+                    <li class="admin-menu active"><a href="admin-services.php"><i class="fa fa-cogs"></i> Manajemen Layanan</a></li>
+                    <li class="admin-menu"><a href="admin-content.php"><i class="fa fa-file-text"></i> Manajemen Konten</a></li>
+                    <li class="admin-menu"><a href="admin-profil.php"><i class="fa fa-user"></i> Manajemen Profil</a></li>
+                <?php endif; ?>
+                <li class="logout-menu"><a href="logout.php" class="logout-link"><i class="fa fa-sign-out"></i> Logout (<?php echo htmlspecialchars($_SESSION['username']); ?>)</a></li>
+            <?php else: ?>
+                <li><a href="login.php">Login</a></li>
             <?php endif; ?>
-            
-            <li class="logout-menu"><a href="logout.php" class="logout-link"><i class="fa fa-sign-out"></i> Logout (<?php echo htmlspecialchars($_SESSION['username']); ?>)</a></li>
         </ul>
     </div>
 
@@ -387,22 +276,21 @@ if ($result->num_rows > 0) {
         </section>
         
         <footer>
-        <div class="container">
-            <div class="row">
-                <div class="col-lg-12 text-center">
-                    <h4>Badan Pusat Statistik Kota Bandar Lampung</h4>
-                    <address>
-                        Jl. Sutan Syahrir No. 30, Pahoman, Bandar Lampung, 35215<br>
-                        Telp. (0721) 255980. Mailbox : bps1871@bps.go.id
-                    </address>
-                    <div class="text-center">
+            <div class="container">
+                <div class="row">
+                    <div class="col-lg-12 text-center">
+                        <h4>Badan Pusat Statistik Kota Bandar Lampung</h4>
+                        <address>
+                            Jl. Sutan Syahrir No. 30, Pahoman, Bandar Lampung, 35215<br>
+                            Telp. (0721) 255980. Mailbox : bps1871@bps.go.id
+                        </address>
+                        <div class="text-center">
                             <p>Hak Cipta © 2025 Badan Pusat Statistik Kota Bandar Lampung</p>
                             <p>Semua Hak Dilindungi</p>
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
         </footer>
     </div>
 
@@ -412,13 +300,6 @@ if ($result->num_rows > 0) {
     <script src="js/jquery.js"></script>
     <script src="js/bootstrap.min.js"></script>
     <script src="js/custom.js"></script>
-    <script>
-        $(document).ready(function() {
-            // Otomatis sembunyikan pesan alert setelah 3 detik
-            setTimeout(function() {
-                $('.alert').fadeOut();
-            }, 3000);
-        });
-    </script>
+    <script src="js/admin-services.js"></script>
 </body>
 </html> 

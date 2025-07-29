@@ -1,0 +1,96 @@
+.harmoni-container {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 40px;
+    background: #fff;
+    border-radius: 10px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    margin: 30px 0;
+}
+
+.harmoni-image {
+    width: 40%;
+    height: auto;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.harmoni-content {
+    width: 55%;
+    padding-left: 40px;
+}
+
+.harmoni-content h3 {
+    color: #1a3c6e;
+    font-size: 16px;
+    margin-bottom: 12px;
+    font-weight: 500;
+}
+
+.harmoni-content p {
+    color: #666;
+    font-size: 13px;
+    line-height: 1.5;
+    margin-bottom: 18px;
+}
+
+.harmoni-cta {
+    text-align: left;
+}
+
+.btn-harmoni {
+    background: #ff9800;
+    color: #ffffff !important;
+    padding: 12px 25px;
+    border-radius: 5px;
+    text-decoration: none;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    display: inline-block;
+    font-size: 16px;
+}
+
+.btn-harmoni:hover {
+    background: #e65100;
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(230,81,0,0.2);
+    color: #ffffff !important;
+}
+
+.btn-harmoni i {
+    margin-right: 10px;
+    font-size: 18px;
+    color: #ffffff !important;
+}
+
+.btn-harmoni span {
+    color: #ffffff !important;
+}
+
+.harmoni-cta a {
+    color: #ffffff !important;
+    text-decoration: none;
+}
+
+.harmoni-cta a:hover {
+    color: #ffffff !important;
+    text-decoration: none;
+}
+
+@media (max-width: 768px) {
+    .harmoni-container {
+        flex-direction: column;
+        padding: 20px;
+    }
+    
+    .harmoni-image {
+        width: 100%;
+        margin-bottom: 20px;
+    }
+    
+    .harmoni-content {
+        width: 100%;
+        padding-left: 0;
+    }
+}

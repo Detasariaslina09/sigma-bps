@@ -1,0 +1,211 @@
+/* Styling untuk struktur organisasi */
+.org-chart {
+    margin: 15px auto;
+    max-width: 1000px;
+}
+
+.org-chart-box {
+    padding: 15px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    margin-bottom: 20px;
+    text-align: center;
+    transition: all 0.3s ease;
+    background-color: #fff;
+    border-left: 5px solid #1a3c6e;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.org-chart-box:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 15px rgba(0,0,0,0.2);
+}
+
+.org-chart-box h4 {
+    margin: 10px 0 5px;
+    color: #1a3c6e;
+    font-weight: 600;
+    font-size: 16px;
+}
+
+.org-chart-box p {
+    margin: 0;
+    color: #666;
+    font-size: 14px;
+}
+
+.org-chart-head {
+    background-color: #1a3c6e;
+    color: white;
+    border-left: 2px solid #ff9800;
+    width: calc(16.666% - 8px);
+    min-width: 160px;
+    max-width: 180px;
+    margin: 0 auto 8px auto;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    border-radius: 8px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+    padding: 8px;
+    text-align: center;
+}
+
+.org-chart-head:hover {
+    background-color: #234b87;
+    transform: translateY(-5px);
+    box-shadow: 0 8px 15px rgba(0,0,0,0.2);
+}
+
+.org-chart-head h4, .org-chart-head p {
+    color: white;
+}
+
+.org-chart-subhead {
+    background-color: #2c5aa0;
+    color: white;
+    border-left: 2px solid #ff9800;
+    width: calc(16.666% - 8px);
+    min-width: 160px;
+    max-width: 180px;
+    margin: 0 8px 8px 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    border-radius: 8px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+    padding: 8px;
+    text-align: center;
+}
+
+.org-chart-subhead:hover {
+    background-color: #3468b5;
+    transform: translateY(-5px);
+    box-shadow: 0 8px 15px rgba(0,0,0,0.2);
+}
+
+.org-chart-subhead h4, .org-chart-subhead p {
+    color: white;
+}
+
+.org-chart-staff {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 8px;
+    margin-top: 10px;
+}
+
+.staff-box {
+    flex: 0 0 calc(16.666% - 8px);
+    padding: 8px;
+    border-radius: 8px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+    text-align: center;
+    background-color: #f9f9f9;
+    border-left: 2px solid #2c5aa0;
+    transition: all 0.3s ease;
+    cursor: pointer;
+    margin-bottom: 8px;
+}
+
+.staff-box:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 3px 6px rgba(0,0,0,0.12);
+    background-color: #f0f7ff;
+    border-left-color: #ff9800;
+}
+
+.staff-photo, .leader-photo {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    margin: 0 auto 10px;
+    overflow: hidden;
+}
+
+.staff-photo {
+    border: 3px solid #1a3c6e;
+}
+
+.leader-photo {
+    border: 3px solid #ff9800;
+}
+
+.staff-photo img, .leader-photo img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.staff-box h4 {
+    font-size: 14px;
+    margin: 0;
+    color: #1a3c6e;
+}
+
+.staff-box p {
+    font-size: 12px;
+    margin: 5px 0 0;
+    color: #666;
+}
+
+.download-btn {
+    display: inline-block;
+    background-color: #1a3c6e;
+    color: white;
+    padding: 10px 20px;
+    border-radius: 30px;
+    text-decoration: none;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    margin-top: 10px;
+    box-shadow: 0 3px 10px rgba(0,0,0,0.2);
+    border: 2px solid #1a3c6e;
+}
+
+.download-btn:hover {
+    background-color: #ff9800;
+    color: white;
+    transform: translateY(-3px);
+    box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+    border-color: #ff9800;
+}
+
+.download-btn i {
+    margin-right: 8px;
+}
+
+/* Responsive Design */
+@media (max-width: 992px) {
+    .staff-box {
+        flex: 0 0 calc(33.333% - 15px);
+    }
+    
+    .org-chart-subhead {
+        margin-right: 50px;
+    }
+}
+
+@media (max-width: 768px) {
+    .staff-box {
+        flex: 0 0 calc(50% - 15px);
+    }
+    
+    .org-chart-subhead {
+        margin-right: auto;
+        margin-left: auto;
+    }
+}
+
+@media (max-width: 480px) {
+    .staff-box {
+        flex: 0 0 100%;
+    }
+}

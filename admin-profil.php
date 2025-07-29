@@ -8,6 +8,10 @@ if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'admin') {
     exit;
 }
 
+// Definisi variabel status login dan admin
+$is_logged_in = isset($_SESSION['user_id']);
+$is_admin = $is_logged_in && $_SESSION['role'] === 'admin';
+
 // Fungsi untuk memeriksa koneksi database dan melakukan reconnect jika terputus
 function check_connection($conn) {
     if (!$conn->ping()) {
@@ -200,20 +204,6 @@ if ($result_all) {
     }
 }
 
-// Ambil data profil untuk diedit jika ada parameter edit
-$edit_profile = null;
-if (isset($_GET['edit']) && !empty($_GET['edit'])) {
-    $id_edit = $_GET['edit'];
-    $stmt_edit = $conn->prepare("SELECT * FROM profil WHERE id = ?");
-    $stmt_edit->bind_param("i", $id_edit);
-    $stmt_edit->execute();
-    $result_edit = $stmt_edit->get_result();
-    if ($result_edit->num_rows > 0) {
-        $edit_profile = $result_edit->fetch_assoc();
-    }
-    $stmt_edit->close();
-}
-
 // Tutup koneksi database
 if ($conn instanceof mysqli) {
     $conn->close();
@@ -230,184 +220,10 @@ if ($conn instanceof mysqli) {
     <meta name="author" content="" />
     <link href="css/bootstrap.min.css" rel="stylesheet" />
     <link href="css/fancybox/jquery.fancybox.css" rel="stylesheet">
-    <link href="css/jcarousel.css" rel="stylesheet" />
-    <link href="css/flexslider.css" rel="stylesheet" />
     <link href="css/style.css" rel="stylesheet" />
     <link href="css/custom-styles.css" rel="stylesheet" />
     <link href="css/font-awesome.css" rel="stylesheet" />
-    
-    <style>
-        .profile-img-preview {
-            width: 100px;
-            height: 100px;
-            object-fit: cover;
-            border-radius: 50%;
-            margin-bottom: 10px;
-            border: 3px solid #1a3c6e;
-        }
-        
-        .profile-img-table {
-            width: 50px;
-            height: 50px;
-            object-fit: cover;
-            border-radius: 50%;
-            border: 2px solid #1a3c6e;
-        }
-        
-        .table-responsive {
-            background: #fff;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-        }
-        
-        .btn-action {
-            margin: 2px;
-            padding: 6px 12px;
-            border-radius: 4px;
-            transition: all 0.3s ease;
-            color: #fff !important;
-            text-decoration: none;
-            font-weight: 500;
-        }
-
-        .btn-action.btn-primary {
-            background-color: #ff9800;
-            border-color: #ff9800;
-            color: #fff !important;
-        }
-
-        .btn-action.btn-primary:hover {
-            background-color: #f57c00;
-            border-color: #f57c00;
-            color: #fff !important;
-        }
-
-        .btn-action.btn-danger {
-            background-color: #d9534f; /* Default red for danger */
-            border-color: #d43f3a;
-            color: #fff !important;
-        }
-
-        .btn-action.btn-danger:hover {
-            background-color: #c9302c;
-            border-color: #ac2925;
-            color: #fff !important;
-        }
-
-        .btn-action i {
-            margin-right: 5px;
-            color: #fff !important;
-        }
-
-        /* Tambahan untuk memastikan teks selalu putih */
-        .btn-action span,
-        .btn-action:link,
-        .btn-action:visited,
-        .btn-action:hover,
-        .btn-action:active {
-            color: #fff !important;
-            text-decoration: none !important;
-        }
-
-        .btn-action:focus {
-            box-shadow: 0 0 0 0.2rem rgba(255, 152, 0, 0.25);
-            outline: none;
-        }
-
-        .btn-action:active {
-            background-color: #ef6c00 !important;
-            border-color: #ef6c00 !important;
-        }
-        
-        .alert {
-            margin-top: 20px;
-        }
-        
-        .required-field::after {
-            content: " *";
-            color: red;
-        }
-        .modal {
-            z-index: 9999;
-        }
-        
-        .modal-backdrop {
-            z-index: 9998;
-        }
-
-        .modal-dialog {
-            margin: 30px auto;
-        }
-
-        .modal-content {
-            border-radius: 8px;
-            box-shadow: 0 3px 15px rgba(0,0,0,0.2);
-        }
-
-        .modal-header {
-            background: #f8f9fa;
-            border-radius: 8px 8px 0 0;
-            border-bottom: 1px solid #e9ecef;
-        }
-
-        .modal-footer {
-            background: #f8f9fa;
-            border-radius: 0 0 8px 8px;
-            border-top: 1px solid #e9ecef;
-        }
-
-        /* Style untuk tombol di modal */
-        .modal-footer .btn-default {
-            background-color: #6c757d;
-            border-color: #6c757d;
-            color: #fff;
-        }
-
-        .modal-footer .btn-default:hover {
-            background-color: #5a6268;
-            border-color: #545b62;
-            color: #fff;
-        }
-
-        .modal-footer .btn {
-            padding: 8px 16px;
-            font-weight: 500;
-            transition: all 0.3s ease;
-        }
-
-        /* --- STYLE BARU UNTUK JUdul Tabel dan Tombol Tambah Profil --- */
-        .table-header-row {
-            display: flex; /* Menggunakan flexbox */
-            justify-content: space-between; /* Menjaga elemen di ujung-ujung */
-            align-items: center; /* Memusatkan secara vertikal */
-            margin-bottom: 15px; /* Jarak antara header tabel dan tabel */
-            padding-right: 20px; /* Sesuaikan dengan padding tabel */
-            padding-left: 20px; /* Sesuaikan dengan padding tabel */
-        }
-        .table-header-row h3 {
-            margin: 0; /* Menghilangkan margin default h3 */
-            font-size: 24px; /* Sesuaikan ukuran font jika perlu */
-            color: #333; /* Warna teks judul tabel */
-        }
-        .table-header-row .btn-add-profile-table {
-            background: #ff9800;
-            color: #fff;
-            border: none;
-            padding: 8px 15px; /* Sedikit lebih kecil dari tombol utama */
-            border-radius: 5px;
-            font-weight: 600;
-            transition: all 0.3s;
-            white-space: nowrap; /* Mencegah tombol pecah baris */
-        }
-        .table-header-row .btn-add-profile-table:hover {
-            background: #e65100;
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(255,152,0,0.15);
-        }
-        /* --- AKHIR STYLE BARU --- */
-
-    </style>
+    <link href="css/admin-profil.css" rel="stylesheet" />
 </head>
 <body>
     <button class="mobile-menu-toggle">
@@ -419,20 +235,22 @@ if ($conn instanceof mysqli) {
         <ul class="nav navbar-nav">
             <li><a href="index.php">Beranda</a></li>
             <li><a href="profil.php">Profil dan Roadmap</a></li>
-            <li><a href="monev.php">Monev</a></li>
-            <li><a href="about.php">Layanan</a></li>
             <li><a href="services.php">Pusat Aplikasi</a></li>
-            <li><a href="pricing.php">Dokumentasi</a></li>
-            <li><a href="harmoni.php">Harmoni</a></li>
-            
-            <?php if ($_SESSION['role'] === 'admin'): ?>
-                <li class="admin-menu"><a href="admin-users.php"><i class="fa fa-users"></i> Manajemen User</a></li>
-                <li class="admin-menu"><a href="admin-services.php"><i class="fa fa-cogs"></i> Manajemen Layanan</a></li>
-                <li class="admin-menu"><a href="admin-content.php"><i class="fa fa-file-text"></i> Manajemen Konten</a></li>
-                <li class="admin-menu active"><a href="admin-profil.php"><i class="fa fa-user"></i> Manajemen Profil</a></li>
+            <?php if ($is_logged_in): ?>
+                <li><a href="monev.php">Monev</a></li>
+                <li><a href="about.php">Layanan</a></li>
+                <li><a href="pricing.php">Dokumentasi</a></li>
+                <li><a href="harmoni.php">Harmoni</a></li>
+                <?php if ($is_admin): ?>
+                    <li class="admin-menu"><a href="admin-users.php"><i class="fa fa-users"></i> Manajemen User</a></li>
+                    <li class="admin-menu"><a href="admin-services.php"><i class="fa fa-cogs"></i> Manajemen Layanan</a></li>
+                    <li class="admin-menu"><a href="admin-content.php"><i class="fa fa-file-text"></i> Manajemen Konten</a></li>
+                    <li class="admin-menu active"><a href="admin-profil.php"><i class="fa fa-user"></i> Manajemen Profil</a></li>
+                <?php endif; ?>
+                <li class="logout-menu"><a href="logout.php" class="logout-link"><i class="fa fa-sign-out"></i> Logout (<?php echo htmlspecialchars($_SESSION['username']); ?>)</a></li>
+            <?php else: ?>
+                <li><a href="login.php">Login</a></li>
             <?php endif; ?>
-            
-            <li class="logout-menu"><a href="logout.php" class="logout-link"><i class="fa fa-sign-out"></i> Logout (<?php echo htmlspecialchars($_SESSION['username']); ?>)</a></li>
         </ul>
     </div>
 
@@ -589,74 +407,9 @@ if ($conn instanceof mysqli) {
     <script src="js/jquery.easing.1.3.js"></script>
     <script src="js/bootstrap.min.js"></script>
     <script src="js/jquery.fancybox.pack.js"></script>
-    <script src="js/jquery.fancybox-media.js"></script> 
-    <script src="js/portfolio/jquery.quicksand.js"></script>
-    <script src="js/portfolio/setting.js"></script>
-    <script src="js/jquery.flexslider.js"></script>
+    <script src="js/jquery.fancybox-media.js"></script>
     <script src="js/animate.js"></script>
     <script src="js/custom.js"></script>
-    <script src="js/owl-carousel/owl.carousel.js"></script>
-    
-    <script>
-        // Preview image before upload
-        function previewImage(input) {
-            if (input.files && input.files[0]) {
-                var reader = new FileReader();
-                
-                reader.onload = function(e) {
-                    $('#preview-image').attr('src', e.target.result);
-                }
-                
-                reader.readAsDataURL(input.files[0]);
-            }
-        }
-        
-        // Confirm delete
-        function confirmDelete(id) {
-            if (confirm("Apakah Anda yakin ingin menghapus profil ini?")) {
-                window.location.href = "admin-profil.php?delete=" + id;
-            }
-        }
-
-        // Edit profile
-        function editProfile(profile) {
-            // Set modal title
-            $('#profileModalLabel').text('Edit Profil');
-            
-            // Fill form with profile data
-            $('#profile_id').val(profile.id);
-            $('#nama').val(profile.nama);
-            $('#jabatan').val(profile.jabatan);
-            $('#link').val(profile.link);
-            $('#old_foto').val(profile.foto);
-            $('#preview-image').attr('src', 'img/staff/' + profile.foto);
-            
-            // Show modal
-            $('#profileModal').modal('show');
-        }
-
-        // Reset form when modal is closed
-        $('#profileModal').on('hidden.bs.modal', function () {
-            $('#profileForm')[0].reset();
-            $('#profile_id').val('');
-            $('#old_foto').val('');
-            $('#preview-image').attr('src', 'img/staff/default-male.jpg'); // Reset to default image
-            $('#profileModalLabel').text('Tambah Profil Baru');
-        });
-
-        // Show success message in modal if exists (ini logika untuk halaman lain jika alert muncul setelah redirect)
-        $(document).ready(function() {
-            <?php if (!empty($message) && $messageType == 'success'): ?>
-            // Logika untuk menampilkan alert jika perlu, atau ini bisa dihilangkan jika pesan sudah muncul otomatis
-            // alert('<?php echo $message; ?>');
-            <?php endif; ?>
-
-            // Trigger modal for add new profile (menggunakan class btn-add-profile-table yang baru)
-            $('.btn-add-profile-table').click(function() {
-                $('#profileModalLabel').text('Tambah Profil Baru');
-                $('#profileModal').modal('show');
-            });
-        });
-    </script>
+    <script src="js/admin-profil.js"></script>
 </body>
 </html>
