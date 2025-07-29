@@ -177,19 +177,16 @@ if (!$image || !file_exists('img/' . $image)) {
     <meta name="description" content="Halaman manajemen konten BPS Kota Bandar Lampung" />
     <meta name="author" content="BPS Kota Bandar Lampung" />
     
-    <!-- CSS Files -->
     <link href="css/bootstrap.min.css" rel="stylesheet" />
     <link href="css/style.css" rel="stylesheet" />
     <link href="css/custom-styles.css" rel="stylesheet" />
     <link href="css/font-awesome.css" rel="stylesheet" />
     <link href="css/admin-content.css" rel="stylesheet" />
     
-    <!-- Meta tags for JavaScript -->
     <meta name="username" content="<?php echo htmlspecialchars($_SESSION['username']); ?>">
     <meta name="role" content="<?php echo htmlspecialchars($_SESSION['role']); ?>">
 </head>
 <body>
-    <!-- Loading overlay -->
     <div class="loading-overlay" id="loadingOverlay">
         <div class="loading-spinner">
             <i class="fa fa-spinner fa-spin fa-4x"></i>
@@ -197,12 +194,10 @@ if (!$image || !file_exists('img/' . $image)) {
         </div>
     </div>
 
-    <!-- Mobile Menu Toggle Button -->
     <button class="mobile-menu-toggle">
         <i class="fa fa-bars"></i> Menu
     </button>
     
-    <!-- Sidebar menu -->
     <div class="sidebar">
         <a class="navbar-brand" href="index.php"><img src="img/sigma.png" alt="logo"/></a>
         <ul class="nav navbar-nav">
@@ -243,7 +238,6 @@ if (!$image || !file_exists('img/' . $image)) {
                         </div>
                     </div>
                 
-                    <!-- Pesan sukses/error -->
                     <div class="alert alert-success" id="successAlert" style="display:<?php echo $success ? 'block' : 'none'; ?>">
                         <i class="fa fa-check-circle"></i> Konten berhasil disimpan.
                     </div>
@@ -251,7 +245,6 @@ if (!$image || !file_exists('img/' . $image)) {
                         <i class="fa fa-exclamation-circle"></i> <?php echo $error; ?>
                     </div>
                     
-                    <!-- Form untuk edit konten -->
                     <form id="contentForm" method="post" action="admin-content.php" enctype="multipart/form-data">
                         <input type="hidden" name="action" value="edit">
                         <input type="hidden" name="id" id="content_id" value="1">
@@ -330,7 +323,6 @@ if (!$image || !file_exists('img/' . $image)) {
     
     <a href="#" class="scrollup"><i class="fa fa-angle-up active"></i></a>
     
-    <!-- javascript -->
     <script src="js/jquery.js"></script>
     <script src="js/bootstrap.min.js"></script>
     <script src="js/custom.js"></script>

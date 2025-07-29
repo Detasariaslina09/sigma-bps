@@ -21,7 +21,7 @@ return [
     ],
     [
         'img' => 'Siimut.png',
-        'title' => 'SiImut',
+        'title' => 'Siimut',
         'desc' => 'Sistem Informasi Mutasi',
         'url' => 'https://sdm.bps.go.id/siimut/web/'
     ],
@@ -63,50 +63,56 @@ return [
     ],
     [
         'img' => 'bbps.png',
+        'title' => 'Website BPS RI',
+        'desc' => 'Portal Resmi BPS',
+        'url' => 'https://www.bps.go.id/'
+    ],
+    [
+        'img' => 'ttd.jpeg',
+        'title' => 'Digital Signature',
+        'desc' => 'Layanan Tanda Tangan Digital BPS',
+        'url' => 'https://ettd.bps.go.id/'
+    ],
+    [
+        'img' => 'bbps.png',
         'title' => 'Portal SDM1800',
         'desc' => 'Portal Layanan SDM BPS Provinsi Lampung',
         'url' => 'https://sites.google.com/view/layanansdm1800'
     ],
     [
         'img' => 'bbps.png',
-        'title' => 'Parabola',
-        'desc' => 'Sistem Informasi Parabola',
-        'url' => '#'
-    ],
-    [
-        'img' => 'bbps.png',
-        'title' => 'Sivitas',
-        'desc' => 'Sistem Informasi Sivitas',
-        'url' => '#'
-    ],
-    [
-        'img' => 'bbps.png',
-        'title' => 'Digital Signature',
-        'desc' => 'Layanan Tanda Tangan Digital BPS',
-        'url' => 'https://sign.bps.go.id/'
-    ],
-    [
-        'img' => 'bbps.png',
-        'title' => 'SIADIN',
-        'desc' => 'Sistem Informasi Administrasi Internal',
-        'url' => 'https://siadin.bps.go.id/'
-    ],
-    [
-        'img' => 'bbps.png',
-        'title' => 'Website BPS',
-        'desc' => 'Portal Resmi BPS',
-        'url' => 'https://www.bps.go.id/'
-    ],
-    [
-        'img' => 'bbps.png',
-        'title' => 'PPID BPS',
-        'desc' => 'Pejabat Pengelola Informasi dan Dokumentasi',
-        'url' => 'https://ppid.bps.go.id/'
-    ],
-    [
-        'img' => 'bbps.png',
         'title' => 'BPS Kota Bandar Lampung',
         'desc' => 'Website Resmi BPS Kota Bandar Lampung',
         'url' => 'https://bandarlampungkota.bps.go.id/'
+    ],
+    [
+        'img' => 'parabola.png',
+        'title' => 'Parabola',
+        'desc' => 'Sistem Informasi Parabola',
+        'url' => 'http://parabola.web.bps.go.id/'
+    ],
+    [
+        'img' => 'SIVITAS.png',
+        'title' => 'Sivitas',
+        'desc' => 'Sistem Informasi Sivitas',
+        'url' => 'https://bandarlampungkota.web.bps.go.id/sivitas/'
+    ],
+    [
+        'img' => 'siadin.png',
+        'title' => 'SIADIN',
+        'desc' => 'Sistem Informasi Administrasi Internal',
+        'url' => 'http://wa.me/6285281871871'
+    ],
+    [
+        'img' => 'ppid.png',
+        'title' => 'PPID BPS',
+        'desc' => 'Pejabat Pengelola Informasi dan Dokumentasi',
+        'url' => 'https://ppid.bps.go.id/?mfd=1871'
+    ],
+    [
+        'img' => 'magnet.png',
+        'title' => 'Magnet',
+        'desc' => 'Magang',
+        'url' => 'http://magent.web.bps.go.id/'
     ]
 ];

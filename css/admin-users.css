@@ -1,0 +1,127 @@
+.admin-content {
+    background: #fff;
+    padding: 30px;
+    border-radius: 10px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    margin-bottom: 30px;
+}
+
+.admin-header {
+    margin-bottom: 30px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid #eee;
+}
+
+.admin-header h2 {
+    font-size: 28px;
+    font-weight: 600;
+    color: #333;
+    margin-top: 0;
+}
+
+.admin-header p {
+    color: #777;
+    margin-bottom: 0;
+}
+
+.btn-add-user {
+    background: #ff9800;
+    color: #fff;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    font-weight: 600;
+    transition: all 0.3s;
+}
+
+.btn-add-user:hover {
+    background: #e65100;
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(255, 152, 0, 0.15);
+}
+
+.user-table th,
+.user-table td {
+    vertical-align: middle;
+}
+
+.action-buttons .btn {
+    padding: 5px 10px;
+    margin-right: 5px;
+    transition: all 0.3s ease;
+}
+
+.action-buttons .btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.modal-header {
+    background: #f8f9fa;
+    border-bottom: none;
+    padding: 20px;
+}
+
+.modal-body {
+    padding: 30px;
+}
+
+.modal-footer {
+    border-top: none;
+    padding: 0 30px 30px;
+}
+
+.label-primary {
+    background-color: #ff9800;
+}
+
+.btn-primary {
+    background-color: #ff9800;
+    border-color: #ff9800;
+}
+
+.btn-primary:hover,
+.btn-primary:focus {
+    background-color: #e65100;
+    border-color: #e65100;
+}
+
+.alert {
+    padding: 15px;
+    margin-bottom: 20px;
+    border: 1px solid transparent;
+    border-radius: 4px;
+    animation: slideDown 0.3s ease-out;
+}
+
+.alert-success {
+    color: #3c763d;
+    background-color: #dff0d8;
+    border-color: #d6e9c6;
+}
+
+.alert-danger {
+    color: #a94442;
+    background-color: #f2dede;
+    border-color: #ebccd1;
+}
+
+@keyframes slideDown {
+    from {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.fa-spinner {
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}

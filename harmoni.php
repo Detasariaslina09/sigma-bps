@@ -23,114 +23,12 @@ $is_admin = $is_logged_in && $_SESSION['role'] === 'admin';
 <!-- css -->
 <link href="css/bootstrap.min.css" rel="stylesheet" />
 <link href="css/fancybox/jquery.fancybox.css" rel="stylesheet">
-<link href="css/jcarousel.css" rel="stylesheet" />
 <link href="css/flexslider.css" rel="stylesheet" />
 <link href="css/style.css" rel="stylesheet" />
 <link href="css/custom-styles.css" rel="stylesheet" />
 <link href="css/font-awesome.css" rel="stylesheet" />
-    <link href="css/sidebar.css" rel="stylesheet" />
+<link href="css/harmoni.css" rel="stylesheet" />
 
-<style>
-    .harmoni-container {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        padding: 40px;
-        background: #fff;
-        border-radius: 10px;
-        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-        margin: 30px 0;
-    }
-
-    .harmoni-image {
-        width: 40%;
-        height: auto;
-        border-radius: 8px;
-        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-    }
-
-    .harmoni-content {
-        width: 55%;
-        padding-left: 40px;
-    }
-
-    .harmoni-content h3 {
-        color: #1a3c6e;
-        font-size: 16px;
-        margin-bottom: 12px;
-        font-weight: 500;
-    }
-
-    .harmoni-content p {
-        color: #666;
-        font-size: 13px;
-        line-height: 1.5;
-        margin-bottom: 18px;
-    }
-
-    .harmoni-cta {
-        text-align: left;
-    }
-
-    .btn-harmoni {
-        background: #ff9800;
-        color: #ffffff !important;
-        padding: 12px 25px;
-        border-radius: 5px;
-        text-decoration: none;
-        font-weight: 600;
-        transition: all 0.3s ease;
-        display: inline-block;
-        font-size: 16px;
-    }
-
-    .btn-harmoni:hover {
-        background: #e65100;
-        transform: translateY(-2px);
-        box-shadow: 0 5px 15px rgba(230,81,0,0.2);
-        color: #ffffff !important;
-    }
-
-    .btn-harmoni i {
-        margin-right: 10px;
-        font-size: 18px;
-        color: #ffffff !important;
-    }
-
-    .btn-harmoni span {
-        color: #ffffff !important;
-    }
-
-    .harmoni-cta a {
-        color: #ffffff !important;
-        text-decoration: none;
-    }
-
-    .harmoni-cta a:hover {
-        color: #ffffff !important;
-        text-decoration: none;
-    }
-
-    /* Mobile menu toggle */
-    
-    
-    @media (max-width: 768px) {
-        .harmoni-container {
-            flex-direction: column;
-            padding: 20px;
-        }
-        
-        .harmoni-image {
-            width: 100%;
-            margin-bottom: 20px;
-        }
-        
-        .harmoni-content {
-            width: 100%;
-            padding-left: 0;
-        }
-    }
-</style>
 </head>
 <body>
     <!-- Mobile Menu Toggle Button -->
@@ -144,21 +42,21 @@ $is_admin = $is_logged_in && $_SESSION['role'] === 'admin';
         <ul class="nav navbar-nav">
             <li><a href="index.php">Beranda</a></li>
             <li><a href="profil.php">Profil dan Roadmap</a></li>
-            <li><a href="monev.php">Monev</a></li>
-            <li><a href="about.php">Layanan</a></li>
             <li><a href="services.php">Pusat Aplikasi</a></li>
-            <li><a href="pricing.php">Dokumentasi</a></li>
-            <li class="active"><a href="harmoni.php">Harmoni</a></li>
-            
-            <?php if ($is_admin): ?>
-            <!-- Menu Admin - hanya ditampilkan jika role adalah admin -->
-            <li class="admin-menu"><a href="admin-users.php"><i class="fa fa-users"></i> Manajemen User</a></li>
-            <li class="admin-menu"><a href="admin-services.php"><i class="fa fa-cogs"></i> Manajemen Layanan</a></li>
-            <li class="admin-menu"><a href="admin-content.php"><i class="fa fa-file-text"></i> Manajemen Konten</a></li>
-            <li class="admin-menu"><a href="admin-profil.php"><i class="fa fa-user"></i> Manajemen Profil</a></li>
-            <?php endif; ?>
             
             <?php if ($is_logged_in): ?>
+                <li><a href="monev.php">Monev</a></li>
+                <li><a href="about.php">Layanan</a></li>
+                <li><a href="pricing.php">Dokumentasi</a></li>
+                <li class="active"><a href="harmoni.php">Harmoni</a></li>
+                
+                <?php if ($is_admin): ?>
+                    <li class="admin-menu"><a href="admin-users.php"><i class="fa fa-users"></i> Manajemen User</a></li>
+                    <li class="admin-menu"><a href="admin-services.php"><i class="fa fa-cogs"></i> Manajemen Layanan</a></li>
+                    <li class="admin-menu"><a href="admin-content.php"><i class="fa fa-file-text"></i> Manajemen Konten</a></li>
+                    <li class="admin-menu"><a href="admin-profil.php"><i class="fa fa-user"></i> Manajemen Profil</a></li>
+                <?php endif; ?>
+                
                 <li class="logout-menu"><a href="logout.php" class="logout-link"><i class="fa fa-sign-out"></i> Logout (<?php echo htmlspecialchars($_SESSION['username']); ?>)</a></li>
             <?php else: ?>
                 <li><a href="login.php"><i class="fa fa-sign-in"></i> Login</a></li>
@@ -223,59 +121,6 @@ $is_admin = $is_logged_in && $_SESSION['role'] === 'admin';
 <script src="js/jquery.flexslider.js"></script>
 <script src="js/animate.js"></script>
 <script src="js/custom.js"></script>
-    <script src="js/sidebar.js"></script>
-<script src="js/validate.js"></script>
-<script>
-    // Cek apakah sudah login
-    function checkLogin() {
-        var isLoggedIn = sessionStorage.getItem('isLoggedIn');
-        if (!isLoggedIn) {
-            // Jika belum login, alihkan ke halaman utama
-            window.location.href = 'index.php';
-        } else {
-            // Jika sudah login, cek role untuk menampilkan/sembunyikan menu admin
-            showHideAdminMenu();
-        }
-    }
-    
-    // Fungsi untuk menampilkan/menyembunyikan menu admin berdasarkan role
-    function showHideAdminMenu() {
-        var role = sessionStorage.getItem('userRole');
-        if (role === 'admin') {
-            // Tampilkan menu admin
-            $('.admin-menu').show();
-        } else {
-            // Sembunyikan menu admin
-            $('.admin-menu').hide();
-        }
-    }
-    
-    $(document).ready(function() {
-        // Sembunyikan menu admin secara default
-        $('.admin-menu').hide();
-        
-        // Cek login saat halaman dimuat
-        checkLogin();
-        
-        // Handle logout button
-        $('#logout-btn').on('click', function(e) {
-            e.preventDefault();
-            
-            // Hapus session storage
-            sessionStorage.removeItem('isLoggedIn');
-            sessionStorage.removeItem('username');
-            sessionStorage.removeItem('userRole');
-            
-            // Alihkan ke halaman utama
-            window.location.href = 'index.php';
-        });
-        
-        // Mobile menu toggle
-        $('.mobile-menu-toggle').on('click', function() {
-            console.log("Button Pressed, adding class");
-            $('.sidebar').toggleClass('open');
-        });
-    });
-</script>
+<script src="js/harmoni.js"></script>
 </body>
 </html>

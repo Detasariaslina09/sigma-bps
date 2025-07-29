@@ -1,6 +1,7 @@
 <?php
 session_start();
 require_once 'koneksi.php';
+require_once 'includes/admin-profil-functions.php';
 
 // Periksa status login - jika belum login atau bukan admin, redirect ke halaman login
 if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'admin') {
@@ -11,26 +12,6 @@ if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'admin') {
 // Definisi variabel status login dan admin
 $is_logged_in = isset($_SESSION['user_id']);
 $is_admin = $is_logged_in && $_SESSION['role'] === 'admin';
-
-// Fungsi untuk memeriksa koneksi database dan melakukan reconnect jika terputus
-function check_connection($conn) {
-    if (!$conn->ping()) {
-        // Reconnect jika koneksi terputus
-        $conn->close();
-        $servername = "127.0.0.1";
-        $username   = "root";
-        $password   = "";
-        $dbname     = "sigap";
-        $port       = 3306;
-        
-        $conn = new mysqli($servername, $username, $password, $dbname, $port);
-        
-        if ($conn->connect_error) {
-            die("Connection failed: " . $conn->connect_error);
-        }
-    }
-    return $conn;
-}
 
 // Pastikan koneksi aktif
 if (!isset($conn) || !$conn instanceof mysqli) {
@@ -50,51 +31,6 @@ $conn = check_connection($conn);
 // Inisialisasi variabel pesan
 $message = '';
 $messageType = '';
-
-// Fungsi untuk menangani jabatan khusus
-function handleSpecialPosition($conn, $jabatan_input, $nama, $foto, $link) {
-    $jabatan_lower = trim(strtolower($jabatan_input));
-
-    $isKepala = strpos($jabatan_lower, 'kepala bps kota bandar lampung') !== false;
-    $isKasubbag = strpos($jabatan_lower, 'kepala subbagian umum') !== false || strpos($jabatan_lower, 'kasubbag umum') !== false;
-    
-    if ($isKepala || $isKasubbag) {
-        $searchTerm = '';
-        if ($isKepala) {
-            $searchTerm = 'Kepala BPS Kota Bandar Lampung';
-        } else if ($isKasubbag) {
-            $searchTerm = 'Kepala Subbagian Umum';
-        }
-        
-        $stmt_check = $conn->prepare("SELECT id, foto FROM profil WHERE jabatan LIKE ?");
-        $like_term = '%' . $searchTerm . '%';
-        $stmt_check->bind_param("s", $like_term);
-        $stmt_check->execute();
-        $result_check = $stmt_check->get_result();
-        
-        if ($row_check = $result_check->fetch_assoc()) {
-            $oldFoto = $row_check['foto'];
-            $stmt_update = $conn->prepare("UPDATE profil SET nama = ?, jabatan = ?, foto = ?, link = ? WHERE id = ?");
-            $stmt_update->bind_param("ssssi", $nama, $jabatan_input, $foto, $link, $row_check['id']);
-            
-            if ($stmt_update->execute()) {
-                if ($oldFoto != 'default-male.jpg' && $oldFoto != 'default-female.jpg' && 
-                    $oldFoto != 'kepala.jpg' && $oldFoto != 'kasubbag.jpg' && $oldFoto != $foto) {
-                    $old_path = "img/staff/" . $oldFoto;
-                    if (file_exists($old_path)) {
-                        unlink($old_path);
-                    }
-                }
-                $stmt_update->close();
-                $stmt_check->close();
-                return true;
-            }
-            $stmt_update->close();
-        }
-        $stmt_check->close();
-    }
-    return false;
-}
 
 
 // Proses hapus profil
@@ -219,7 +155,6 @@ if ($conn instanceof mysqli) {
     <meta name="description" content="Manajemen Profil BPS Kota Bandar Lampung" />
     <meta name="author" content="" />
     <link href="css/bootstrap.min.css" rel="stylesheet" />
-    <link href="css/fancybox/jquery.fancybox.css" rel="stylesheet">
     <link href="css/style.css" rel="stylesheet" />
     <link href="css/custom-styles.css" rel="stylesheet" />
     <link href="css/font-awesome.css" rel="stylesheet" />
@@ -290,7 +225,7 @@ if ($conn instanceof mysqli) {
                                                 <div class="form-group text-center">
                                                     <label>Foto Profil</label><br>
                                                     <img id="preview-image" class="profile-img-preview" src="img/staff/default-male.jpg" alt="Preview">
-                                                    <input type="file" name="foto" id="foto" class="form-control" onchange="previewImage(this);">
+                                                    <input type="file" name="foto" id="foto" class="form-control">
                                                     <small class="text-muted">Format: JPG, JPEG, PNG, GIF. Ukuran maksimal: 2MB.</small>
                                                 </div>
                                             </div>
@@ -364,10 +299,10 @@ if ($conn instanceof mysqli) {
                                             <?php endif; ?>
                                         </td>
                                         <td>
-                                            <a href="javascript:void(0);" onclick="editProfile(<?php echo htmlspecialchars(json_encode($profile)); ?>)" class="btn btn-sm btn-primary btn-action">
+                                            <a href="javascript:void(0);" class="btn btn-sm btn-primary btn-action btn-edit-profile" data-profile='<?php echo htmlspecialchars(json_encode($profile)); ?>'>
                                                 <i class="fa fa-edit"></i><span>Edit</span>
                                             </a>
-                                            <a href="javascript:void(0);" onclick="confirmDelete(<?php echo htmlspecialchars($profile['id']); ?>)" class="btn btn-sm btn-danger btn-action">
+                                            <a href="javascript:void(0);" class="btn btn-sm btn-danger btn-action btn-delete-profile" data-id="<?php echo htmlspecialchars($profile['id']); ?>">
                                                 <i class="fa fa-trash"></i><span>Hapus</span>
                                             </a>
                                         </td>
@@ -382,33 +317,28 @@ if ($conn instanceof mysqli) {
         </section>
         
         <footer>
-        <div class="container">
-            <div class="row">
-                <div class="col-lg-12 text-center">
-                    <h4>Badan Pusat Statistik Kota Bandar Lampung</h4>
-                    <address>
-                        Jl. Sutan Syahrir No. 30, Pahoman, Bandar Lampung, 35215<br>
-                        Telp. (0721) 255980. Mailbox : bps1871@bps.go.id
-                    </address>
-                    <div class="text-center">
+            <div class="container">
+                <div class="row">
+                    <div class="col-lg-12 text-center">
+                        <h4>Badan Pusat Statistik Kota Bandar Lampung</h4>
+                        <address>
+                            Jl. Sutan Syahrir No. 30, Pahoman, Bandar Lampung, 35215<br>
+                            Telp. (0721) 255980. Mailbox : bps1871@bps.go.id
+                        </address>
+                        <div class="text-center">
                             <p>Hak Cipta © 2025 Badan Pusat Statistik Kota Bandar Lampung</p>
                             <p>Semua Hak Dilindungi</p>
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
         </footer>
     </div>
 
     <a href="#" class="scrollup"><i class="fa fa-angle-up active"></i></a>
 
     <script src="js/jquery.js"></script>
-    <script src="js/jquery.easing.1.3.js"></script>
     <script src="js/bootstrap.min.js"></script>
-    <script src="js/jquery.fancybox.pack.js"></script>
-    <script src="js/jquery.fancybox-media.js"></script>
-    <script src="js/animate.js"></script>
     <script src="js/custom.js"></script>
     <script src="js/admin-profil.js"></script>
 </body>

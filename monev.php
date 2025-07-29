@@ -23,12 +23,10 @@ $is_admin = $is_logged_in && $_SESSION['role'] === 'admin';
 <!-- css -->
 <link href="css/bootstrap.min.css" rel="stylesheet" />
 <link href="css/fancybox/jquery.fancybox.css" rel="stylesheet">
-<link href="css/jcarousel.css" rel="stylesheet" />
 <link href="css/flexslider.css" rel="stylesheet" />
 <link href="css/style.css" rel="stylesheet" />
 <link href="css/custom-styles.css" rel="stylesheet" />
 <link href="css/font-awesome.css" rel="stylesheet" />
-<link href="css/sidebar.css" rel="stylesheet" />
 <link href="css/monev-card.css" rel="stylesheet" />
  
 <!-- HTML5 shim, for IE6-8 support of HTML5 elements -->
@@ -49,21 +47,21 @@ $is_admin = $is_logged_in && $_SESSION['role'] === 'admin';
         <ul class="nav navbar-nav">
             <li><a href="index.php">Beranda</a></li>
             <li><a href="profil.php">Profil dan Roadmap</a></li>
-            <li class="active"><a href="monev.php">Monev</a></li>
-            <li><a href="about.php">Layanan</a></li>
             <li><a href="services.php">Pusat Aplikasi</a></li>
-            <li><a href="pricing.php">Dokumentasi</a></li>
-            <li><a href="harmoni.php">Harmoni</a></li>
-            
-            <?php if ($is_admin): ?>
-            <!-- Menu Admin - hanya ditampilkan jika role adalah admin -->
-            <li class="admin-menu"><a href="admin-users.php"><i class="fa fa-users"></i> Manajemen User</a></li>
-            <li class="admin-menu"><a href="admin-services.php"><i class="fa fa-cogs"></i> Manajemen Layanan</a></li>
-            <li class="admin-menu"><a href="admin-content.php"><i class="fa fa-file-text"></i> Manajemen Konten</a></li>
-            <li class="admin-menu"><a href="admin-profil.php"><i class="fa fa-user"></i> Manajemen Profil</a></li>
-            <?php endif; ?>
             
             <?php if ($is_logged_in): ?>
+                <li class="active"><a href="monev.php">Monev</a></li>
+                <li><a href="about.php">Layanan</a></li>
+                <li><a href="pricing.php">Dokumentasi</a></li>
+                <li><a href="harmoni.php">Harmoni</a></li>
+                
+                <?php if ($is_admin): ?>
+                    <li class="admin-menu"><a href="admin-users.php"><i class="fa fa-users"></i> Manajemen User</a></li>
+                    <li class="admin-menu"><a href="admin-services.php"><i class="fa fa-cogs"></i> Manajemen Layanan</a></li>
+                    <li class="admin-menu"><a href="admin-content.php"><i class="fa fa-file-text"></i> Manajemen Konten</a></li>
+                    <li class="admin-menu"><a href="admin-profil.php"><i class="fa fa-user"></i> Manajemen Profil</a></li>
+                <?php endif; ?>
+                
                 <li class="logout-menu"><a href="logout.php" class="logout-link"><i class="fa fa-sign-out"></i> Logout (<?php echo htmlspecialchars($_SESSION['username']); ?>)</a></li>
             <?php else: ?>
                 <li><a href="login.php"><i class="fa fa-sign-in"></i> Login</a></li>
@@ -92,6 +90,16 @@ $is_admin = $is_logged_in && $_SESSION['role'] === 'admin';
                         <div class="monev-content">
                             <h3>Tim Umum</h3>
                             <a href="monev/monev-umum.php" class="btn-monev">Lihat</a>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Tim Statistik Sektoral -->
+                <div class="col-md-4 col-sm-6">
+                    <div class="monev-card" style="background-image: url('img/Monev/statistik.png');">
+                        <div class="monev-content">
+                            <h3>Tim Statistik Sektoral</h3>
+                            <a href="monev/monev-sektoral.php" class="btn-monev">Lihat</a>
                         </div>
                     </div>
                 </div>
@@ -182,7 +190,5 @@ $is_admin = $is_logged_in && $_SESSION['role'] === 'admin';
 <script src="js/jquery.flexslider.js"></script>
 <script src="js/animate.js"></script>
 <script src="js/custom.js"></script>
-    <script src="js/sidebar.js"></script>
-<!-- All authentication handling is now in auth.js -->
 </body>
 </html> 

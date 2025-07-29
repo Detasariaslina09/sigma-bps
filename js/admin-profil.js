@@ -51,4 +51,21 @@ $(document).ready(function() {
         $('#profileModalLabel').text('Tambah Profil Baru');
         $('#profileModal').modal('show');
     });
+    
+    // Handle file input change for image preview
+    $('#foto').on('change', function() {
+        previewImage(this);
+    });
+    
+    // Handle edit profile buttons
+    $(document).on('click', '.btn-edit-profile', function() {
+        var profileData = $(this).data('profile');
+        editProfile(profileData);
+    });
+    
+    // Handle delete profile buttons
+    $(document).on('click', '.btn-delete-profile', function() {
+        var profileId = $(this).data('id');
+        confirmDelete(profileId);
+    });
 });

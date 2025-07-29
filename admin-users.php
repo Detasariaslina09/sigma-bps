@@ -9,29 +9,9 @@ if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'admin') {
     exit;
 }
 
-// Include file koneksi database
+// Include file koneksi database dan functions
 require_once 'koneksi.php';
-
-// Fungsi untuk memeriksa koneksi database dan melakukan reconnect jika terputus
-function check_connection($conn)
-{
-    if (!$conn->ping()) {
-        // Reconnect jika koneksi terputus
-        $conn->close();
-        $servername = "127.0.0.1";
-        $username   = "root";
-        $password   = "";
-        $dbname     = "sigap";
-        $port       = 3306;
-
-        $conn = new mysqli($servername, $username, $password, $dbname, $port);
-
-        if ($conn->connect_error) {
-            die("Connection failed: " . $conn->connect_error);
-        }
-    }
-    return $conn;
-}
+require_once 'includes/admin-users-functions.php';
 
 // Pastikan koneksi aktif
 // Asumsi $conn sudah ada dari require_once 'koneksi.php';
@@ -108,15 +88,26 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
     }
 }
 
-// Handle hapus user
 // Handle hapus user via AJAX
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['ajax_delete']) && $_POST['ajax_delete'] == 1) {
+    // Set content type untuk response
+    header('Content-Type: text/plain; charset=utf-8');
+    
+    // Debug logging
+    error_log("=== ADMIN USER DELETE DEBUG ===");
+    error_log("POST data: " . print_r($_POST, true));
+    error_log("Session user_id: " . $_SESSION['user_id']);
+    
     $user_id = isset($_POST['user_id']) ? intval($_POST['user_id']) : 0;
+    error_log("Received user_id: " . $user_id);
+    
     if ($user_id <= 0) {
+        error_log("ERROR: Invalid user ID");
         echo "User ID tidak valid.";
         exit;
     }
     if ($user_id == $_SESSION['user_id']) {
+        error_log("ERROR: Attempting to delete own account");
         echo "Anda tidak dapat menghapus akun yang sedang Anda gunakan.";
         exit;
     }
@@ -126,19 +117,29 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['ajax_delete']) && $_P
         $stmt->bind_param("i", $user_id);
         $stmt->execute();
         $result = $stmt->get_result();
+        
+        error_log("User lookup query executed. Rows found: " . $result->num_rows);
+        
         if ($result->num_rows === 0) {
+            error_log("ERROR: User not found in database");
             echo "User tidak ditemukan.";
             $stmt->close();
             exit;
         } else {
             $user_data = $result->fetch_assoc();
+            error_log("Found user data: " . print_r($user_data, true));
+            
             if ($user_data['role'] === 'admin') {
                 $admin_count_stmt = $conn->prepare("SELECT COUNT(*) as total FROM users WHERE role = 'admin' AND id != ?");
                 $admin_count_stmt->bind_param("i", $user_id);
                 $admin_count_stmt->execute();
                 $admin_count_result = $admin_count_stmt->get_result();
                 $admin_count = $admin_count_result->fetch_assoc()['total'];
+                
+                error_log("Admin count check: " . $admin_count);
+                
                 if ($admin_count < 1) {
+                    error_log("ERROR: Cannot delete last admin");
                     echo "Tidak dapat menghapus admin terakhir. Minimal harus ada satu admin.";
                     $stmt->close();
                     $admin_count_stmt->close();
@@ -149,10 +150,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['ajax_delete']) && $_P
                     $del_stmt = $conn->prepare("DELETE FROM users WHERE id = ?");
                     $del_stmt->bind_param("i", $user_id);
                     if ($del_stmt->execute()) {
+                        error_log("SUCCESS: Admin user deleted successfully");
                         echo "User berhasil dihapus.";
                         $del_stmt->close();
                         exit;
                     } else {
+                        error_log("ERROR: Failed to delete admin user: " . $conn->error);
                         echo "Gagal menghapus user: " . $conn->error;
                         $del_stmt->close();
                         exit;
@@ -163,10 +166,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['ajax_delete']) && $_P
                 $del_stmt = $conn->prepare("DELETE FROM users WHERE id = ?");
                 $del_stmt->bind_param("i", $user_id);
                 if ($del_stmt->execute()) {
+                    error_log("SUCCESS: Regular user deleted successfully");
                     echo "User berhasil dihapus.";
                     $del_stmt->close();
                     exit;
                 } else {
+                    error_log("ERROR: Failed to delete regular user: " . $conn->error);
                     echo "Gagal menghapus user: " . $conn->error;
                     $del_stmt->close();
                     exit;
@@ -174,11 +179,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['ajax_delete']) && $_P
             }
         }
     } catch (Exception $e) {
+        error_log("EXCEPTION: " . $e->getMessage());
         echo "Terjadi kesalahan: " . $e->getMessage();
         exit;
     }
-// ...existing code...
-// Penutup blok hapus user via AJAX sudah ada di atas, hapus kurung tutup yang tidak perlu
 }
 
 // Ambil semua data user untuk ditampilkan
@@ -210,115 +214,10 @@ try {
     <meta name="description" content="Halaman Manajemen User - BPS Kota Bandar Lampung" />
     <meta name="author" content="" />
     <link href="css/bootstrap.min.css" rel="stylesheet" />
-    <link href="css/fancybox/jquery.fancybox.css" rel="stylesheet">
-    <link href="css/jcarousel.css" rel="stylesheet" />
-    <link href="css/flexslider.css" rel="stylesheet" />
     <link href="css/style.css" rel="stylesheet" />
     <link href="css/custom-styles.css" rel="stylesheet" />
     <link href="css/font-awesome.css" rel="stylesheet" />
-    <link href="css/sidebar.css" rel="stylesheet" />
-    <style>
-        .admin-content {
-            background: #fff;
-            padding: 30px;
-            border-radius: 10px;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-            margin-bottom: 30px;
-        }
-
-        .admin-header {
-            margin-bottom: 30px;
-            padding-bottom: 20px;
-            border-bottom: 1px solid #eee;
-        }
-
-        .admin-header h2 {
-            font-size: 28px;
-            font-weight: 600;
-            color: #333;
-            margin-top: 0;
-        }
-
-        .admin-header p {
-            color: #777;
-            margin-bottom: 0;
-        }
-
-        .btn-add-user {
-            background: #ff9800;
-            color: #fff;
-            border: none;
-            padding: 10px 20px;
-            border-radius: 5px;
-            font-weight: 600;
-            transition: all 0.3s;
-        }
-
-        .btn-add-user:hover {
-            background: #e65100;
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(255, 152, 0, 0.15);
-        }
-
-        .user-table th,
-        .user-table td {
-            vertical-align: middle;
-        }
-
-        .action-buttons .btn {
-            padding: 5px 10px;
-            margin-right: 5px;
-        }
-
-        .modal-header {
-            background: #f8f9fa;
-            border-bottom: none;
-            padding: 20px;
-        }
-
-        .modal-body {
-            padding: 30px;
-        }
-
-        .modal-footer {
-            border-top: none;
-            padding: 0 30px 30px;
-        }
-
-        .label-primary {
-            background-color: #ff9800;
-        }
-
-        .btn-primary {
-            background-color: #ff9800;
-            border-color: #ff9800;
-        }
-
-        .btn-primary:hover,
-        .btn-primary:focus {
-            background-color: #e65100;
-            border-color: #e65100;
-        }
-
-        .alert {
-            padding: 15px;
-            margin-bottom: 20px;
-            border: 1px solid transparent;
-            border-radius: 4px;
-        }
-
-        .alert-success {
-            color: #3c763d;
-            background-color: #dff0d8;
-            border-color: #d6e9c6;
-        }
-
-        .alert-danger {
-            color: #a94442;
-            background-color: #f2dede;
-            border-color: #ebccd1;
-        }
-    </style>
+    <link href="css/admin-users.css" rel="stylesheet" />
 </head>
 
 <body>
@@ -327,24 +226,29 @@ try {
     </button>
 
     <div class="sidebar">
-        <a class="navbar-brand" href="index.php"><img src="img/sigma.png" alt="sigma" /></a>
+        <a class="navbar-brand" href="index.php"><img src="img/sigma.png" alt="logo"/></a>
         <ul class="nav navbar-nav">
             <li><a href="index.php">Beranda</a></li>
             <li><a href="profil.php">Profil dan Roadmap</a></li>
-            <li><a href="monev.php">Monev</a></li>
-            <li><a href="about.php">Layanan</a></li>
             <li><a href="services.php">Pusat Aplikasi</a></li>
-            <li><a href="pricing.php">Dokumentasi</a></li>
-            <li><a href="harmoni.php">Harmoni</a></li>
-
-            <?php if ($_SESSION['role'] === 'admin'): ?>
-                <li class="admin-menu active"><a href="admin-users.php"><i class="fa fa-users"></i> Manajemen User</a></li>
-                <li class="admin-menu"><a href="admin-services.php"><i class="fa fa-cogs"></i> Manajemen Layanan</a></li>
-                <li class="admin-menu"><a href="admin-content.php"><i class="fa fa-file-text"></i> Manajemen Konten</a></li>
-                <li class="admin-menu"><a href="admin-profil.php"><i class="fa fa-user"></i> Manajemen Profil</a></li>
+            <?php
+            $is_logged_in = isset($_SESSION['user_id']);
+            $is_admin = $is_logged_in && $_SESSION['role'] === 'admin';
+            if ($is_logged_in): ?>
+                <li><a href="monev.php">Monev</a></li>
+                <li><a href="about.php">Layanan</a></li>
+                <li><a href="pricing.php">Dokumentasi</a></li>
+                <li><a href="harmoni.php">Harmoni</a></li>
+                <?php if ($is_admin): ?>
+                    <li class="admin-menu active"><a href="admin-users.php"><i class="fa fa-users"></i> Manajemen User</a></li>
+                    <li class="admin-menu"><a href="admin-services.php"><i class="fa fa-cogs"></i> Manajemen Layanan</a></li>
+                    <li class="admin-menu"><a href="admin-content.php"><i class="fa fa-file-text"></i> Manajemen Konten</a></li>
+                    <li class="admin-menu"><a href="admin-profil.php"><i class="fa fa-user"></i> Manajemen Profil</a></li>
+                <?php endif; ?>
+                <li class="logout-menu"><a href="logout.php" class="logout-link"><i class="fa fa-sign-out"></i> Logout (<?php echo htmlspecialchars($_SESSION['username']); ?>)</a></li>
+            <?php else: ?>
+                <li><a href="login.php">Login</a></li>
             <?php endif; ?>
-
-            <li class="logout-menu"><a href="logout.php" class="logout-link"><i class="fa fa-sign-out"></i> Logout (<?php echo htmlspecialchars($_SESSION['username']); ?>)</a></li>
         </ul>
     </div>
 
@@ -412,8 +316,12 @@ try {
                                                     <form method="post" action="admin-users.php" class="delete-user-form" style="display:inline;">
                                                         <input type="hidden" name="action" value="delete">
                                                         <input type="hidden" name="user_id" value="<?php echo $user['id']; ?>">
-                                                        <button type="submit" class="btn btn-danger btn-sm delete-user-btn" data-username="<?php echo htmlspecialchars($user['username']); ?>">
+                                                        <button type="submit" class="btn btn-danger btn-sm delete-user-btn" 
+                                                                data-username="<?php echo htmlspecialchars($user['username']); ?>"
+                                                                data-user-id="<?php echo $user['id']; ?>">
                                                             <i class="fa fa-trash"></i> Hapus
+                                                        </button>
+                                                    </form>
                                                         </button>
                                                     </form>
                                                     <?php endif; ?>
@@ -489,50 +397,12 @@ try {
         </div>
     </div>
 
-    <div class="modal fade" id="deleteUserModal" tabindex="-1" role="dialog">
-        <!-- Modal hapus user dihapus, digantikan alert JS dan AJAX -->
-    </div>
-
     <a href="#" class="scrollup"><i class="fa fa-angle-up active"></i></a>
 
     <script src="js/jquery.js"></script>
-    <script src="js/jquery.easing.1.3.js"></script>
     <script src="js/bootstrap.min.js"></script>
-    <script src="js/jquery.fancybox.pack.js"></script>
-    <script src="js/jquery.fancybox-media.js"></script>
-    <script src="js/portfolio/jquery.quicksand.js"></script>
-    <script src="js/portfolio/setting.js"></script>
-    <script src="js/jquery.flexslider.js"></script>
-    <script src="js/animate.js"></script>
     <script src="js/custom.js"></script>
-    <script src="js/sidebar.js"></script>
-    <script>
-        $(document).ready(function() {
-            // Auto hide alerts after 5 seconds
-            setTimeout(function() {
-                $('.alert').fadeOut('slow');
-            }, 5000);
-
-            // Handle delete user button click (alert + AJAX)
-            $('.delete-user-btn').on('click', function(e) {
-                var username = $(this).data('username');
-                if (!window.confirm('⚠️ Konfirmasi Hapus\n\nApakah Anda yakin ingin menghapus user "' + username + '"?\nData yang dihapus tidak dapat dikembalikan!')) {
-                    e.preventDefault();
-                }
-            });
-
-            // Validasi form tambah user
-            $('#addUserForm').on('submit', function(e) {
-                var password = $('#password').val();
-                var confirmPassword = $('#confirm_password').val();
-
-                if (password !== confirmPassword) {
-                    e.preventDefault();
-                    alert('Password dan konfirmasi password tidak cocok!');
-                }
-            });
-        });
-    </script>
+    <script src="js/admin-users.js"></script>
 </body>
 
 </html>

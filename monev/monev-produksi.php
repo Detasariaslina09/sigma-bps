@@ -173,93 +173,78 @@ $is_admin = $is_logged_in && $_SESSION['role'] === 'admin';
                     <a href="../monev.php" class="btn-back"><i class="fa fa-arrow-left"></i> Kembali ke Daftar Tim</a>
                 </div>
             </div>
-            
-            <!-- Apps List -->
-            <div class="service-category-container">
-                <!-- Aplikasi 1: SIPROTAN -->
                 <div class="service-category-item">
                     <div class="service-category-content">
                         <div class="service-category-info">
-                            <h3>SIPROTAN</h3>
+                            <h3>Monev Distribusi</h3>
                             <ul class="service-links-list">
-                                <li><a href="https://webapps.bps.go.id/siprotan" target="_blank">Sistem Informasi Produksi Tanaman Pangan</a></li>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- Aplikasi 2: SIMTAN -->
-                <div class="service-category-item">
-                    <div class="service-category-content">
-                        <div class="service-category-info">
-                            <h3>SIMTAN</h3>
-                            <ul class="service-links-list">
-                                <li><a href="https://webapps.bps.go.id/simtan" target="_blank">Sistem Informasi Monitoring Tanaman Pangan</a></li>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- Aplikasi 3: SIPERTA -->
-                <div class="service-category-item">
-                    <div class="service-category-content">
-                        <div class="service-category-info">
-                            <h3>SIPERTA</h3>
-                            <ul class="service-links-list">
-                                <li><a href="https://webapps.bps.go.id/siperta" target="_blank">Sistem Informasi Pertanian Terpadu</a></li>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- Aplikasi 4: SIMTANI -->
-                <div class="service-category-item">
-                    <div class="service-category-content">
-                        <div class="service-category-info">
-                            <h3>SIMTANI</h3>
-                            <ul class="service-links-list">
-                                <li><a href="https://webapps.bps.go.id/simtani" target="_blank">Sistem Informasi Monitoring Pertanian</a></li>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- Aplikasi 5: SIMONAS -->
-                <div class="service-category-item">
-                    <div class="service-category-content">
-                        <div class="service-category-info">
-                            <h3>SIMONAS</h3>
-                            <ul class="service-links-list">
-                                <li><a href="https://webapps.bps.go.id/simonas" target="_blank">Sistem Monitoring Nasional</a></li>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- Aplikasi 6: SIMPERTAN -->
-                <div class="service-category-item">
-                    <div class="service-category-content">
-                        <div class="service-category-info">
-                            <h3>SIMPERTAN</h3>
-                            <ul class="service-links-list">
-                                <li><a href="https://webapps.bps.go.id/simpertan" target="_blank">Sistem Informasi Manajemen Pertanian</a></li>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- Aplikasi 7: SIHATI -->
-                <div class="service-category-item">
-                    <div class="service-category-content">
-                        <div class="service-category-info">
-                            <h3>SIHATI</h3>
-                            <ul class="service-links-list">
-                                <li><a href="https://webapps.bps.go.id/sihati" target="_blank">Sistem Informasi Hasil Pertanian</a></li>
+                                <li><a href="https://docs.google.com/spreadsheets/d/13iYb9GNb_c_8It_TZdhxwufPri_EPavm/edit?usp=sharing&ouid=115956294358221492991&rtpof=true&sd=true" target="_blank">Buka Aplikasi</a></li>
                             </ul>
                         </div>
                     </div>
                 </div>
             </div>
+            <div class="service-category-container">
+                <div class="service-category-item">
+                    <div class="service-category-content">
+                        <div class="service-category-info">
+                            <h3>KSA Padi</h3>
+                            <ul class="service-links-list">
+                                <li><a href="https://ksapro-manajemen.bps.go.id/" target="_blank">Buka Aplikasi</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <div class="service-category-item">
+                    <div class="service-category-content">
+                        <div class="service-category-info">
+                            <h3>KSA Jagung</h3>
+                            <ul class="service-links-list">
+                                <li><a href="https://manajemen-ksapro.bps.go.id/" target="_blank">Buka Aplikasi</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <div class="service-category-item">
+                    <div class="service-category-content">
+                        <div class="service-category-info">
+                            <h3>Ubinan Padi</h3>
+                            <ul class="service-links-list">
+                                <li><a href="https://webapps.bps.go.id/simharga" target="_blank">Buka Aplikasi</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <div class="service-category-item">
+                    <div class="service-category-content">
+                        <div class="service-category-info">
+                            <h3>Ubinan Palawija</h3>
+                            <ul class="service-links-list">
+                                <li><a href="https://pengolahan.bps.go.id/produksi/TanamanPangan/" target="_blank">Buka Aplikasi</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <div class="service-category-item">
+                    <div class="service-category-content">
+                        <div class="service-category-info">
+                            <h3>Sistem sampel Ubinan Padi</h3>
+                            <ul class="service-links-list">
+                                <li><a href="https://iframe.bps.go.id/sampling/padi/" target="_blank">Buka Aplikasi</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <div class="service-category-item">
+                    <div class="service-category-content">
+                        <div class="service-category-info">
+                            <h3>Sistem sampel Ubinan Palawija</h3>
+                            <ul class="service-links-list">
+                                <li><a href="https://iframe.bps.go.id/sampling/palawija/" target="_blank">Buka Aplikasi</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
         </div>
     </section>
     <footer>
