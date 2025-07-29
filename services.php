@@ -37,8 +37,8 @@ $is_admin = $is_logged_in && $_SESSION['role'] === 'admin';
             <li class="active"><a href="services.php">Pusat Aplikasi</a></li>
             <?php if (isset($_SESSION['user_id'])): ?>
                 <li><a href="monev.php">Monev</a></li>
-                <li><a href="about.php">Layanan</a></li>
-                <li><a href="pricing.php">Dokumentasi</a></li>
+                <li><a href="layanan.php">Layanan</a></li>
+                <li><a href="dokumentasi.php">Dokumentasi</a></li>
                 <li><a href="harmoni.php">Harmoni</a></li>
                 <?php if ($is_admin): ?>
                     <li class="admin-menu"><a href="admin-users.php"><i class="fa fa-users"></i> Manajemen User</a></li>

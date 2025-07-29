@@ -155,8 +155,8 @@ if (!isset($_SESSION['full_name'])) {
             
             <?php if ($is_logged_in): ?>
                 <li><a href="monev.php">Monev</a></li>
-                <li><a href="about.php">Layanan</a></li>
-                <li><a href="pricing.php">Dokumentasi</a></li>
+                <li><a href="layanan.php">Layanan</a></li>
+                <li><a href="dokumentasi.php">Dokumentasi</a></li>
                 <li><a href="harmoni.php">Harmoni</a></li>
                 
                 <?php if ($is_admin): ?>

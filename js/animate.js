@@ -483,7 +483,4 @@ jQuery(document).ready(function($) {
 		$(this).removeClass("animated rollOut");
 		}
 	);
-
-
-
 });
