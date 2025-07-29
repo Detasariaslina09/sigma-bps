@@ -1,8 +1,8 @@
 $(document).ready(function() {
-    // Auto hide alerts after 5 seconds
+    // Auto hide alerts after 8 seconds
     setTimeout(function() {
         $('.alert').fadeOut('slow');
-    }, 5000);
+    }, 8000);
 
     // Handle delete user button click with AJAX (using event delegation for dynamic content)
     $(document).on('click', '.delete-user-btn', function(e) {
@@ -15,7 +15,7 @@ $(document).ready(function() {
         // Try to get user ID from multiple sources
         var userId = $form.find('input[name="user_id"]').val() || $btn.data('user-id') || $btn.attr('data-user-id');
         
-        // Debug logging
+        // Debug logging (console only)
         console.log('=== DELETE USER DEBUG ===');
         console.log('Button clicked:', $btn);
         console.log('Form found:', $form.length, 'forms');
@@ -23,12 +23,7 @@ $(document).ready(function() {
         console.log('User ID from hidden input:', $form.find('input[name="user_id"]').val());
         console.log('User ID from data-user-id:', $btn.data('user-id'));
         console.log('User ID final value:', userId);
-        console.log('Form HTML:', $form.html());
-        console.log('Button HTML:', $btn[0].outerHTML);
         console.log('========================');
-        
-        // Tambahan debug dengan alert untuk memastikan kita bisa lihat
-        alert('DEBUG INFO:\nUsername: ' + username + '\nUser ID: ' + userId + '\nForm found: ' + $form.length);
         
         // Validate data
         if (!userId || userId === '' || userId === 'undefined') {
@@ -66,24 +61,13 @@ $(document).ready(function() {
                     console.log('Response length:', response.length);
                     console.log('Response trimmed:', JSON.stringify(response.trim()));
                     
-                    // Debug alert untuk response
-                    alert('Server Response: "' + response.trim() + '"');
-                    
+                    // Apapun responsenya, reload halaman dengan parameter success
                     if (response.trim() === 'User berhasil dihapus.') {
-                        console.log('Success! Removing row...');
-                        // Remove the row from table
-                        $btn.closest('tr').fadeOut(300, function() {
-                            $(this).remove();
-                            // Update row numbers
-                            updateRowNumbers();
-                            // Show success message
-                            showAlert('success', 'User berhasil dihapus.');
-                        });
+                        console.log('Success! Redirecting...');
+                        window.location.href = 'admin-users.php?success=' + encodeURIComponent('User berhasil dihapus.');
                     } else {
-                        console.log('Delete failed. Showing error message...');
-                        // Show error message
-                        showAlert('danger', response.trim());
-                        $btn.html(originalHtml).prop('disabled', false);
+                        console.log('Delete failed. Redirecting with error message...');
+                        window.location.href = 'admin-users.php?error=' + encodeURIComponent(response.trim());
                     }
                 },
                 error: function(xhr, status, error) {
@@ -93,9 +77,8 @@ $(document).ready(function() {
                     console.log('Response Text:', xhr.responseText);
                     console.log('Status Code:', xhr.status);
                     
-                    alert('AJAX Error: ' + status + ' - ' + error);
-                    showAlert('danger', 'Terjadi kesalahan saat menghapus user. Status: ' + status);
-                    $btn.html(originalHtml).prop('disabled', false);
+                    // Redirect with error message
+                    window.location.href = 'admin-users.php?error=' + encodeURIComponent('Terjadi kesalahan saat menghapus user. Status: ' + status);
                 },
                 complete: function() {
                     console.log('AJAX request completed.');
@@ -127,7 +110,8 @@ $(document).ready(function() {
         var alertClass = type === 'success' ? 'alert-success' : 'alert-danger';
         var icon = type === 'success' ? 'fa-check-circle' : 'fa-exclamation-circle';
         
-        var alertHtml = '<div class="alert ' + alertClass + '" role="alert">' +
+        var alertHtml = '<div class="alert ' + alertClass + ' alert-dismissible" role="alert">' +
+                       '<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>' +
                        '<i class="fa ' + icon + '"></i> ' + message +
                        '</div>';
         
@@ -137,9 +121,9 @@ $(document).ready(function() {
         // Add new alert at the top of admin-content
         $('.admin-header').after(alertHtml);
         
-        // Auto hide after 5 seconds
+        // Auto hide after 8 seconds
         setTimeout(function() {
             $('.alert').fadeOut('slow');
-        }, 5000);
+        }, 8000);
     }
 });

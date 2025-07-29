@@ -269,13 +269,15 @@ try {
                     </div>
 
                     <?php if (!empty($success_msg)): ?>
-                        <div class="alert alert-success" role="alert">
+                        <div class="alert alert-success alert-dismissible" role="alert">
+                            <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
                             <i class="fa fa-check-circle"></i> <?php echo $success_msg; ?>
                         </div>
                     <?php endif; ?>
 
                     <?php if (!empty($error_msg)): ?>
-                        <div class="alert alert-danger" role="alert">
+                        <div class="alert alert-danger alert-dismissible" role="alert">
+                            <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
                             <i class="fa fa-exclamation-circle"></i> <?php echo $error_msg; ?>
                         </div>
                     <?php endif; ?>
@@ -316,12 +318,11 @@ try {
                                                     <form method="post" action="admin-users.php" class="delete-user-form" style="display:inline;">
                                                         <input type="hidden" name="action" value="delete">
                                                         <input type="hidden" name="user_id" value="<?php echo $user['id']; ?>">
+                                                        <input type="hidden" name="ajax_delete" value="1">
                                                         <button type="submit" class="btn btn-danger btn-sm delete-user-btn" 
                                                                 data-username="<?php echo htmlspecialchars($user['username']); ?>"
                                                                 data-user-id="<?php echo $user['id']; ?>">
                                                             <i class="fa fa-trash"></i> Hapus
-                                                        </button>
-                                                    </form>
                                                         </button>
                                                     </form>
                                                     <?php endif; ?>
