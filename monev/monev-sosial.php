@@ -176,79 +176,47 @@ $is_admin = $is_logged_in && $_SESSION['role'] === 'admin';
             
             <!-- Apps List -->
             <div class="service-category-container">
-                <!-- Aplikasi 1: SIKAP -->
                 <div class="service-category-item">
                     <div class="service-category-content">
                         <div class="service-category-info">
-                            <h3>SIKAP</h3>
+                            <h3>Seruti</h3>
                             <ul class="service-links-list">
-                                <li><a href="https://webapps.bps.go.id/sikap" target="_blank">Sistem Informasi Kependudukan dan Ketenagakerjaan</a></li>
+                                <li><a href="https://webapps.bps.go.id/olah/seruti" target="_blank">Survei Ekonomi Rumah Tangga Triwulanan 2025</a></li>
                             </ul>
                         </div>
                     </div>
                 </div>
-                
-                <!-- Aplikasi 2: SIMDASI -->
                 <div class="service-category-item">
                     <div class="service-category-content">
                         <div class="service-category-info">
-                            <h3>SIMDASI</h3>
+                            <h3>Podes</h3>
                             <ul class="service-links-list">
-                                <li><a href="https://webapps.bps.go.id/simdasi" target="_blank">Sistem Informasi Manajemen Data Sosial</a></li>
+                                <li><a href="https://docs.google.com/spreadsheets/d/1bLGmKBErQa-r2x_469GjoRvbo5tg2sPsKlf9YZfhOZM/edit?usp=sharing" target="_blank">Monitoring Podes 2025</a></li>
                             </ul>
                         </div>
                     </div>
                 </div>
-                
-                <!-- Aplikasi 3: SIRUSA -->
                 <div class="service-category-item">
                     <div class="service-category-content">
                         <div class="service-category-info">
-                            <h3>SIRUSA</h3>
+                            <h3>Supas</h3>
                             <ul class="service-links-list">
-                                <li><a href="https://sirusa.bps.go.id" target="_blank">Sistem Rujukan Statistik</a></li>
+                                <li><a href="https://docs.google.com/spreadsheets/d/1CM7_NauPdkMRXCd-IzbVYomT6q2LxzVgQ_vXYrQkyX4/edit?usp=sharing" target="_blank">Monitoring Pemutakhiran SUPAS 2025</a></li>
                             </ul>
                         </div>
                     </div>
                 </div>
-                
-                <!-- Aplikasi 4: SIMDAK -->
                 <div class="service-category-item">
                     <div class="service-category-content">
                         <div class="service-category-info">
-                            <h3>SIMDAK</h3>
+                            <h3>Supas Pendataan</h3>
                             <ul class="service-links-list">
-                                <li><a href="https://webapps.bps.go.id/simdak" target="_blank">Sistem Informasi Manajemen Data Kesehatan</a></li>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- Aplikasi 5: SIMKESRA -->
-                <div class="service-category-item">
-                    <div class="service-category-content">
-                        <div class="service-category-info">
-                            <h3>SIMKESRA</h3>
-                            <ul class="service-links-list">
-                                <li><a href="https://webapps.bps.go.id/simkesra" target="_blank">Sistem Informasi Monitoring Kesejahteraan Rakyat</a></li>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- Aplikasi 6: SIMBPS -->
-                <div class="service-category-item">
-                    <div class="service-category-content">
-                        <div class="service-category-info">
-                            <h3>SIMBPS</h3>
-                            <ul class="service-links-list">
-                                <li><a href="https://webapps.bps.go.id/simbps" target="_blank">Sistem Informasi Monitoring BPS</a></li>
+                                <li><a href="https://docs.google.com/spreadsheets/d/13tyOy9ZGDYfkzsGuxwcv8jGQ2-lWSyd0MmtBw-G0BXA/edit?usp=sharing" target="_blank">MONITORING PENDATAAN SUPAS 1871</a></li>
                             </ul>
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
     </section>
     <footer>
         <div class="container">

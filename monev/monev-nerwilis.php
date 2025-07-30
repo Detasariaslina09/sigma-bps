@@ -180,87 +180,14 @@ $is_admin = $is_logged_in && $_SESSION['role'] === 'admin';
                 <div class="service-category-item">
                     <div class="service-category-content">
                         <div class="service-category-info">
-                            <h3>SIMNER</h3>
+                            <h3>DINAMIS</h3>
                             <ul class="service-links-list">
-                                <li><a href="https://webapps.bps.go.id/simner" target="_blank">Sistem Informasi Monitoring Neraca</a></li>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- Aplikasi 2: SIMNADA -->
-                <div class="service-category-item">
-                    <div class="service-category-content">
-                        <div class="service-category-info">
-                            <h3>SIMNADA</h3>
-                            <ul class="service-links-list">
-                                <li><a href="https://webapps.bps.go.id/simnada" target="_blank">Sistem Informasi Monitoring Neraca Daerah</a></li>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- Aplikasi 3: SIMREG -->
-                <div class="service-category-item">
-                    <div class="service-category-content">
-                        <div class="service-category-info">
-                            <h3>SIMREG</h3>
-                            <ul class="service-links-list">
-                                <li><a href="https://webapps.bps.go.id/simreg" target="_blank">Sistem Informasi Monitoring Regional</a></li>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- Aplikasi 4: SIMSTAT -->
-                <div class="service-category-item">
-                    <div class="service-category-content">
-                        <div class="service-category-info">
-                            <h3>SIMSTAT</h3>
-                            <ul class="service-links-list">
-                                <li><a href="https://webapps.bps.go.id/simstat" target="_blank">Sistem Informasi Monitoring Statistik</a></li>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- Aplikasi 5: SIMPDDK -->
-                <div class="service-category-item">
-                    <div class="service-category-content">
-                        <div class="service-category-info">
-                            <h3>SIMPDDK</h3>
-                            <ul class="service-links-list">
-                                <li><a href="https://webapps.bps.go.id/simpddk" target="_blank">Sistem Informasi Monitoring PDRB</a></li>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- Aplikasi 6: SIMANA -->
-                <div class="service-category-item">
-                    <div class="service-category-content">
-                        <div class="service-category-info">
-                            <h3>SIMANA</h3>
-                            <ul class="service-links-list">
-                                <li><a href="https://webapps.bps.go.id/simana" target="_blank">Sistem Informasi Monitoring Analisis</a></li>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- Aplikasi 7: SIMBPS -->
-                <div class="service-category-item">
-                    <div class="service-category-content">
-                        <div class="service-category-info">
-                            <h3>SIMBPS</h3>
-                            <ul class="service-links-list">
-                                <li><a href="https://webapps.bps.go.id/simbps" target="_blank">Sistem Informasi Monitoring BPS</a></li>
+                                <li><a href="https://s.bps.go.id/dinamis1871" target="_blank">KEGIATAN STATISTIK TIM NERACA WILAYAH DAN ANALISIS</a></li>
                             </ul>
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
     </section>
     <footer>
         <div class="container">

@@ -4,7 +4,7 @@ session_start();
 
 // Periksa status login - jika belum login, redirect ke halaman login
 if (!isset($_SESSION['user_id'])) {
-    header("Location: ../login.php");
+    header("Location: login.php");
     exit;
 }
 
@@ -16,13 +16,14 @@ $is_admin = $is_logged_in && $_SESSION['role'] === 'admin';
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<title>Monev Tim Statistik Sektoral - BPS Kota Bandar Lampung</title>
+<title>Monev Tim Nerwilis - BPS Kota Bandar Lampung</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<meta name="description" content="Monitoring dan Evaluasi Tim Statistik Sektoral BPS Kota Bandar Lampung" />
+<meta name="description" content="Monitoring dan Evaluasi Tim Neraca dan Analisis Statistik BPS Kota Bandar Lampung" />
 <meta name="author" content="" />
 <!-- css -->
 <link href="../css/bootstrap.min.css" rel="stylesheet" />
 <link href="../css/fancybox/jquery.fancybox.css" rel="stylesheet">
+<link href="../css/jcarousel.css" rel="stylesheet" />
 <link href="../css/flexslider.css" rel="stylesheet" />
 <link href="../css/style.css" rel="stylesheet" />
 <link href="../css/custom-styles.css" rel="stylesheet" />
@@ -48,75 +49,81 @@ $is_admin = $is_logged_in && $_SESSION['role'] === 'admin';
         border-radius: 8px;
         box-shadow: 0 2px 10px rgba(0,0,0,0.1);
         overflow: hidden;
-        transition: all 0.3s ease;
-    }
-    
-    .service-category-item:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 5px 15px rgba(0,0,0,0.2);
     }
     
     .service-category-content {
+        display: flex;
+        flex-direction: row;
+    }
+    
+    .service-category-info {
+        flex: 1;
         padding: 20px;
-        text-align: center;
     }
     
-    .service-category-content h3 {
-        color: #333;
-        margin-bottom: 15px;
-        font-size: 18px;
-        font-weight: 600;
-    }
-    
-    .service-category-content p {
-        color: #666;
-        margin-bottom: 20px;
-        line-height: 1.6;
-    }
-    
-    .service-category-content .btn {
-        background: #ff9800;
-        color: #fff;
-        padding: 10px 25px;
-        border-radius: 25px;
-        text-decoration: none;
-        display: inline-block;
-        transition: all 0.3s ease;
-        border: none;
-        font-weight: 600;
-    }
-    
-    .service-category-content .btn:hover {
-        background: #e65100;
-        color: #fff;
-        text-decoration: none;
-        transform: scale(1.05);
-    }
-    
-    .service-icon {
-        font-size: 48px;
+    .service-category-info h3 {
         color: #ff9800;
-        margin-bottom: 20px;
+        margin-top: 0;
+        margin-bottom: 15px;
+        padding-bottom: 10px;
+        border-bottom: 1px dashed #eee;
     }
     
-    .monev-header {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        color: #fff;
-        padding: 40px 0;
-        margin-bottom: 40px;
-        border-radius: 10px;
+    .service-links-list {
+        list-style: none;
+        padding: 0;
+        margin: 0;
     }
     
-    .monev-header h1 {
-        color: #fff;
+    .service-links-list li {
         margin-bottom: 10px;
-        font-weight: 700;
     }
     
-    .monev-header p {
-        color: rgba(255,255,255,0.9);
-        font-size: 18px;
-        margin-bottom: 0;
+    .service-links-list li a {
+        color: #111 !important;
+        text-decoration: none;
+        display: block;
+        padding: 8px 10px;
+        background: #f9f9f9;
+        border-radius: 4px;
+        transition: all 0.3s ease;
+    }
+    
+    .service-links-list li a:hover {
+        background: #ff9800;
+        color: #fff !important;
+        padding-left: 15px;
+    }
+    
+    .header-back {
+        margin-bottom: 30px;
+    }
+    
+    .btn-back {
+        background: #f5f5f5;
+        color: #333;
+        padding: 8px 15px;
+        border-radius: 4px;
+        display: inline-block;
+        text-decoration: none;
+        transition: all 0.3s ease;
+    }
+    
+    .btn-back:hover {
+        background: #e0e0e0;
+        color: #333;
+        text-decoration: none;
+    }
+    
+    .btn-back i {
+        margin-right: 5px;
+    }
+    
+    /* Media query for mobile */
+    @media (max-width: 768px) {
+        .service-category-content {
+            flex-direction: column;
+        }
     }
 </style>
 
@@ -132,7 +139,6 @@ $is_admin = $is_logged_in && $_SESSION['role'] === 'admin';
         <a class="navbar-brand" href="../index.php"><img src="../img/sigma.png" alt="logo"/></a>
         <ul class="nav navbar-nav">
             <li><a href="../index.php">Beranda</a></li>
-            <li><a href="../profil.php">Profil dan Roadmap</a></li>
             <li class="active"><a href="../monev.php">Monev</a></li>
             <li><a href="../layanan.php">Layanan</a></li>
             <li><a href="../services.php">Pusat Aplikasi</a></li>
@@ -144,7 +150,7 @@ $is_admin = $is_logged_in && $_SESSION['role'] === 'admin';
             <li class="admin-menu"><a href="../admin-users.php"><i class="fa fa-users"></i> Manajemen User</a></li>
             <li class="admin-menu"><a href="../admin-services.php"><i class="fa fa-cogs"></i> Manajemen Layanan</a></li>
             <li class="admin-menu"><a href="../admin-content.php"><i class="fa fa-file-text"></i> Manajemen Konten</a></li>
-            <li class="admin-menu"><a href="../admin-profil.php"><i class="fa fa-user"></i> Manajemen Profil</a></li>
+            <li class="admin-menu"><a href="admin-profil.php"><i class="fa fa-id-card"></i> Manajemen Profil</a></li>
             <?php endif; ?>
             
             <?php if ($is_logged_in): ?>
@@ -158,115 +164,41 @@ $is_admin = $is_logged_in && $_SESSION['role'] === 'admin';
 <div id="wrapper">
     <section id="content">
         <div class="container">
-            <!-- Header -->
-            <div class="row">
-                <div class="col-md-12">
-                    <div class="monev-header text-center">
-                        <h1>Monitoring dan Evaluasi</h1>
-                        <p>Tim Statistik Sektoral</p>
-                    </div>
+            <!-- Header & Back Button -->
+            <div class="row header-back">
+                <div class="col-md-6">
+                    <h2><i class="fa fa-bar-chart"></i> Monitoring dan Evaluasi Tim Statistik Sektoral</h2>
+                </div>
+                <div class="col-md-6 text-right">
+                    <a href="../monev.php" class="btn-back"><i class="fa fa-arrow-left"></i> Kembali ke Daftar Tim</a>
                 </div>
             </div>
             
-            <!-- Konten Tim Statistik Sektoral -->
-            <div class="row service-category-container">
-                <!-- Statistik Ekonomi -->
-                <div class="col-md-6">
-                    <div class="service-category-item">
-                        <div class="service-category-content">
-                            <div class="service-icon">
-                                <i class="fa fa-line-chart"></i>
-                            </div>
-                            <h3>Statistik Ekonomi</h3>
-                            <p>Monitoring dan evaluasi kegiatan statistik ekonomi, termasuk survei ekonomi, harga, dan perdagangan.</p>
-                            <a href="#" class="btn">Detail Monev</a>
+            <!-- Apps List -->
+            <div class="service-category-container">
+                <!-- Aplikasi 1: SIMNER -->
+                <div class="service-category-item">
+                    <div class="service-category-content">
+                        <div class="service-category-info">
+                            <h3>Desa Cantik</h3>
+                            <ul class="service-links-list">
+                                <li><a href="https://docs.google.com/spreadsheets/d/1h8T41Wu0bHTcAlb1cWxz9kGMwausHQS7NJAKmUhk1lw/edit?usp=sharing" target="_blank">Tim Kelurahan</a></li>
+                            </ul>
                         </div>
                     </div>
                 </div>
-                
-                <!-- Statistik Pertanian -->
-                <div class="col-md-6">
-                    <div class="service-category-item">
-                        <div class="service-category-content">
-                            <div class="service-icon">
-                                <i class="fa fa-leaf"></i>
-                            </div>
-                            <h3>Statistik Pertanian</h3>
-                            <p>Monitoring dan evaluasi kegiatan statistik pertanian, hortikultura, dan perkebunan.</p>
-                            <a href="#" class="btn">Detail Monev</a>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- Statistik Industri -->
-                <div class="col-md-6">
-                    <div class="service-category-item">
-                        <div class="service-category-content">
-                            <div class="service-icon">
-                                <i class="fa fa-industry"></i>
-                            </div>
-                            <h3>Statistik Industri</h3>
-                            <p>Monitoring dan evaluasi kegiatan statistik industri pengolahan dan manufaktur.</p>
-                            <a href="#" class="btn">Detail Monev</a>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- Statistik Perdagangan -->
-                <div class="col-md-6">
-                    <div class="service-category-item">
-                        <div class="service-category-content">
-                            <div class="service-icon">
-                                <i class="fa fa-shopping-cart"></i>
-                            </div>
-                            <h3>Statistik Perdagangan</h3>
-                            <p>Monitoring dan evaluasi kegiatan statistik perdagangan dalam dan luar negeri.</p>
-                            <a href="#" class="btn">Detail Monev</a>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- Statistik Transportasi -->
-                <div class="col-md-6">
-                    <div class="service-category-item">
-                        <div class="service-category-content">
-                            <div class="service-icon">
-                                <i class="fa fa-truck"></i>
-                            </div>
-                            <h3>Statistik Transportasi</h3>
-                            <p>Monitoring dan evaluasi kegiatan statistik transportasi dan komunikasi.</p>
-                            <a href="#" class="btn">Detail Monev</a>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- Statistik Pariwisata -->
-                <div class="col-md-6">
-                    <div class="service-category-item">
-                        <div class="service-category-content">
-                            <div class="service-icon">
-                                <i class="fa fa-camera"></i>
-                            </div>
-                            <h3>Statistik Pariwisata</h3>
-                            <p>Monitoring dan evaluasi kegiatan statistik pariwisata dan budaya.</p>
-                            <a href="#" class="btn">Detail Monev</a>
+                <div class="service-category-item">
+                    <div class="service-category-content">
+                        <div class="service-category-info">
+                            <h3>Rencana Kerja PPS</h3>
+                            <ul class="service-links-list">
+                                <li><a href="https://docs.google.com/spreadsheets/d/15NbHr8DnSPx6zMxN_MKSziO1-tFknYH2frJag7FpQc4/edit?usp=sharing" target="_blank">Jadwal Pembinaan Statistik Sektoral Tahun 2025</a></li>
+                            </ul>
                         </div>
                     </div>
                 </div>
             </div>
-            
-            <!-- Informasi Tambahan -->
-            <div class="row" style="margin-top: 40px;">
-                <div class="col-md-12">
-                    <div class="alert alert-info">
-                        <h4><i class="fa fa-info-circle"></i> Informasi Tim Statistik Sektoral</h4>
-                        <p>Tim Statistik Sektoral bertanggung jawab untuk monitoring dan evaluasi berbagai kegiatan statistik sektoral yang mencakup ekonomi, pertanian, industri, perdagangan, transportasi, dan pariwisata. Tim ini memastikan kualitas data statistik sektor-sektor penting dalam perekonomian daerah.</p>
-                    </div>
-                </div>
-            </div>
-        </div>
     </section>
-    
     <footer>
         <div class="container">
             <div class="row">
@@ -276,16 +208,17 @@ $is_admin = $is_logged_in && $_SESSION['role'] === 'admin';
                         Jl. Sutan Syahrir No. 30, Pahoman, Bandar Lampung, 35215<br>
                         Telp. (0721) 255980. Mailbox : bps1871@bps.go.id
                     </address>
-                    <div class="text-center">
-                        <p>Hak Cipta © 2025 Badan Pusat Statistik Kota Bandar Lampung</p>
-                        <p>Semua Hak Dilindungi</p>
+                    <div class="copyright">
+                        <div class="text-center">
+                            <p>Hak Cipta © 2025 Badan Pusat Statistik Kota Bandar Lampung</p>
+                            <p>Semua Hak Dilindungi</p>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
     </footer>
 </div>
-
 <a href="#" class="scrollup"><i class="fa fa-angle-up active"></i></a>
 <!-- javascript
     ================================================== -->
@@ -301,48 +234,12 @@ $is_admin = $is_logged_in && $_SESSION['role'] === 'admin';
 <script src="../js/animate.js"></script>
 <script src="../js/custom.js"></script>
 <script>
-    $(document).ready(function() {
-        // Sembunyikan menu admin secara default
-        $('.admin-menu').hide();
-        
-        // Cek login saat halaman dimuat
-        checkLogin();
-        
-        // Handle logout button
-        $('#logout-btn').on('click', function(e) {
-            e.preventDefault();
-            
-            // Hapus session storage
-            sessionStorage.removeItem('isLoggedIn');
-            sessionStorage.removeItem('username');
-            sessionStorage.removeItem('userRole');
-            
-            // Alihkan ke halaman utama
-            window.location.href = '../index.php';
-        });
-        
-        // Mobile menu toggle
-        $('.mobile-menu-toggle').on('click', function() {
-            $('.sidebar').toggleClass('open');
-        });
-        
-        // Hover effects untuk service items
-        $('.service-category-item').hover(
-            function() {
-                $(this).find('.service-icon i').addClass('animated bounce');
-            },
-            function() {
-                $(this).find('.service-icon i').removeClass('animated bounce');
-            }
-        );
-    });
-    
     // Cek apakah sudah login
     function checkLogin() {
         var isLoggedIn = sessionStorage.getItem('isLoggedIn');
         if (!isLoggedIn) {
             // Jika belum login, alihkan ke halaman utama
-            window.location.href = '../index.php';
+            window.location.href = 'index.php';
         } else {
             // Jika sudah login, cek role untuk menampilkan/sembunyikan menu admin
             showHideAdminMenu();
@@ -360,6 +257,27 @@ $is_admin = $is_logged_in && $_SESSION['role'] === 'admin';
             $('.admin-menu').hide();
         }
     }
+    
+    $(document).ready(function() {
+        // Sembunyikan menu admin secara default
+        $('.admin-menu').hide();
+        
+        // Cek login saat halaman dimuat
+        checkLogin();
+        
+        // Handle logout button
+        $('.logout-link').on('click', function(e) {
+            e.preventDefault();
+            
+            // Hapus session storage
+            sessionStorage.removeItem('isLoggedIn');
+            sessionStorage.removeItem('username');
+            sessionStorage.removeItem('userRole');
+            
+            // Alihkan ke halaman utama
+            window.location.href = 'logout.php';
+        });
+    });
 </script>
 </body>
-</html>
+</html> 
