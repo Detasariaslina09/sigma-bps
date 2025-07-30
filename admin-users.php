@@ -88,103 +88,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
     }
 }
 
-// Handle hapus user via AJAX
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['ajax_delete']) && $_POST['ajax_delete'] == 1) {
-    // Set content type untuk response
-    header('Content-Type: text/plain; charset=utf-8');
-    
-    // Debug logging
-    error_log("=== ADMIN USER DELETE DEBUG ===");
-    error_log("POST data: " . print_r($_POST, true));
-    error_log("Session user_id: " . $_SESSION['user_id']);
-    
-    $user_id = isset($_POST['user_id']) ? intval($_POST['user_id']) : 0;
-    error_log("Received user_id: " . $user_id);
-    
-    if ($user_id <= 0) {
-        error_log("ERROR: Invalid user ID");
-        echo "User ID tidak valid.";
-        exit;
-    }
-    if ($user_id == $_SESSION['user_id']) {
-        error_log("ERROR: Attempting to delete own account");
-        echo "Anda tidak dapat menghapus akun yang sedang Anda gunakan.";
-        exit;
-    }
-    try {
-        $conn = check_connection($conn);
-        $stmt = $conn->prepare("SELECT id, role FROM users WHERE id = ?");
-        $stmt->bind_param("i", $user_id);
-        $stmt->execute();
-        $result = $stmt->get_result();
-        
-        error_log("User lookup query executed. Rows found: " . $result->num_rows);
-        
-        if ($result->num_rows === 0) {
-            error_log("ERROR: User not found in database");
-            echo "User tidak ditemukan.";
-            $stmt->close();
-            exit;
-        } else {
-            $user_data = $result->fetch_assoc();
-            error_log("Found user data: " . print_r($user_data, true));
-            
-            if ($user_data['role'] === 'admin') {
-                $admin_count_stmt = $conn->prepare("SELECT COUNT(*) as total FROM users WHERE role = 'admin' AND id != ?");
-                $admin_count_stmt->bind_param("i", $user_id);
-                $admin_count_stmt->execute();
-                $admin_count_result = $admin_count_stmt->get_result();
-                $admin_count = $admin_count_result->fetch_assoc()['total'];
-                
-                error_log("Admin count check: " . $admin_count);
-                
-                if ($admin_count < 1) {
-                    error_log("ERROR: Cannot delete last admin");
-                    echo "Tidak dapat menghapus admin terakhir. Minimal harus ada satu admin.";
-                    $stmt->close();
-                    $admin_count_stmt->close();
-                    exit;
-                } else {
-                    $stmt->close();
-                    $admin_count_stmt->close();
-                    $del_stmt = $conn->prepare("DELETE FROM users WHERE id = ?");
-                    $del_stmt->bind_param("i", $user_id);
-                    if ($del_stmt->execute()) {
-                        error_log("SUCCESS: Admin user deleted successfully");
-                        echo "User berhasil dihapus.";
-                        $del_stmt->close();
-                        exit;
-                    } else {
-                        error_log("ERROR: Failed to delete admin user: " . $conn->error);
-                        echo "Gagal menghapus user: " . $conn->error;
-                        $del_stmt->close();
-                        exit;
-                    }
-                }
-            } else {
-                $stmt->close();
-                $del_stmt = $conn->prepare("DELETE FROM users WHERE id = ?");
-                $del_stmt->bind_param("i", $user_id);
-                if ($del_stmt->execute()) {
-                    error_log("SUCCESS: Regular user deleted successfully");
-                    echo "User berhasil dihapus.";
-                    $del_stmt->close();
-                    exit;
-                } else {
-                    error_log("ERROR: Failed to delete regular user: " . $conn->error);
-                    echo "Gagal menghapus user: " . $conn->error;
-                    $del_stmt->close();
-                    exit;
-                }
-            }
-        }
-    } catch (Exception $e) {
-        error_log("EXCEPTION: " . $e->getMessage());
-        echo "Terjadi kesalahan: " . $e->getMessage();
-        exit;
-    }
-}
-
 // Ambil semua data user untuk ditampilkan
 $users = [];
 try {
@@ -313,19 +216,12 @@ try {
                                             </td>
                                             <td><?php echo date('d-m-Y H:i', strtotime($user['created_at'])); ?></td>
                                             <td class="action-buttons">
-                                                <?php if ($user['id'] != $_SESSION['user_id']): // Jangan tampilkan tombol hapus untuk user yang sedang login ?>
-                                                    <?php if (isset($user['id']) && isset($user['username'])): ?>
-                                                    <form method="post" action="admin-users.php" class="delete-user-form" style="display:inline;">
-                                                        <input type="hidden" name="action" value="delete">
-                                                        <input type="hidden" name="user_id" value="<?php echo $user['id']; ?>">
-                                                        <input type="hidden" name="ajax_delete" value="1">
-                                                        <button type="submit" class="btn btn-danger btn-sm delete-user-btn" 
-                                                                data-username="<?php echo htmlspecialchars($user['username']); ?>"
-                                                                data-user-id="<?php echo $user['id']; ?>">
-                                                            <i class="fa fa-trash"></i> Hapus
-                                                        </button>
-                                                    </form>
-                                                    <?php endif; ?>
+                                                <?php if ($user['id'] != $_SESSION['user_id']): ?>
+                                                    <button type="button" class="btn btn-danger btn-sm delete-user-btn" 
+                                                            data-username="<?php echo htmlspecialchars($user['username']); ?>"
+                                                            data-user-id="<?php echo $user['id']; ?>">
+                                                        <i class="fa fa-trash"></i> Hapus
+                                                    </button>
                                                 <?php endif; ?>
                                             </td>
                                         </tr>
@@ -381,12 +277,13 @@ try {
                             <input type="password" class="form-control" id="confirm_password" name="confirm_password" required>
                         </div>
                         <div class="form-group">
-                            <label for="role">Role</label>
-                            <select class="form-control" id="role" name="role" required>
-                                <option value="">Pilih Role</option>
+                            <label for="role">Role <span style="color: red;">*</span></label>
+                            <select class="form-control" id="role" name="role" required style="background-color: white !important; color: #333 !important;">
+                                <option value="">-- Pilih Role --</option>
                                 <option value="admin">Admin</option>
                                 <option value="user">User</option>
                             </select>
+                            <small class="help-block" style="color: #666;">Pilih peran untuk user baru</small>
                         </div>
                         <div class="modal-footer">
                             <button type="button" class="btn btn-default" data-dismiss="modal">Batal</button>
@@ -402,8 +299,139 @@ try {
 
     <script src="js/jquery.js"></script>
     <script src="js/bootstrap.min.js"></script>
-    <script src="js/custom.js"></script>
-    <script src="js/admin-users.js"></script>
+    <script>
+        // Script super simple tanpa konflik
+        jQuery(document).ready(function($) {
+            console.log('Script started');
+            console.log('Buttons found:', $('.delete-user-btn').length);
+            
+            // Fix untuk dropdown role - lebih agresif
+            $('#role').on('change', function() {
+                var selectedValue = $(this).val();
+                var selectedText = $(this).find('option:selected').text();
+                console.log('Role selected:', selectedValue, '-', selectedText);
+                
+                // Force update display
+                if (selectedValue) {
+                    $(this).css({
+                        'color': '#333 !important',
+                        'background-color': '#fff !important'
+                    });
+                    $(this).removeClass('text-muted');
+                }
+            });
+            
+            // Fix saat modal dibuka
+            $('#addUserModal').on('shown.bs.modal', function() {
+                console.log('Modal opened');
+                $('#role').prop('selectedIndex', 0); // Reset ke pilihan pertama
+                $('#role').css('color', '#333');
+            });
+            
+            // Monitor perubahan value
+            $('#role').on('input change blur', function() {
+                var val = $(this).val();
+                console.log('Role value changed to:', val);
+                if (val) {
+                    $(this).css('color', '#333 !important');
+                }
+            });
+            
+            // Pastikan dropdown dapat diklik
+            $('#role').on('click', function(e) {
+                e.stopPropagation();
+                console.log('Dropdown clicked');
+            });
+            
+            // Fix untuk form validation
+            $('#addUserForm').on('submit', function(e) {
+                var role = $('#role').val();
+                var password = $('#password').val();
+                var confirmPassword = $('#confirm_password').val();
+                
+                if (!role) {
+                    e.preventDefault();
+                    alert('Silakan pilih role!');
+                    $('#role').focus();
+                    return false;
+                }
+                
+                if (password !== confirmPassword) {
+                    e.preventDefault();
+                    alert('Password dan konfirmasi password tidak cocok!');
+                    $('#confirm_password').focus();
+                    return false;
+                }
+            });
+            
+            // Event delegation untuk menghindari konflik
+            $(document).off('click', '.delete-user-btn').on('click', '.delete-user-btn', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                
+                console.log('BUTTON CLICKED!');
+                
+                var $btn = $(this);
+                var userId = $btn.attr('data-user-id');
+                var username = $btn.attr('data-username');
+                
+                console.log('User ID:', userId);
+                console.log('Username:', username);
+                
+                if (!userId) {
+                    alert('User ID tidak ditemukan!');
+                    return false;
+                }
+                
+                if (confirm('Hapus user "' + username + '"?')) {
+                    console.log('Dihapus');
+                    
+                    // Update button
+                    $btn.html('⏳ Menghapus...').prop('disabled', true);
+                    
+                    // Simple AJAX
+                    $.ajax({
+                        url: 'delete-user.php',
+                        type: 'POST',
+                        data: { user_id: userId },
+                        success: function(data) {
+                            console.log('📨 Raw response:', data);
+                            
+                            var response;
+                            try {
+                                response = typeof data === 'string' ? JSON.parse(data) : data;
+                            } catch(e) {
+                                console.log('❌ JSON parse error:', e);
+                                alert('❌ Response error: ' + data);
+                                location.reload();
+                                return;
+                            }
+                            
+                            console.log('Parsed response:', response);
+                            
+                            if (response.success) {
+                                alert('✅ ' + response.message);
+                                $btn.closest('tr').fadeOut(function() {
+                                    $(this).remove();
+                                });
+                            } else {
+                                alert('❌ ' + response.message);
+                                $btn.html('<i class="fa fa-trash"></i> Hapus').prop('disabled', false);
+                            }
+                        },
+                        error: function(xhr, status, error) {
+                            console.log('AJAX Error:', error);
+                            console.log('Response text:', xhr.responseText);
+                            
+                            alert('Error: ' + error + '\n\nResponse: ' + xhr.responseText);
+                            $btn.html('<i class="fa fa-trash"></i> Hapus').prop('disabled', false);
+                        }
+                    });
+                }
+                
+                return false;
+            });
+        });
+    </script>
 </body>
-
 </html>

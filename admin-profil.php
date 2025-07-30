@@ -155,6 +155,7 @@ if ($conn instanceof mysqli) {
     <meta name="description" content="Manajemen Profil BPS Kota Bandar Lampung" />
     <meta name="author" content="" />
     <link href="css/bootstrap.min.css" rel="stylesheet" />
+    <link href="css/fancybox/jquery.fancybox.css" rel="stylesheet">
     <link href="css/style.css" rel="stylesheet" />
     <link href="css/custom-styles.css" rel="stylesheet" />
     <link href="css/font-awesome.css" rel="stylesheet" />
@@ -299,12 +300,12 @@ if ($conn instanceof mysqli) {
                                             <?php endif; ?>
                                         </td>
                                         <td>
-                                            <a href="javascript:void(0);" class="btn btn-sm btn-primary btn-action btn-edit-profile" data-profile='<?php echo htmlspecialchars(json_encode($profile)); ?>'>
+                                            <button type="button" onclick="editProfile(<?php echo htmlspecialchars(json_encode($profile), ENT_QUOTES, 'UTF-8'); ?>)" class="btn btn-sm btn-primary btn-action btn-edit-profile">
                                                 <i class="fa fa-edit"></i><span>Edit</span>
-                                            </a>
-                                            <a href="javascript:void(0);" class="btn btn-sm btn-danger btn-action btn-delete-profile" data-id="<?php echo htmlspecialchars($profile['id']); ?>">
+                                            </button>
+                                            <button type="button" onclick="confirmDelete(<?php echo htmlspecialchars($profile['id']); ?>)" class="btn btn-sm btn-danger btn-action btn-delete-profile" data-id="<?php echo htmlspecialchars($profile['id']); ?>">
                                                 <i class="fa fa-trash"></i><span>Hapus</span>
-                                            </a>
+                                            </button>
                                         </td>
                                     </tr>
                                     <?php endforeach; ?>
@@ -339,6 +340,8 @@ if ($conn instanceof mysqli) {
 
     <script src="js/jquery.js"></script>
     <script src="js/bootstrap.min.js"></script>
+    <script src="js/jquery.fancybox.pack.js"></script>
+    <script src="js/jquery.fancybox-media.js"></script>
     <script src="js/custom.js"></script>
     <script src="js/admin-profil.js"></script>
 </body>

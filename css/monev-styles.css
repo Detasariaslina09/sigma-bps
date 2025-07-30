@@ -1,0 +1,266 @@
+/* 
+ * CSS Terpusat untuk Semua Halaman Monev
+ * File: monev-styles.css
+ * Deskripsi: Styling khusus untuk halaman monitoring dan evaluasi tim BPS
+ */
+
+/* Reset margin dan padding untuk full screen */
+body {
+    margin: 0;
+    padding: 0;
+}
+
+#wrapper {
+    margin-left: 0 !important;
+    width: 100% !important;
+}
+
+/* Container aplikasi */
+.app-list {
+    margin-top: 30px;
+}
+
+.service-category-container {
+    margin-top: 30px;
+}
+
+/* Styling untuk setiap item aplikasi */
+.service-category-item {
+    margin-bottom: 20px;
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    overflow: hidden;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.service-category-item:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+}
+
+.service-category-content {
+    display: flex;
+    flex-direction: row;
+}
+
+.service-category-info {
+    flex: 1;
+    padding: 20px;
+}
+
+.service-category-info h3 {
+    color: #ff9800;
+    margin-top: 0;
+    margin-bottom: 15px;
+    padding-bottom: 10px;
+    border-bottom: 1px dashed #eee;
+    font-weight: 600;
+    font-size: 1.2em;
+}
+
+/* Styling untuk daftar link aplikasi */
+.service-links-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.service-links-list li {
+    margin-bottom: 10px;
+}
+
+.service-links-list li a {
+    color: #111 !important;
+    text-decoration: none;
+    display: block;
+    padding: 12px 15px;
+    background: #f9f9f9;
+    border-radius: 6px;
+    transition: all 0.3s ease;
+    border-left: 3px solid transparent;
+    font-weight: 500;
+}
+
+.service-links-list li a:hover {
+    background: #ff9800;
+    color: #fff !important;
+    padding-left: 20px;
+    border-left-color: #f57c00;
+    transform: translateX(5px);
+}
+
+/* Header dan tombol kembali */
+.header-back {
+    margin-bottom: 30px;
+    padding: 20px 0;
+    border-bottom: 1px solid #eee;
+}
+
+.header-back h2 {
+    color: #333;
+    font-weight: 600;
+    margin: 0;
+}
+
+.header-back h2 i {
+    color: #ff9800;
+    margin-right: 10px;
+}
+
+/* Styling tombol kembali */
+.btn-back {
+    background: linear-gradient(135deg, #f5f5f5 0%, #e8e8e8 100%);
+    color: #333;
+    padding: 12px 24px;
+    border-radius: 8px;
+    display: inline-block;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    font-weight: 600;
+    border: 1px solid #ddd;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.btn-back:hover {
+    background: linear-gradient(135deg, #e0e0e0 0%, #d5d5d5 100%);
+    color: #333;
+    text-decoration: none;
+    border-color: #bbb;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+}
+
+.btn-back i {
+    margin-right: 8px;
+    transition: transform 0.3s ease;
+}
+
+.btn-back:hover i {
+    transform: translateX(-2px);
+}
+
+/* Loading animation */
+.loading-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(255, 255, 255, 0.9);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.3s ease;
+}
+
+.loading-overlay.active {
+    opacity: 1;
+    visibility: visible;
+}
+
+.loading-spinner {
+    width: 40px;
+    height: 40px;
+    border: 4px solid #f3f3f3;
+    border-top: 4px solid #ff9800;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .service-category-content {
+        flex-direction: column;
+    }
+    
+    .header-back {
+        text-align: center;
+        padding: 15px 0;
+    }
+    
+    .header-back .col-md-6 {
+        text-align: center !important;
+        margin-bottom: 15px;
+    }
+    
+    .header-back h2 {
+        font-size: 1.5em;
+        margin-bottom: 15px;
+    }
+    
+    .service-category-info {
+        padding: 15px;
+    }
+    
+    .service-links-list li a {
+        padding: 10px 12px;
+        font-size: 0.9em;
+    }
+    
+    .btn-back {
+        padding: 10px 20px;
+        font-size: 0.9em;
+    }
+}
+
+@media (max-width: 480px) {
+    .service-category-container {
+        margin-top: 20px;
+    }
+    
+    .service-category-item {
+        margin-bottom: 15px;
+        border-radius: 6px;
+    }
+    
+    .service-category-info h3 {
+        font-size: 1.1em;
+    }
+    
+    .header-back h2 {
+        font-size: 1.3em;
+    }
+}
+
+/* Animasi masuk halaman */
+.fade-in {
+    animation: fadeIn 0.6s ease-in;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Styling khusus untuk scroll to top button */
+.scrollup {
+    background: #ff9800;
+    border-radius: 50%;
+    width: 50px;
+    height: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+}
+
+.scrollup:hover {
+    background: #f57c00;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(255, 152, 0, 0.3);
+}

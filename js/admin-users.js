@@ -1,90 +1,85 @@
 $(document).ready(function() {
-    // Auto hide alerts after 8 seconds
+    // Auto hide alerts after 5 seconds
     setTimeout(function() {
         $('.alert').fadeOut('slow');
-    }, 8000);
+    }, 5000);
 
-    // Handle delete user button click with AJAX (using event delegation for dynamic content)
+    // Handle delete user button click with AJAX - using event delegation
     $(document).on('click', '.delete-user-btn', function(e) {
         e.preventDefault();
         
         var $btn = $(this);
-        var $form = $btn.closest('form');
         var username = $btn.data('username');
+        var userId = $btn.data('user-id');
+        var $row = $btn.closest('tr');
         
-        // Try to get user ID from multiple sources
-        var userId = $form.find('input[name="user_id"]').val() || $btn.data('user-id') || $btn.attr('data-user-id');
-        
-        // Debug logging (console only)
-        console.log('=== DELETE USER DEBUG ===');
-        console.log('Button clicked:', $btn);
-        console.log('Form found:', $form.length, 'forms');
-        console.log('Username from data attribute:', username);
-        console.log('User ID from hidden input:', $form.find('input[name="user_id"]').val());
-        console.log('User ID from data-user-id:', $btn.data('user-id'));
-        console.log('User ID final value:', userId);
-        console.log('========================');
+        // Debug logging
+        console.log('Delete button clicked!');
+        console.log('Username:', username);
+        console.log('User ID:', userId);
+        console.log('Button data attributes:', $btn.data());
         
         // Validate data
         if (!userId || userId === '' || userId === 'undefined') {
-            console.error('ERROR: User ID is empty or undefined!');
+            console.error('User ID validation failed:', userId);
             showAlert('danger', 'Error: ID user tidak ditemukan! User ID: ' + userId);
-            return;
+            return false;
         }
         
         if (!username || username === '') {
-            console.error('ERROR: Username is empty or undefined!');
+            console.error('Username validation failed:', username);
             showAlert('danger', 'Error: Username tidak ditemukan!');
-            return;
+            return false;
         }
         
-        if (window.confirm('⚠️ Konfirmasi Hapus\n\nApakah Anda yakin ingin menghapus user "' + username + '" (ID: ' + userId + ')?\nData yang dihapus tidak dapat dikembalikan!')) {
+        if (confirm('Apakah Anda yakin ingin menghapus user "' + username + '"?\n\nData yang dihapus tidak dapat dikembalikan!')) {
             // Show loading state
             var originalHtml = $btn.html();
             $btn.html('<i class="fa fa-spinner fa-spin"></i> Menghapus...').prop('disabled', true);
             
-            console.log('Sending AJAX request to delete user ID:', userId);
+            console.log('Sending AJAX request with data:', {
+                ajax_delete: 1,
+                user_id: userId
+            });
             
             // Send AJAX request
             $.ajax({
                 url: 'admin-users.php',
                 type: 'POST',
+                dataType: 'json',
                 data: {
                     ajax_delete: 1,
                     user_id: userId
                 },
-                beforeSend: function() {
-                    console.log('AJAX request starting...');
-                },
                 success: function(response) {
-                    console.log('Raw server response:', JSON.stringify(response));
-                    console.log('Response length:', response.length);
-                    console.log('Response trimmed:', JSON.stringify(response.trim()));
-                    
-                    // Apapun responsenya, reload halaman dengan parameter success
-                    if (response.trim() === 'User berhasil dihapus.') {
-                        console.log('Success! Redirecting...');
-                        window.location.href = 'admin-users.php?success=' + encodeURIComponent('User berhasil dihapus.');
+                    console.log('AJAX Success:', response);
+                    if (response && response.success) {
+                        // Remove the table row with animation
+                        $row.fadeOut('slow', function() {
+                            $(this).remove();
+                            updateRowNumbers();
+                        });
+                        
+                        // Show success notification
+                        showAlert('success', response.message);
                     } else {
-                        console.log('Delete failed. Redirecting with error message...');
-                        window.location.href = 'admin-users.php?error=' + encodeURIComponent(response.trim());
+                        showAlert('danger', response.message || 'Gagal menghapus user');
+                        // Reset button
+                        $btn.html(originalHtml).prop('disabled', false);
                     }
                 },
                 error: function(xhr, status, error) {
-                    console.log('AJAX Error Details:');
-                    console.log('Status:', status);
-                    console.log('Error:', error);
+                    console.log('AJAX Error:', error);
                     console.log('Response Text:', xhr.responseText);
-                    console.log('Status Code:', xhr.status);
+                    showAlert('danger', 'Terjadi kesalahan saat menghapus user.');
                     
-                    // Redirect with error message
-                    window.location.href = 'admin-users.php?error=' + encodeURIComponent('Terjadi kesalahan saat menghapus user. Status: ' + status);
-                },
-                complete: function() {
-                    console.log('AJAX request completed.');
+                    // Reset button
+                    $btn.html(originalHtml).prop('disabled', false);
                 }
             });
         }
+        
+        return false;
     });
 
     // Validasi form tambah user
@@ -110,20 +105,27 @@ $(document).ready(function() {
         var alertClass = type === 'success' ? 'alert-success' : 'alert-danger';
         var icon = type === 'success' ? 'fa-check-circle' : 'fa-exclamation-circle';
         
-        var alertHtml = '<div class="alert ' + alertClass + ' alert-dismissible" role="alert">' +
+        var alertHtml = '<div class="alert ' + alertClass + ' alert-dismissible alert-fixed" role="alert">' +
                        '<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>' +
                        '<i class="fa ' + icon + '"></i> ' + message +
                        '</div>';
         
         // Remove existing alerts
-        $('.alert').remove();
+        $('.alert-fixed').remove();
         
-        // Add new alert at the top of admin-content
-        $('.admin-header').after(alertHtml);
+        // Add new alert at the top of the page
+        $('body').prepend(alertHtml);
         
-        // Auto hide after 8 seconds
+        // Auto hide after 5 seconds
         setTimeout(function() {
-            $('.alert').fadeOut('slow');
-        }, 8000);
+            $('.alert-fixed').fadeOut('slow', function() {
+                $(this).remove();
+            });
+        }, 5000);
+        
+        // Scroll to top to show notification
+        $('html, body').animate({
+            scrollTop: 0
+        }, 300);
     }
 });
