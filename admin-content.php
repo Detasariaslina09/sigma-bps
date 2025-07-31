@@ -1,43 +1,16 @@
 <?php
 // Mulai session
 session_start();
-
-// Cek apakah user sudah login dan memiliki role admin
 if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'admin') {
     // Redirect ke halaman login jika belum login atau bukan admin
     header("Location: login.php");
     exit;
 }
-
-// Definisi variabel status login dan admin
-$is_logged_in = isset($_SESSION['user_id']);
+$is_logged_in = isset($_SESSION['user_id']); // Definisi variabel status login dan admin
 $is_admin = $is_logged_in && $_SESSION['role'] === 'admin';
 
-// Include koneksi database
-require_once 'koneksi.php';
-
-// Fungsi untuk memeriksa koneksi database dan melakukan reconnect jika terputus
-function check_connection($conn) {
-    if (!$conn->ping()) {
-        // Reconnect jika koneksi terputus
-        $conn->close();
-        $servername = "127.0.0.1";
-        $username   = "root";
-        $password   = "";
-        $dbname     = "sigap";
-        $port       = 3306;
-        
-        $conn = new mysqli($servername, $username, $password, $dbname, $port);
-        
-        if ($conn->connect_error) {
-            die("Connection failed: " . $conn->connect_error);
-        }
-    }
-    return $conn;
-}
-
-// Inisialisasi variabel
-$success = false;
+require_once 'koneksi.php';  // Include koneksi database
+$success = false; // Inisialisasi variabel
 $error = '';
 
 // Proses update jika form disubmit
@@ -80,17 +53,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
                 $error = 'Format gambar tidak didukung.';
             }
         }
-        
-        // Jika tidak ada error, lakukan update data
-        if (!$error) {
-            // Hapus semua data konten yang ada terlebih dahulu
-            if (!$conn->query("DELETE FROM konten")) {
+        if (!$error) {// Jika tidak ada error, lakukan update data
+            if (!$conn->query("DELETE FROM konten")) { // Hapus semua data konten yang ada terlebih dahulu
                 throw new Exception("Error deleting old content: " . $conn->error);
             }
-            
-            // Tentukan gambar mana yang akan digunakan
             $imageToUse = '';
-            
             if ($imageName) {
                 // Jika ada gambar baru, gunakan gambar baru
                 $imageToUse = $imageName;
@@ -103,9 +70,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
             $sql = "INSERT INTO konten (id, title, description, image) VALUES (1, '$title', '$description', '$imageToUse')";
             
             if ($conn->query($sql)) {
-                $success = true;
-                
-                // Jika berhasil menyimpan data baru dan ada gambar baru, hapus gambar lama
+                $success = true; // Jika berhasil menyimpan data baru dan ada gambar baru, hapus gambar lama
                 if ($imageName && $oldImage != 'konten.webp' && $oldImage != $imageName) {
                     $oldImagePath = 'img/' . $oldImage;
                     if (file_exists($oldImagePath)) {
@@ -113,9 +78,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
                     }
                 }
             } else {
-                $error = 'Gagal menyimpan perubahan: ' . $conn->error;
-                
-                // Jika gagal menyimpan data baru dan ada gambar baru, hapus gambar baru
+                $error = 'Gagal menyimpan perubahan: ' . $conn->error; // Jika gagal menyimpan data baru dan ada gambar baru, hapus gambar baru
                 if ($imageName) {
                     $newImagePath = 'img/' . $imageName;
                     if (file_exists($newImagePath)) {
@@ -128,12 +91,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
         $error = 'Database error: ' . $e->getMessage();
     }
 }
-
-// Pastikan koneksi aktif sebelum mengambil data
-$conn = check_connection($conn);
-
-// Ambil data konten dari database
-$id = 1;
+$conn = check_connection($conn); // Pastikan koneksi aktif sebelum mengambil data
+$id = 1; // Ambil data konten dari database
 $sql = "SELECT * FROM konten WHERE id=$id LIMIT 1";
 $result = $conn->query($sql);
 
@@ -148,12 +107,7 @@ if ($result && $result->num_rows > 0) {
     $title = 'Selamat Datang di BPS Kota Bandar Lampung';
     $description = 'Silakan isi konten halaman utama website.';
     $image = 'konten.webp';
-    
-    // Tambahkan data default ke database
-    try {
-        // Pastikan koneksi aktif
-        $conn = check_connection($conn);
-        
+    try {     // Tambahkan data default ke database
         $conn->query("DELETE FROM konten"); // Hapus data lama jika ada
         if (!$conn->query("INSERT INTO konten (id, title, description, image) VALUES (1, '$title', '$description', '$image')")) {
             $error = 'Gagal menambahkan data default: ' . $conn->error;
@@ -162,9 +116,7 @@ if ($result && $result->num_rows > 0) {
         $error = 'Database error: ' . $e->getMessage();
     }
 }
-
-// Pastikan file gambar ada
-if (!$image || !file_exists('img/' . $image)) {
+if (!$image || !file_exists('img/' . $image)) { 
     $image = 'konten.webp';
 }
 ?>
@@ -230,7 +182,7 @@ if (!$image || !file_exists('img/' . $image)) {
                         <div class="row">
                             <div class="col-md-6">
                                 <h2><i class="fa fa-file-text"></i> Manajemen Konten</h2>
-                                <p>Kelola konten halaman utama website</p>
+                                <p>Kelola konten di halaman utama website</p>
                             </div>
                             <div class="col-md-6 text-right">
                                 <button type="submit" id="headerSaveBtn" form="contentForm" class="btn btn-add-user"><i class="fa fa-save"></i> Simpan Perubahan</button>

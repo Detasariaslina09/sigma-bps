@@ -8,34 +8,9 @@ $is_admin = $is_logged_in && isset($_SESSION['role']) && $_SESSION['role'] === '
 
 // Ambil ID profil dari parameter URL
 $profile_id = isset($_GET['id']) ? (int)$_GET['id'] : 0;
+$profile = null; // Ambil data profil
 
-// Fungsi untuk memeriksa koneksi database
-function check_connection($conn) {
-    if (!$conn->ping()) {
-        $conn->close();
-        $servername = "127.0.0.1";
-        $username   = "root";
-        $password   = "";
-        $dbname     = "sigap";
-        $port       = 3306;
-        
-        $conn = new mysqli($servername, $username, $password, $dbname, $port);
-        
-        if ($conn->connect_error) {
-            die("Connection failed: " . $conn->connect_error);
-        }
-    }
-    return $conn;
-}
-
-// Pastikan koneksi aktif
-$conn = check_connection($conn);
-
-// Ambil data profil
-$profile = null;
-
-if ($profile_id > 0) {
-    // Jika ID valid, ambil dari database
+if ($profile_id > 0) {     // Jika ID valid, ambil dari database
     $stmt = $conn->prepare("SELECT * FROM profil WHERE id = ?");
     $stmt->bind_param("i", $profile_id);
     $stmt->execute();
@@ -45,8 +20,7 @@ if ($profile_id > 0) {
         $profile = $result->fetch_assoc();
     }
     $stmt->close();
-} else {
-    // Jika ID adalah 0, cek parameter posisi untuk data default
+} else {    // Jika ID adalah 0, cek parameter posisi untuk data default
     $position = isset($_GET['position']) ? $_GET['position'] : '';
     
     if ($position === 'kepala') {
@@ -68,8 +42,7 @@ if ($profile_id > 0) {
     }
 }
 
-// Jika profil tidak ditemukan, redirect ke halaman profil
-if (!$profile) {
+if (!$profile) { // Jika profil tidak ditemukan, redirect ke halaman profil
     header("Location: profil.php");
     exit;
 }
@@ -84,8 +57,6 @@ $conn->close();
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="description" content="Profil <?php echo htmlspecialchars($profile['nama']); ?> - BPS Kota Bandar Lampung" />
     <meta name="author" content="" />
-    
-    <!-- css -->
     <link href="css/bootstrap.min.css" rel="stylesheet" />
     <link href="css/style.css" rel="stylesheet" />
     <link href="css/custom-styles.css" rel="stylesheet" />

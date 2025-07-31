@@ -2,9 +2,7 @@
 session_start();
 require_once 'koneksi.php';
 require_once 'includes/admin-profil-functions.php';
-
-// Periksa status login - jika belum login atau bukan admin, redirect ke halaman login
-if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'admin') {
+if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'admin') { // Periksa status login - jika belum login atau bukan admin, redirect ke halaman login
     header("Location: login.php");
     exit;
 }
@@ -12,26 +10,8 @@ if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'admin') {
 // Definisi variabel status login dan admin
 $is_logged_in = isset($_SESSION['user_id']);
 $is_admin = $is_logged_in && $_SESSION['role'] === 'admin';
-
-// Pastikan koneksi aktif
-if (!isset($conn) || !$conn instanceof mysqli) {
-    $servername = "127.0.0.1";
-    $username   = "root";
-    $password   = "";
-    $dbname     = "sigap";
-    $port       = 3306;
-    $conn = new mysqli($servername, $username, $password, $dbname, $port);
-    if ($conn->connect_error) {
-        die("Initial Connection failed: " . $conn->connect_error);
-    }
-}
-
-$conn = check_connection($conn);
-
-// Inisialisasi variabel pesan
-$message = '';
+$message = ''; // Inisialisasi variabel pesan
 $messageType = '';
-
 
 // Proses hapus profil
 if (isset($_GET['delete']) && !empty($_GET['delete'])) {
@@ -129,8 +109,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     }
 }
 
-
-// Ambil data profil untuk ditampilkan di tabel
 $profiles = [];
 $sql_select_all = "SELECT * FROM profil ORDER BY id ASC";
 $result_all = $conn->query($sql_select_all);
@@ -139,9 +117,7 @@ if ($result_all) {
         $profiles[] = $row_all;
     }
 }
-
-// Tutup koneksi database
-if ($conn instanceof mysqli) {
+if ($conn instanceof mysqli) { // Tutup koneksi database
     $conn->close();
 }
 ?>
@@ -226,7 +202,7 @@ if ($conn instanceof mysqli) {
                                                 <div class="form-group text-center">
                                                     <label>Foto Profil</label><br>
                                                     <img id="preview-image" class="profile-img-preview" src="img/staff/default-male.jpg" alt="Preview">
-                                                    <input type="file" name="foto" id="foto" class="form-control">
+                                                    <input type="file" name="foto" id="foto" class="form-control" onchange="previewImage(this)">
                                                     <small class="text-muted">Format: JPG, JPEG, PNG, GIF. Ukuran maksimal: 2MB.</small>
                                                 </div>
                                             </div>
@@ -337,7 +313,6 @@ if ($conn instanceof mysqli) {
     </div>
 
     <a href="#" class="scrollup"><i class="fa fa-angle-up active"></i></a>
-
     <script src="js/jquery.js"></script>
     <script src="js/bootstrap.min.js"></script>
     <script src="js/jquery.fancybox.pack.js"></script>

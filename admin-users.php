@@ -1,35 +1,13 @@
 <?php
-// Mulai session
-session_start();
+session_start(); // Mulai session
 
 // Cek apakah user sudah login dan memiliki role admin
 if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'admin') {
-    // Redirect ke halaman login jika belum login atau bukan admin
-    header("Location: login.php");
+    header("Location: login.php");// Redirect ke halaman login jika belum login atau bukan admin
     exit;
 }
-
-// Include file koneksi database dan functions
 require_once 'koneksi.php';
-require_once 'includes/admin-users-functions.php';
-
-// Pastikan koneksi aktif
-// Asumsi $conn sudah ada dari require_once 'koneksi.php';
-// Jika tidak, Anda perlu membuatnya di sini atau di koneksi.php
-if (!isset($conn) || !$conn instanceof mysqli) {
-    // Fallback jika $conn belum terdefinisi atau bukan objek mysqli
-    $servername = "127.0.0.1";
-    $username   = "root";
-    $password   = "";
-    $dbname     = "sigap";
-    $port       = 3306;
-    $conn = new mysqli($servername, $username, $password, $dbname, $port);
-    if ($conn->connect_error) {
-        die("Initial Connection failed: " . $conn->connect_error);
-    }
-}
-
-$conn = check_connection($conn);
+require_once 'includes/admin-users-functions.php'; // Include file koneksi database dan functions
 
 // Inisialisasi variabel untuk pesan
 $success_msg = '';
@@ -55,11 +33,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
         $error_msg = "Password dan konfirmasi password tidak cocok.";
     } else {
         try {
-            // Pastikan koneksi aktif
-            $conn = check_connection($conn);
-
-            // Cek apakah username sudah ada
-            $stmt = $conn->prepare("SELECT id FROM users WHERE username = ?");
+            $stmt = $conn->prepare("SELECT id FROM users WHERE username = ?"); // Cek apakah username sudah ada
             $stmt->bind_param("s", $username);
             $stmt->execute();
             $result = $stmt->get_result();
@@ -71,7 +45,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
                 $hashed_password = password_hash($password, PASSWORD_DEFAULT);
 
                 // Insert user baru (hanya username, password, role)
-                // created_at akan otomatis diisi oleh MySQL jika kolom didefinisikan dengan DEFAULT CURRENT_TIMESTAMP
                 $stmt = $conn->prepare("INSERT INTO users (username, password, role) VALUES (?, ?, ?)");
                 $stmt->bind_param("sss", $username, $hashed_password, $role);
 
@@ -88,13 +61,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
     }
 }
 
-// Ambil semua data user untuk ditampilkan
-$users = [];
+$users = []; // Ambil semua data user untuk ditampilkan
 try {
-    // Pastikan koneksi aktif
-    $conn = check_connection($conn);
-
-    // Query untuk mengambil data users sesuai struktur database
     $result = $conn->query("SELECT id, username, role, created_at FROM users ORDER BY id ASC");
 
     if ($result && $result->num_rows > 0) {
@@ -300,7 +268,6 @@ try {
     <script src="js/jquery.js"></script>
     <script src="js/bootstrap.min.js"></script>
     <script>
-        // Script super simple tanpa konflik
         jQuery(document).ready(function($) {
             console.log('Script started');
             console.log('Buttons found:', $('.delete-user-btn').length);
@@ -388,9 +355,7 @@ try {
                     
                     // Update button
                     $btn.html('⏳ Menghapus...').prop('disabled', true);
-                    
-                    // Simple AJAX
-                    $.ajax({
+                    $.ajax({ // Simple AJAX
                         url: 'delete-user.php',
                         type: 'POST',
                         data: { user_id: userId },

@@ -7,14 +7,26 @@ if (typeof jQuery === 'undefined') {
 
 // Preview image before upload
 function previewImage(input) {
-    if (input.files && input.files[0]) {
-        var reader = new FileReader();
-        
-        reader.onload = function(e) {
-            $('#preview-image').attr('src', e.target.result);
+    console.log('previewImage function called');
+    try {
+        if (input.files && input.files[0]) {
+            var reader = new FileReader();
+            
+            reader.onload = function(e) {
+                $('#preview-image').attr('src', e.target.result);
+                console.log('Image preview updated');
+            }
+            
+            reader.onerror = function(e) {
+                console.error('Error reading file:', e);
+            }
+            
+            reader.readAsDataURL(input.files[0]);
+        } else {
+            console.log('No file selected or browser does not support FileReader');
         }
-        
-        reader.readAsDataURL(input.files[0]);
+    } catch (error) {
+        console.error('Error in previewImage function:', error);
     }
 }
 
@@ -62,7 +74,7 @@ function editProfile(profile) {
 
 // Document ready function
 $(document).ready(function() {
-    console.log('Admin profil script loaded');
+    console.log('Admin profil script loaded and document ready');
     
     // Reset form when modal is closed
     $('#profileModal').on('hidden.bs.modal', function () {
@@ -83,7 +95,7 @@ $(document).ready(function() {
     
     // Handle file input change for image preview
     $('#foto').on('change', function() {
-        console.log('File input changed');
+        console.log('File input changed via jQuery event');
         previewImage(this);
     });
     

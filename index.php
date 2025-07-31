@@ -1,62 +1,27 @@
 <?php
-// Mulai session
-session_start();
+session_start(); // Mulai session
 
 // Include file koneksi yang telah diperbaiki
 require_once 'koneksi.php';
-
-// Periksa status login - jika belum login, redirect ke halaman login
-// Halaman ini dapat diakses tanpa login
-
-// Fungsi untuk memeriksa koneksi database dan melakukan reconnect jika terputus
-function check_connection($conn) {
-    if (!$conn->ping()) {
-        // Reconnect jika koneksi terputus
-        $conn->close();
-        $servername = "127.0.0.1";
-        $username   = "root";
-        $password   = "";
-        $dbname     = "sigap";
-        $port       = 3306;
-        
-        $conn = new mysqli($servername, $username, $password, $dbname, $port);
-        
-        if ($conn->connect_error) {
-            die("Connection failed: " . $conn->connect_error);
-        }
-    }
-    return $conn;
-}
-
-// Pastikan koneksi aktif
-$conn = check_connection($conn);
-
-// Default content jika database tidak tersedia
-$title = "Selamat Datang di BPS Kota Bandar Lampung";
+$title = "Selamat Datang di BPS Kota Bandar Lampung"; // Default content jika database tidak tersedia
 $description = "Silakan isi konten halaman utama website.";
 $image = "konten.webp";
 
-try {
-    // Cek apakah tabel konten ada
+try {     // Cek apakah tabel konten ada
     $table_check = $conn->query("SHOW TABLES LIKE 'konten'");
     if ($table_check && $table_check->num_rows > 0) {
-        // Ambil data konten terbaru
-        $sql = "SELECT * FROM konten WHERE id = 1 LIMIT 1";
+        $sql = "SELECT * FROM konten WHERE id = 1 LIMIT 1";         // Ambil data konten terbaru
         $result = $conn->query($sql);
 
-        if ($result && $result->num_rows > 0) {
-            // Jika data ditemukan, gunakan data dari database
+        if ($result && $result->num_rows > 0) {             // Jika data ditemukan, gunakan data dari database
             $row = $result->fetch_assoc();
             $title = $row["title"];
             $description = $row["description"];
             $image = $row["image"];
         }
     }
-} catch (Exception $e) {
-    // Jika terjadi error, gunakan data default
+} catch (Exception $e) {     // Jika terjadi error, gunakan data default
 }
-
-// Pastikan path gambar lengkap dan benar
 $image_path = "img/" . $image;
 if (!file_exists($image_path)) {
     $image_path = "img/konten.webp"; // Gambar default jika gambar tidak ditemukan
@@ -82,7 +47,6 @@ if (!isset($_SESSION['full_name'])) {
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="description" content="Website Resmi BPS Kota Bandar Lampung" />
     <meta name="author" content="" />
-    <!-- css -->
     <link href="css/bootstrap.min.css" rel="stylesheet" />
     <link href="css/fancybox/jquery.fancybox.css" rel="stylesheet">
     <link href="css/jcarousel.css" rel="stylesheet" />
@@ -100,8 +64,7 @@ if (!isset($_SESSION['full_name'])) {
     </script>
 </head>
 <body>
-    <!-- Mobile Menu Toggle Button -->
-    <button class="mobile-menu-toggle">
+    <button class="mobile-menu-toggle">     <!-- Mobile Menu Toggle Button -->
         <i class="fa fa-bars"></i> Menu
     </button>
     
@@ -134,7 +97,6 @@ if (!isset($_SESSION['full_name'])) {
     </div>
 
     <div id="wrapper">
-        <!-- Slider -->
         <section id="featured">
             <div id="main-slider" class="flexslider">
                 <ul class="slides">
@@ -146,7 +108,6 @@ if (!isset($_SESSION['full_name'])) {
                     </li>
                 </ul>
             </div>
-            <!-- end slider -->
         </section>
 
         <section>
@@ -197,10 +158,6 @@ if (!isset($_SESSION['full_name'])) {
     </div>
 
     <a href="#" class="scrollup"><i class="fa fa-angle-up active"></i></a>
-
-    <!-- javascript
-    ================================================== -->
-    <!-- Placed at the end of the document so the pages load faster -->
     <script src="js/jquery.js"></script>
     <script src="js/jquery.easing.1.3.js"></script>
     <script src="js/bootstrap.min.js"></script>

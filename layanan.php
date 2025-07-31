@@ -11,29 +11,6 @@ if (!isset($_SESSION['user_id'])) {
 // Include koneksi database
 require_once 'koneksi.php';
 
-// Fungsi untuk memeriksa koneksi database dan melakukan reconnect jika terputus
-function check_connection($conn) {
-    if (!$conn->ping()) {
-        // Reconnect jika koneksi terputus
-        $conn->close();
-        $servername = "127.0.0.1";
-        $username   = "root";
-        $password   = "";
-        $dbname     = "sigap";
-        $port       = 3306;
-        
-        $conn = new mysqli($servername, $username, $password, $dbname, $port);
-        
-        if ($conn->connect_error) {
-            die("Connection failed: " . $conn->connect_error);
-        }
-    }
-    return $conn;
-}
-
-// Pastikan koneksi aktif
-$conn = check_connection($conn);
-
 // Ambil data layanan dan link dari database
 $services = [];
 
@@ -79,7 +56,6 @@ $is_admin = $is_logged_in && $_SESSION['role'] === 'admin';
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <meta name="description" content="" />
 <meta name="author" content="http://webthemez.com" />
-<!-- css -->
 <link href="css/bootstrap.min.css" rel="stylesheet" />
 <link href="css/fancybox/jquery.fancybox.css" rel="stylesheet">
 <link href="css/jcarousel.css" rel="stylesheet" />
@@ -177,9 +153,6 @@ $is_admin = $is_logged_in && $_SESSION['role'] === 'admin';
     </div>
 
     <a href="#" class="scrollup"><i class="fa fa-angle-up active"></i></a>
-<!-- javascript
-    ================================================== -->
-<!-- Placed at the end of the document so the pages load faster -->
 <script src="js/jquery.js"></script>
 <script src="js/jquery.easing.1.3.js"></script>
 <script src="js/bootstrap.min.js"></script>

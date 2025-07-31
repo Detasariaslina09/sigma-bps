@@ -1,9 +1,12 @@
 <?php
+// Include fungsi database
+require_once 'includes/database.php';
+
 $servername = "127.0.0.1";  // menggunakan IP langsung daripada localhost
 $username   = "root";
 $password   = "";
 $dbname     = "sigap";
-$port       = 3306;         // menambahkan port eksplisit
+$port       = 3306;         
 
 // Buat koneksi baru
 $conn = new mysqli($servername, $username, $password);
