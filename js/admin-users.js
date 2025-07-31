@@ -1,12 +1,17 @@
 $(document).ready(function() {
+    console.log('Admin Users JS Initialized');
+    
     // Auto hide alerts after 5 seconds
     setTimeout(function() {
         $('.alert').fadeOut('slow');
     }, 5000);
 
-    // Handle delete user button click with AJAX - using event delegation
-    $(document).on('click', '.delete-user-btn', function(e) {
+    // Pastikan event handlers untuk delete user tetap berfungsi
+    // dengan menambahkan namespace khusus (.adminUsers)
+    $(document).off('click.adminUsers', '.delete-user-btn');
+    $(document).on('click.adminUsers', '.delete-user-btn', function(e) {
         e.preventDefault();
+        e.stopPropagation(); // Mencegah event bubbling
         
         var $btn = $(this);
         var username = $btn.data('username');
@@ -71,7 +76,20 @@ $(document).ready(function() {
                 error: function(xhr, status, error) {
                     console.log('AJAX Error:', error);
                     console.log('Response Text:', xhr.responseText);
-                    showAlert('danger', 'Terjadi kesalahan saat menghapus user.');
+                    
+                    var errorMessage = 'Terjadi kesalahan saat menghapus user.';
+                    
+                    // Coba parse response jika ada
+                    try {
+                        var response = JSON.parse(xhr.responseText);
+                        if (response && response.message) {
+                            errorMessage = response.message;
+                        }
+                    } catch (e) {
+                        console.log('Error parsing response:', e);
+                    }
+                    
+                    showAlert('danger', errorMessage);
                     
                     // Reset button
                     $btn.html(originalHtml).prop('disabled', false);
@@ -105,9 +123,11 @@ $(document).ready(function() {
         var alertClass = type === 'success' ? 'alert-success' : 'alert-danger';
         var icon = type === 'success' ? 'fa-check-circle' : 'fa-exclamation-circle';
         
+        console.log('Showing alert:', type, message);
+        
         var alertHtml = '<div class="alert ' + alertClass + ' alert-dismissible alert-fixed" role="alert">' +
                        '<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>' +
-                       '<i class="fa ' + icon + '"></i> ' + message +
+                       '<i class="fa ' + icon + '"></i> <strong>' + (type === 'success' ? 'Sukses!' : 'Error!') + '</strong> ' + message +
                        '</div>';
         
         // Remove existing alerts

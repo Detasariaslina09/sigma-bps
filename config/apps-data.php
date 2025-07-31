@@ -52,7 +52,7 @@ return [
     [
         'img' => 'gojas.png',
         'title' => 'GOJAGS',
-        'desc' => 'Sistem Informasi Jabatan Fungsional',
+        'desc' => 'General Online Job Assistant for Great Service',
         'url' => 'https://gojags.web.bps.go.id/'
     ],
     [
@@ -76,31 +76,37 @@ return [
     [
         'img' => 'bbps.png',
         'title' => 'Portal SDM1800',
-        'desc' => 'Portal Layanan SDM BPS Provinsi Lampung',
+        'desc' => 'Portal Layanan SDM BPS 1800',
         'url' => 'https://sites.google.com/view/layanansdm1800'
     ],
     [
         'img' => 'bbps.png',
         'title' => 'BPS Kota Bandar Lampung',
-        'desc' => 'Website Resmi BPS Kota Bandar Lampung',
+        'desc' => 'Website Resmi BPS 1871',
         'url' => 'https://bandarlampungkota.bps.go.id/'
     ],
     [
         'img' => 'parabola.png',
         'title' => 'Parabola',
-        'desc' => 'Sistem Informasi Parabola',
+        'desc' => 'Portal Administrasi BPS 1871',
         'url' => 'http://parabola.web.bps.go.id/'
     ],
     [
         'img' => 'SIVITAS.png',
         'title' => 'Sivitas',
-        'desc' => 'Sistem Informasi Sivitas',
+        'desc' => 'Buku Tamu Online BPS 1871',
         'url' => 'https://bandarlampungkota.web.bps.go.id/sivitas/'
+    ],
+    [
+        'img' => 'bbps.png',
+        'title' => 'Digital',
+        'desc' => 'Indikator Strategis Kota Bandar Lampung',
+        'url' => 'http://magent.web.bps.go.id/'
     ],
     [
         'img' => 'siadin.png',
         'title' => 'SIADIN',
-        'desc' => 'Sistem Informasi Administrasi Internal',
+        'desc' => 'Silahkan Tanya Data Online',
         'url' => 'http://wa.me/6285281871871'
     ],
     [
@@ -112,7 +118,7 @@ return [
     [
         'img' => 'magnet.png',
         'title' => 'Magnet',
-        'desc' => 'Magang',
+        'desc' => 'Manajemen Magang BPS 1871',
         'url' => 'http://magent.web.bps.go.id/'
     ]
 ];

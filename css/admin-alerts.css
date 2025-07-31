@@ -1,0 +1,48 @@
+/* CSS untuk alert notifikasi */
+.alert-fixed {
+    position: fixed;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 9999;
+    min-width: 300px;
+    max-width: 600px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    border-radius: 4px;
+    padding: 15px;
+    opacity: 0.95;
+}
+
+.alert-success {
+    background-color: #dff0d8;
+    border-color: #d6e9c6;
+    color: #3c763d;
+}
+
+.alert-danger {
+    background-color: #f2dede;
+    border-color: #ebccd1;
+    color: #a94442;
+}
+
+.alert-fixed .close {
+    right: 10px;
+    top: 7px;
+    position: absolute;
+}
+
+/* Animasi untuk alert */
+@keyframes fadeInDown {
+    from {
+        opacity: 0;
+        transform: translate(-50%, -20px);
+    }
+    to {
+        opacity: 0.95;
+        transform: translate(-50%, 0);
+    }
+}
+
+.alert-fixed {
+    animation: fadeInDown 0.5s ease-out;
+}

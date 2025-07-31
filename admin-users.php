@@ -9,6 +9,37 @@ if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'admin') {
 require_once 'koneksi.php';
 require_once 'includes/admin-users-functions.php'; // Include file koneksi database dan functions
 
+// Handle AJAX delete request
+if (isset($_POST['ajax_delete']) && $_POST['ajax_delete'] == 1) {
+    header('Content-Type: application/json');
+    
+    $user_id = isset($_POST['user_id']) ? intval($_POST['user_id']) : 0;
+    
+    if ($user_id <= 0) {
+        echo json_encode(['success' => false, 'message' => 'ID tidak valid']);
+        exit;
+    }
+    
+    
+    if ($user_id == $_SESSION['user_id']) {
+        echo json_encode(['success' => false, 'message' => 'Tidak bisa hapus akun sendiri']);
+        exit;
+    }
+    
+    // Simple delete query
+    $stmt = $conn->prepare("DELETE FROM users WHERE id = ? AND id != ?");
+    $stmt->bind_param("ii", $user_id, $_SESSION['user_id']);
+    
+    if ($stmt->execute() && $stmt->affected_rows > 0) {
+        echo json_encode(['success' => true, 'message' => 'User berhasil dihapus']);
+    } else {
+        echo json_encode(['success' => false, 'message' => 'Gagal menghapus user: ' . $conn->error]);
+    }
+    
+    $stmt->close();
+    exit;
+}
+
 // Inisialisasi variabel untuk pesan
 $success_msg = '';
 $error_msg = '';
@@ -89,6 +120,7 @@ try {
     <link href="css/custom-styles.css" rel="stylesheet" />
     <link href="css/font-awesome.css" rel="stylesheet" />
     <link href="css/admin-users.css" rel="stylesheet" />
+    <link href="css/admin-alerts.css" rel="stylesheet" />
 </head>
 
 <body>
@@ -202,24 +234,7 @@ try {
             </div>
         </section>
 
-        <footer>
-            <div class="container">
-                <div class="row">
-                    <div class="col-lg-12 text-center">
-                        <h4>Badan Pusat Statistik Kota Bandar Lampung</h4>
-                        <address>
-                            Jl. Sutan Syahrir No. 30, Pahoman, Bandar Lampung, 35215<br>
-                            Telp. (0721) 255980. Mailbox : bps1871@bps.go.id
-                        </address>
-                        <div class="text-center">
-                            <p>Hak Cipta © 2025 Badan Pusat Statistik Kota Bandar Lampung</p>
-                            <p>Semua Hak Dilindungi</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-    </div>
-    </footer>
+        <?php include_once 'includes/footer.php'; ?>
     </div>
 
     <div class="modal fade" id="addUserModal" tabindex="-1" role="dialog">
@@ -267,136 +282,7 @@ try {
 
     <script src="js/jquery.js"></script>
     <script src="js/bootstrap.min.js"></script>
-    <script>
-        jQuery(document).ready(function($) {
-            console.log('Script started');
-            console.log('Buttons found:', $('.delete-user-btn').length);
-            
-            // Fix untuk dropdown role - lebih agresif
-            $('#role').on('change', function() {
-                var selectedValue = $(this).val();
-                var selectedText = $(this).find('option:selected').text();
-                console.log('Role selected:', selectedValue, '-', selectedText);
-                
-                // Force update display
-                if (selectedValue) {
-                    $(this).css({
-                        'color': '#333 !important',
-                        'background-color': '#fff !important'
-                    });
-                    $(this).removeClass('text-muted');
-                }
-            });
-            
-            // Fix saat modal dibuka
-            $('#addUserModal').on('shown.bs.modal', function() {
-                console.log('Modal opened');
-                $('#role').prop('selectedIndex', 0); // Reset ke pilihan pertama
-                $('#role').css('color', '#333');
-            });
-            
-            // Monitor perubahan value
-            $('#role').on('input change blur', function() {
-                var val = $(this).val();
-                console.log('Role value changed to:', val);
-                if (val) {
-                    $(this).css('color', '#333 !important');
-                }
-            });
-            
-            // Pastikan dropdown dapat diklik
-            $('#role').on('click', function(e) {
-                e.stopPropagation();
-                console.log('Dropdown clicked');
-            });
-            
-            // Fix untuk form validation
-            $('#addUserForm').on('submit', function(e) {
-                var role = $('#role').val();
-                var password = $('#password').val();
-                var confirmPassword = $('#confirm_password').val();
-                
-                if (!role) {
-                    e.preventDefault();
-                    alert('Silakan pilih role!');
-                    $('#role').focus();
-                    return false;
-                }
-                
-                if (password !== confirmPassword) {
-                    e.preventDefault();
-                    alert('Password dan konfirmasi password tidak cocok!');
-                    $('#confirm_password').focus();
-                    return false;
-                }
-            });
-            
-            // Event delegation untuk menghindari konflik
-            $(document).off('click', '.delete-user-btn').on('click', '.delete-user-btn', function(e) {
-                e.preventDefault();
-                e.stopPropagation();
-                
-                console.log('BUTTON CLICKED!');
-                
-                var $btn = $(this);
-                var userId = $btn.attr('data-user-id');
-                var username = $btn.attr('data-username');
-                
-                console.log('User ID:', userId);
-                console.log('Username:', username);
-                
-                if (!userId) {
-                    alert('User ID tidak ditemukan!');
-                    return false;
-                }
-                
-                if (confirm('Hapus user "' + username + '"?')) {
-                    console.log('Dihapus');
-                    
-                    // Update button
-                    $btn.html('⏳ Menghapus...').prop('disabled', true);
-                    $.ajax({ // Simple AJAX
-                        url: 'delete-user.php',
-                        type: 'POST',
-                        data: { user_id: userId },
-                        success: function(data) {
-                            console.log('📨 Raw response:', data);
-                            
-                            var response;
-                            try {
-                                response = typeof data === 'string' ? JSON.parse(data) : data;
-                            } catch(e) {
-                                console.log('❌ JSON parse error:', e);
-                                alert('❌ Response error: ' + data);
-                                location.reload();
-                                return;
-                            }
-                            
-                            console.log('Parsed response:', response);
-                            
-                            if (response.success) {
-                                alert('✅ ' + response.message);
-                                $btn.closest('tr').fadeOut(function() {
-                                    $(this).remove();
-                                });
-                            } else {
-                                alert('❌ ' + response.message);
-                                $btn.html('<i class="fa fa-trash"></i> Hapus').prop('disabled', false);
-                            }
-                        },
-                        error: function(xhr, status, error) {
-                            console.log('AJAX Error:', error);
-                            console.log('Response text:', xhr.responseText);
-                            
-                            alert('Error: ' + error + '\n\nResponse: ' + xhr.responseText);
-                            $btn.html('<i class="fa fa-trash"></i> Hapus').prop('disabled', false);
-                        }
-                    });
-                }
-                
-                return false;
-            });
-        });
-    </script>
+    <script src="js/admin-users.js"></script>
+    <script src="js/custom.js"></script>
 </body>
 </html>

@@ -64,7 +64,7 @@ if (!isset($_SESSION['full_name'])) {
     </script>
 </head>
 <body>
-    <button class="mobile-menu-toggle">     <!-- Mobile Menu Toggle Button -->
+    <button class="mobile-menu-toggle">     
         <i class="fa fa-bars"></i> Menu
     </button>
     
@@ -132,29 +132,7 @@ if (!isset($_SESSION['full_name'])) {
                 </div>
             </div>
         </section>
-        
-        <footer>
-            <div class="container">
-                <div class="row">
-                    <div class="col-lg-12 text-center">
-                        <div class="footer-content">
-                            <div class="footer-logo">
-                                <h4>BADAN PUSAT STATISTIK KOTA BANDAR LAMPUNG</h4>
-                            </div>
-                            <div class="footer-address">
-                                <p>Jl. Sutan Syahrir No. 30, Pahoman, Bandar Lampung, 35215</p>
-                                <p>Telp. (0721) 255980. Mailbox : bps1871@bps.go.id</p>
-                            </div>
-                                <div class="text-center">
-                                    <p>Hak Cipta © 2025 Badan Pusat Statistik Kota Bandar Lampung</p>
-                                    <p>Semua Hak Dilindungi</p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </footer>
+        <?php include_once 'includes/footer.php'; ?>
     </div>
 
     <a href="#" class="scrollup"><i class="fa fa-angle-up active"></i></a>

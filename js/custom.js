@@ -18,14 +18,16 @@ jQuery(document).ready(function($) {
 	// Memperbaiki masalah pada halaman admin - memastikan bahwa mobile menu berfungsi
 	// dengan benar pada semua halaman termasuk admin services dan admin content
 	setTimeout(function() {
-		// Reset event handler yang mungkin terduplikasi
-		$(document).off('click', '.mobile-menu-toggle');
-		$(document).off('click', '.sidebar-overlay');
+		// Reset event handler yang mungkin terduplikasi - dengan namespace sidebarToggle
+		$(document).off('click.sidebarToggle', '.mobile-menu-toggle');
+		$(document).off('click.sidebarToggle', '.sidebar-overlay');
 		
-		// Tambahkan event handler yang baru
-		$(document).on('click', '.mobile-menu-toggle', function(e) {
+		// Tambahkan event handler yang baru dengan namespace
+		$(document).on('click.sidebarToggle', '.mobile-menu-toggle', function(e) {
 			e.preventDefault();
 			e.stopPropagation();
+			
+			console.log('Mobile menu toggle clicked');
 			
 			// Toggle sidebar untuk semua ukuran layar
 			$('.sidebar').toggleClass('collapsed');
