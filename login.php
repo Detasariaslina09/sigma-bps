@@ -79,22 +79,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     <link href="css/login.css" rel="stylesheet" />
 </head>
 <body class="login-background">
-    <!-- Mobile Menu Toggle Button -->
-    <button class="mobile-menu-toggle">
-        <i class="fa fa-bars"></i> Menu
-    </button>
-    
-    <!-- Sidebar menu -->
-    <div class="sidebar">
-        <a class="navbar-brand" href="index.php"><img src="img/sigma.png" alt="logo"/></a>
-        <ul class="nav navbar-nav">
-            <li><a href="index.php">Beranda</a></li>
-            <li><a href="profil.php">Profil dan Roadmap</a></li>
-            <li><a href="services.php">Pusat Aplikasi</a></li>
-            <li class="active"><a href="login.php">Login</a></li>
-        </ul>
-    </div>
-
+    <?php include_once 'includes/sidebar.php'; ?>
     <div id="wrapper">
         <section id="content">
             <div class="container">

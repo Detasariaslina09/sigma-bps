@@ -1,8 +1,7 @@
 <?php
 // Mulai session
 session_start();
-if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'admin') {
-    // Redirect ke halaman login jika belum login atau bukan admin
+if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'admin') {     // Redirect ke halaman login jika belum login atau bukan admin
     header("Location: login.php");
     exit;
 }
@@ -21,11 +20,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
     $imageName = '';
 
     try {
-        // Pastikan koneksi aktif
-        $conn = check_connection($conn);
+        $conn = check_connection($conn); // Pastikan koneksi aktif
         
-        // Ambil informasi konten lama, termasuk gambar
-        $oldContentQuery = $conn->query("SELECT * FROM konten WHERE id=1");
+        $oldContentQuery = $conn->query("SELECT * FROM konten WHERE id=1"); // Ambil informasi konten lama, termasuk gambar
         $oldImage = 'konten.webp'; // Default jika tidak ada data sebelumnya
         
         if ($oldContentQuery && $oldContentQuery->num_rows > 0) {
@@ -33,8 +30,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
             $oldImage = $oldContent['image'];
         }
         
-        // Cek jika ada upload gambar baru
-        if (isset($_FILES['image']) && $_FILES['image']['error'] === UPLOAD_ERR_OK) {
+        if (isset($_FILES['image']) && $_FILES['image']['error'] === UPLOAD_ERR_OK) { // Cek jika ada upload gambar baru
             $imgTmp = $_FILES['image']['tmp_name'];
             $imgName = basename($_FILES['image']['name']);
             $imgExt = strtolower(pathinfo($imgName, PATHINFO_EXTENSION));
@@ -59,15 +55,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
             }
             $imageToUse = '';
             if ($imageName) {
-                // Jika ada gambar baru, gunakan gambar baru
                 $imageToUse = $imageName;
             } else {
-                // Jika tidak ada gambar baru, gunakan gambar lama
-                $imageToUse = $oldImage;
+                $imageToUse = $oldImage; // Jika tidak ada gambar baru, gunakan gambar lama
             }
             
-            // Simpan data baru ke database
-            $sql = "INSERT INTO konten (id, title, description, image) VALUES (1, '$title', '$description', '$imageToUse')";
+            $sql = "INSERT INTO konten (id, title, description, image) VALUES (1, '$title', '$description', '$imageToUse')"; // Simpan data baru ke database
             
             if ($conn->query($sql)) {
                 $success = true; // Jika berhasil menyimpan data baru dan ada gambar baru, hapus gambar lama
@@ -128,13 +121,11 @@ if (!$image || !file_exists('img/' . $image)) {
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="description" content="Halaman manajemen konten BPS Kota Bandar Lampung" />
     <meta name="author" content="BPS Kota Bandar Lampung" />
-    
     <link href="css/bootstrap.min.css" rel="stylesheet" />
     <link href="css/style.css" rel="stylesheet" />
     <link href="css/custom-styles.css" rel="stylesheet" />
     <link href="css/font-awesome.css" rel="stylesheet" />
     <link href="css/admin-content.css" rel="stylesheet" />
-    
     <meta name="username" content="<?php echo htmlspecialchars($_SESSION['username']); ?>">
     <meta name="role" content="<?php echo htmlspecialchars($_SESSION['role']); ?>">
 </head>
@@ -145,35 +136,7 @@ if (!$image || !file_exists('img/' . $image)) {
             <p>Memproses...</p>
         </div>
     </div>
-
-    <button class="mobile-menu-toggle">
-        <i class="fa fa-bars"></i> Menu
-    </button>
-    
-    <div class="sidebar">
-        <a class="navbar-brand" href="index.php"><img src="img/sigma.png" alt="logo"/></a>
-        <ul class="nav navbar-nav">
-            <li><a href="index.php">Beranda</a></li>
-            <li><a href="profil.php">Profil dan Roadmap</a></li>
-            <li><a href="services.php">Pusat Aplikasi</a></li>
-            <?php if ($is_logged_in): ?>
-                <li><a href="monev.php">Monev</a></li>
-                <li><a href="layanan.php">Layanan</a></li>
-                <li><a href="dokumentasi.php">Dokumentasi</a></li>
-                <li><a href="harmoni.php">Harmoni</a></li>
-                <?php if ($is_admin): ?>
-                    <li class="admin-menu"><a href="admin-users.php"><i class="fa fa-users"></i> Manajemen User</a></li>
-                    <li class="admin-menu"><a href="admin-services.php"><i class="fa fa-cogs"></i> Manajemen Layanan</a></li>
-                    <li class="admin-menu active"><a href="admin-content.php"><i class="fa fa-file-text"></i> Manajemen Konten</a></li>
-                    <li class="admin-menu"><a href="admin-profil.php"><i class="fa fa-user"></i> Manajemen Profil</a></li>
-                <?php endif; ?>
-                <li class="logout-menu"><a href="logout.php" class="logout-link"><i class="fa fa-sign-out"></i> Logout (<?php echo htmlspecialchars($_SESSION['username']); ?>)</a></li>
-            <?php else: ?>
-                <li><a href="login.php">Login</a></li>
-            <?php endif; ?>
-        </ul>
-    </div>
-
+    <?php include_once 'includes/sidebar.php'; ?>
     <div id="wrapper">
         <section id="content">
             <div class="container">

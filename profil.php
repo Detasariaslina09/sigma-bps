@@ -142,37 +142,7 @@ if (!isset($_SESSION['full_name'])) {
     </style>
 </head>
 <body>
-    <button class="mobile-menu-toggle">
-        <i class="fa fa-bars"></i> Menu
-    </button>
-    
-    <div class="sidebar">
-        <a class="navbar-brand" href="index.php"><img src="img/sigma.png" alt="logo"/></a>
-        <ul class="nav navbar-nav">
-            <li><a href="index.php">Beranda</a></li>
-            <li class="active"><a href="profil.php">Profil dan Roadmap</a></li>
-            <li><a href="services.php">Pusat Aplikasi</a></li>
-            
-            <?php if ($is_logged_in): ?>
-                <li><a href="monev.php">Monev</a></li>
-                <li><a href="layanan.php">Layanan</a></li>
-                <li><a href="dokumentasi.php">Dokumentasi</a></li>
-                <li><a href="harmoni.php">Harmoni</a></li>
-                
-                <?php if ($is_admin): ?>
-                    <li class="admin-menu"><a href="admin-users.php"><i class="fa fa-users"></i> Manajemen User</a></li>
-                    <li class="admin-menu"><a href="admin-services.php"><i class="fa fa-cogs"></i> Manajemen Layanan</a></li>
-                    <li class="admin-menu"><a href="admin-content.php"><i class="fa fa-file-text"></i> Manajemen Konten</a></li>
-                    <li class="admin-menu"><a href="admin-profil.php"><i class="fa fa-user"></i> Manajemen Profil</a></li>
-                <?php endif; ?>
-                
-                <li class="logout-menu"><a href="logout.php" class="logout-link"><i class="fa fa-sign-out"></i> Logout (<?php echo htmlspecialchars($_SESSION['username']); ?>)</a></li>
-            <?php else: ?>
-                <li><a href="login.php"><i class="fa fa-sign-in"></i> Login</a></li>
-            <?php endif; ?>
-        </ul>
-    </div>
-
+    <?php include_once 'includes/sidebar.php'; ?>
     <div id="wrapper">
         <section id="content">
             <div class="container">
